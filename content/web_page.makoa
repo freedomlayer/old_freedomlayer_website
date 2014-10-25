@@ -1,0 +1,10 @@
+<%inherit file="/page.makoa"/>
+
+<%block name="page_header">
+	<%block name="web_page_header"/>
+</%block>
+
+
+<%block name="page_body">
+	<%block name="web_page_body"/>
+</%block>

@@ -1,0 +1,12 @@
+<%namespace name="utils" file="/lib/utils.makoa"/>
+
+<%def name="gen_navbar()">
+    ## Generate a navigation bar
+    <nav>
+    <a href="${utils.rel_file_link("index.html")}">Index</a> |
+    <a href="${utils.rel_file_link("pages/links.html")}">Links</a> |
+    <a href="${utils.rel_file_link("blog_index.html")}">Blog</a> |
+    <a href="${utils.rel_file_link("pages/about.html")}">About</a>
+    </nav>
+
+</%def>

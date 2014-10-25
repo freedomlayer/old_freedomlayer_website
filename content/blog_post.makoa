@@ -1,0 +1,19 @@
+<%inherit file="/page.makoa"/>
+
+<%block name="page_header">
+	<%
+		p_meta = self.post_metadata()
+	%>
+	<title>xorpd | Blog | ${p_meta["title"]}</title>
+	<%block name="blog_post_header"/>
+</%block>
+
+<%block name="page_body">
+	<%
+		p_meta = self.post_metadata()
+	%>
+	<h1>Blog</h1>
+	## Blog's title:
+	<h2>${p_meta["title"]}</h2>
+	<%block name="blog_post_body"/>
+</%block>

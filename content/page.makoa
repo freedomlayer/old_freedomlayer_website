@@ -1,0 +1,37 @@
+<%inherit file="/lib/inspectable.makoa"/>
+<%namespace name="utils" file="/lib/utils.makoa" inheritable="True"/>
+<%namespace name="navbar" file="/navbar.makoa"/>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%block name="page_header"/>
+
+    ## css link for the syntax highlighting.
+    <link rel="stylesheet" type="text/css" 
+	href="${utils.rel_file_link(utils.HIGHLIGHT_CSS())}"/>
+
+    ## css link for the page style.
+    <link rel="stylesheet" type="text/css"
+        href="${utils.rel_file_link("page_style.css")}"/>
+
+</head>
+<body>
+
+<div id="header">
+The page header
+<br/><br/>
+</div>
+<div id="nav">
+    ${navbar.gen_navbar()}
+</div>
+<div id="content">
+    <%block name="page_body"/>
+</div>
+<div id="footer">
+The page footer
+</div>
+
+</body>
+</html>
+

@@ -1,0 +1,12 @@
+body { 
+    font-family:"Lucida Console", Monaco, monospace;
+}
+
+a:link,a:visited {
+    text-decoration:none;
+    color:blue;
+}
+
+a:hover {
+    color:red;
+}
