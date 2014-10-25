@@ -7,12 +7,6 @@
     from mako.lookup import TemplateLookup
 %>
 
-<%def name="HIGHLIGHT_CSS()">
-<%
-    return "lib/code_highlight.css"
-%>
-</%def>
-
 <%def name="mdown(text)">
 <%
     """
