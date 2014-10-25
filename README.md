@@ -4,6 +4,18 @@
 A static website generator for developers.
 Written in Python, and uses the Mako templating library extensively.
 
+## Motivation
+
+I used other python based website generators before, but I felt the lack of
+control. I wanted to be able to have the power of a website generator engine,
+but still be able to add my own python code, or my custom HTML and CSS wherever
+I want. 
+
+I wanted a static website generator for programmers, but it was hard
+for me to find one. So I created Static Weber.
+
+## General Info
+
 To use this you will have to know a bit about Mako and Python, and also a bit
 about HTML and CSS (Just a bit), though it will give you much more power
 flexibility than the usual static website generators out there.
