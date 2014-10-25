@@ -40,6 +40,12 @@ Now to build the website, run:
 Then you have the compiled website in the output folder.
 To view it, just click on index.html
 
+To deploy, usually you will invoke:
+	
+	python3 website_tool.py deploy "commit_message"
+
+Currently it works with github pages. You could change it to do something else.
+
 ## Required reading
 
 To really understand what is going on here, you should read a bit of Mako
