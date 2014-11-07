@@ -1,5 +1,4 @@
-<%namespace name="utils" file="/lib/utils.makoa"/>
-
+<%namespace name="utils" module="lib.utils"/>
 <%def name="gen_navbar()">
     ## Generate a navigation bar
     <nav>

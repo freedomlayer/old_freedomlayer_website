@@ -1,5 +1,5 @@
-<%inherit file="/lib/inspectable.makoa"/>
-<%namespace name="utils" file="/lib/utils.makoa" inheritable="True"/>
+<%inherit file="/inspectable.makoa"/>
+<%namespace name="utils" module="lib.utils" inheritable="True"/>
 <%namespace name="navbar" file="/navbar.makoa"/>
 
 <!DOCTYPE html>
@@ -9,11 +9,11 @@
 
     ## css link for the syntax highlighting.
     <link rel="stylesheet" type="text/css" 
-	href="${utils.rel_file_link("code_highlight.css")}"/>
+	href="${self.utils.rel_file_link("code_highlight.css")}"/>
 
     ## css link for the page style.
     <link rel="stylesheet" type="text/css"
-        href="${utils.rel_file_link("page_style.css")}"/>
+        href="${self.utils.rel_file_link("page_style.css")}"/>
 
 </head>
 <body>
