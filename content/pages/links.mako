@@ -1,7 +1,7 @@
 <%inherit file="/web_page.makoa"/>
 
 <%block name="web_page_header">
-<title>xorpd | Links</title>
+<title>Links</title>
 </%block>
 
 <%block name="web_page_body" filter="self.utils.mdown">
