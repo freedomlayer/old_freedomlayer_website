@@ -35,14 +35,14 @@ def inspect_temp(context,file_path,key):
     return metadata
 
 
-def get_extension(context,filename):
+def _get_extension(filename):
     """
     Get the extension of a file (What comes right after the last dot).
     """
     return filename.split(".")[-1]
 
 
-def change_extension(context,filename,new_ext):
+def _change_extension(filename,new_ext):
     """
     Change the extension of a file to be new_ext
     """
@@ -65,7 +65,7 @@ def inspect_directory(context,dir_name,props):
     # Iterate over all files inside the blog:
     for root,dirs,files in os.walk(dir_path):
         for fl in files:
-            if not get_extension(context,fl) == MAKO_EXT:
+            if not _get_extension(fl) == MAKO_EXT:
                 # We only care about files with mako extension.
                 continue
 
@@ -78,7 +78,7 @@ def inspect_directory(context,dir_name,props):
 
             # Add to list:
             entry = {}
-            fl_rel_html = change_extension(context,fl_rel,HTML_EXT)
+            fl_rel_html = _change_extension(fl_rel,HTML_EXT)
             entry["link_addr"] = os.path.join(dir_name,fl_rel_html)
             entry["props"] = {}
             for prop in props:
