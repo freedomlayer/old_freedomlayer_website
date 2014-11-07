@@ -9,13 +9,6 @@ from mako.template import Template
 from mako.lookup import TemplateLookup
 
 
-class ExceptUtil(Exception):
-    pass
-
-class ExceptNoClosingDelimiter(ExceptUtil):
-    pass
-
-
 def rel_file_link(context,file_path):
     """
     Create a relative link to a file.
