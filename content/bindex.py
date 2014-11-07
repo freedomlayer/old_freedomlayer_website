@@ -1,23 +1,20 @@
-<%namespace name="utils" file="/lib/utils.makoa"/>
+from lib import utils
 
-<%!
-    import os
-    import time
-    import datetime
+import os
+import time
+import datetime
 
-    ## Extensions for mako and HTML:
-    MAKO_EXT = "mako"
-    HTML_EXT = "html"
+## Extensions for mako and HTML:
+MAKO_EXT = "mako"
+HTML_EXT = "html"
 
-    ## The name of blogs directory:
-    BLOGS_DIR = "blog"
+## The name of blogs directory:
+BLOGS_DIR = "blog"
 
-    ## The time format:
-    TIME_FORMAT = "%Y-%m-%d %H:%M"
-%>
+## The time format:
+TIME_FORMAT = "%Y-%m-%d %H:%M"
 
-<%def name="fix_dates(b_entries)">
-<%
+def fix_dates(b_entries):
     """
     Parse dates of blog entries
     """
@@ -26,28 +23,21 @@
         tstruct = time.strptime(raw_date,TIME_FORMAT)
         dt = datetime.datetime.fromtimestamp(time.mktime(tstruct))
         be["props"]["post_metadata"]["date"] = dt
-%>
-</%def>
+
     
-<%def name="sort_by_dates(b_entries)">
-<%
+def sort_by_dates(b_entries):
     """
     Sort the blog entries by date.
     """
     b_entries.sort(key=lambda x:x["props"]["post_metadata"]["date"],reverse=True)
-%>
-</%def>
 
-<%def name="get_blog_entries()">
-<%
+
+def get_blog_entries(context):
     """
     Get the list of blog entries after fixing the time format and some
     sorting.
     """
-
-    b_entries = utils.inspect_directory(BLOGS_DIR,["post_metadata"])
+    b_entries = utils.inspect_directory(context,BLOGS_DIR,["post_metadata"])
     fix_dates(b_entries)
     sort_by_dates(b_entries)
     return b_entries
-%>
-</%def>

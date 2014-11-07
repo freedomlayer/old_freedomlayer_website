@@ -1,5 +1,5 @@
 <%inherit file="/web_page.makoa"/>
-<%namespace name="bindex" file="/bindex.makoa"/>
+<%namespace name="bindex" module="content.bindex"/>
 
 <%block name="web_page_header">
 <title>xorpd | Blog</title>
