@@ -24,6 +24,7 @@ Features:
 - Basic Blog
 - Syntax Highlighting with Pygments. (You should supply your own highlight css)
 - Markdown blocks
+- Mathjax inside Markdown blocks.
 - Python scripting
 - Mako templating. Specifically, you get page inheritance, which is great.
 
