@@ -2,7 +2,6 @@
 Utils file for static_weber.
 """
 
-import markdown
 import os
 import json
 
@@ -10,13 +9,11 @@ from mako.template import Template
 from mako.lookup import TemplateLookup
 
 
-def mdown(context,text):
-    """
-    Convert mdown text to html.
-    This is a filter.
-    """
-    return markdown.markdown(text,\
-        extensions=['markdown.extensions.codehilite'])
+class ExceptUtil(Exception):
+    pass
+
+class ExceptNoClosingDelimiter(ExceptUtil):
+    pass
 
 
 def rel_file_link(context,file_path):

@@ -1,5 +1,6 @@
 <%inherit file="/inspectable.makoa"/>
 <%namespace name="utils" module="lib.utils" inheritable="True"/>
+<%namespace name="filters" module="lib.filters" inheritable="True"/>
 <%namespace name="navbar" file="/navbar.makoa"/>
 
 <!DOCTYPE html>
