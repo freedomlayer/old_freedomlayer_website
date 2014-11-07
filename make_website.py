@@ -39,6 +39,26 @@ def get_extension(filename):
     """
     return filename.split(".")[-1]
 
+def clean_empty_dirs(root_dir):
+    """
+    Check the directory tree for any empty directories, or directories that
+    contain only empty directories (etc.)
+    Then delete any such directories.
+    """
+    files = os.listdir(root_dir)
+
+    for f in files:
+        new_root = os.path.join(root_dir,f)
+        if os.path.isdir(new_root):
+            clean_empty_dirs(new_root)
+
+    # After some deleting, we get again the list of contents.
+    # Note that this will not be the same list from the first time.
+    files = os.listdir(root_dir)
+    if len(files) == 0:
+        # If there are no files inside the directory, remove it and exit:
+        os.rmdir(root_dir)
+
 class Website():
     def __init__(self,path):
         # Load the path of the website:
@@ -112,6 +132,9 @@ class Website():
                     shutil.copyfile(fl_path,fl_output)
                     # Continue to the next file:
                     continue
+
+        # Clean any empty directories inside output:
+        clean_empty_dirs(output_path)
 
 
 def go():
