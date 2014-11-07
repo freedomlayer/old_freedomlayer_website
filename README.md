@@ -87,7 +87,8 @@ tree. It distinguishes between a few types of files:
 
 - .makoa files. (Mako Abstract) Those are "Abstract" Mako templates. They will
   not be rendered by the builder. Those files are useful for inheritance and
-  similar things.
+  similar things. If you just want a file to put pure python code, use .py
+  files instead.
 
 - .makon files. (Mako No output) Those files will be rendered as Mako templates
   by the engine, however their output will not be saved in the output directory
@@ -96,20 +97,24 @@ tree. It distinguishes between a few types of files:
 
 ## Included files and folders
 
-- lib directory contains utility functions and the general inspectable.mako mako
-  template, which all pages inherit from. If you just want to build your
+- lib directory contains utility functions. If you just want to build your
   website, you shouldn't touch this directory.
 
 - blog directory contains all the blog posts. They all inherit from the
   blog_post.makoa Mako template.
 
+- inspectable.makoa - All pages inherit from this template. Generally speaking
+  it allows you to inspect any template that you have for metadata. If you just
+  want to create a website, you don't really care about it. Leave it there.
+
 - page.makoa - This is the base page template. It inherits from inspectable,
   and all your pages will inherit from page.makoa. If you want to put anything
   like google analytics, page.makoa is the place.
 
-- blog_index.mako and bindex.makoa both build the blog index. You can edit
+- blog_index.mako and bindex.py both build the blog index. You can edit
   blog_index.mako to coustomize the way it looks like, but generally you
-  shouldn't touch bindex.makoa, which is the engine to get the blog posts list.
+  wouldn't want to touch bindex.py, which is the engine to get the blog posts
+  list.
 
 - blog_post.makoa: Inherit from page.makoa. blog_post.makoa is the base
   template for all blog posts inside the blog directory.
