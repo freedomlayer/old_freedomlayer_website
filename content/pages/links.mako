@@ -4,7 +4,7 @@
 <title>Links</title>
 </%block>
 
-<%block name="web_page_body" filter="self.utils.mdown">
+<%block name="web_page_body" filter="self.filters.mdown">
 <h1>Links</h1>
 Some useful low level resources:
 

@@ -10,7 +10,7 @@
 %>
 </%def>
 
-<%block name="blog_post_body" filter="self.utils.mdown">
+<%block name="blog_post_body" filter="self.filters.mdown">
 
 GDB is a very powerful debugger that comes with most linux distrubutions. You
 will want to study it for a while if you are going to write assembly code on

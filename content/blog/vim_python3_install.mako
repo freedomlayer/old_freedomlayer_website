@@ -10,7 +10,7 @@
 %>
 </%def>
 
-<%block name="blog_post_body" filter="self.utils.mdown">
+<%block name="blog_post_body" filter="self.filters.mdown">
 
 First Get checkinstall. It will allow us to install vim in an ordered fashion.
 If we ever want to remove this vim version, we could do it easily. (As opposed
