@@ -1,43 +1,41 @@
-<%!
-    import markdown
-    import os
-    import json
+"""
+Utils file for static_weber.
+"""
 
-    from mako.template import Template
-    from mako.lookup import TemplateLookup
-%>
+import markdown
+import os
+import json
 
-<%def name="mdown(text)">
-<%
+from mako.template import Template
+from mako.lookup import TemplateLookup
+
+
+def mdown(context,text):
     """
     Convert mdown text to html.
     This is a filter.
     """
     return markdown.markdown(text,\
         extensions=['markdown.extensions.codehilite'])
-%>
-</%def>
 
-<%def name="rel_file_link(file_path)">
-<%
-## Create a relative link to a file.
-## file_path is the relative path of the file, with respect to the content
-## directory.
-    cur_path = os.path.join(my_output_dir,my_rel_dir)
-    file_path = os.path.join(my_output_dir,file_path)
+
+def rel_file_link(context,file_path):
+    """
+    Create a relative link to a file.
+    file_path is the relative path of the file, with respect to the content
+    directory.
+    """
+    cur_path = os.path.join(context['my_output_dir'],context['my_rel_dir'])
+    file_path = os.path.join(context['my_output_dir'],file_path)
     href_addr = os.path.relpath(file_path,cur_path)
     return href_addr
-%>
-</%def>
 
-<%def name="inspect_temp(file_path,key)">
-<%
+def inspect_temp(context,file_path,key):
     """
     Inspect a template to get some metadata.
     Basically it runs self.${key}() at the template side and returns
     the result.
     """
-
     # Render the template with inspect=True to get the blog entry's
     # metadata.
     fl_tmp = Template(filename=file_path,lookup=context.lookup)
@@ -45,43 +43,39 @@
     metadata = json.loads(res_inspect)
 
     return metadata
-%>
-</%def>
 
 
-<%def name="get_extension(filename)">
-<%
+def get_extension(context,filename):
     """
     Get the extension of a file (What comes right after the last dot).
     """
     return filename.split(".")[-1]
-%>
-</%def>
 
-<%def name="change_extension(filename,new_ext)">
-<%
+
+def change_extension(context,filename,new_ext):
     """
     Change the extension of a file to be new_ext
     """
     last_dot = filename.rfind(".")
     return filename[:last_dot] + "." + new_ext
 
-%>
-</%def>
 
-<%def name="inspect_directory(dir_name,props)">
-<%
+def inspect_directory(context,dir_name,props):
+    """
+    Get metadata from all files inside a directory.
+    """
     MAKO_EXT = "mako"
     HTML_EXT = "html"
 
     res_entries = []
 
-    dir_path = os.path.join(my_content_dir,my_rel_dir,dir_name)
+    dir_path = os.path.join(context['my_content_dir'],\
+            context['my_rel_dir'],dir_name)
 
     # Iterate over all files inside the blog:
     for root,dirs,files in os.walk(dir_path):
         for fl in files:
-            if not get_extension(fl) == MAKO_EXT:
+            if not get_extension(context,fl) == MAKO_EXT:
                 # We only care about files with mako extension.
                 continue
 
@@ -94,14 +88,12 @@
 
             # Add to list:
             entry = {}
-            fl_rel_html = change_extension(fl_rel,HTML_EXT)
+            fl_rel_html = change_extension(context,fl_rel,HTML_EXT)
             entry["link_addr"] = os.path.join(dir_name,fl_rel_html)
             entry["props"] = {}
             for prop in props:
-                entry["props"][prop] = inspect_temp(fl_path,prop)
+                entry["props"][prop] = inspect_temp(context,fl_path,prop)
             res_entries.append(entry)
 
     return res_entries
-%>
-</%def>
 
