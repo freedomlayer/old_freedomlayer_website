@@ -2,6 +2,7 @@
 
 <%block name="web_page_header">
     <title>Index page</title>
+    ## mathjax:
     <script type="text/javascript"
         src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
     </script>
@@ -14,18 +15,12 @@
 	<img src="${self.utils.rel_file_link("pics/balls.png")}"/>
 	<br/><br/>
 
-<%block filter="self.filters.mdown_math">
+<%block filter="self.filters.math_mdown">
 This is a test for some text.
-<h1>This is big text.</h1>
 
-$$ A \subseteq B $$
-usual line.
-$$ x < y $$
-$$ x <y $$
+Inline math example: \( \frac{n!}{k!(n-k)!} = \binom{n}{k} \).
 
-And this is inline: \(a \neq b\) as wanted.
-
-
+Display math example: $$ \frac{n!}{k!(n-k)!} = \binom{n}{k} $$
 
 Some more text.
 
