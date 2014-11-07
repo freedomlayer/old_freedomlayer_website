@@ -46,6 +46,11 @@ Next you will need to install mako and markdown:
 	pip install mako
 	pip install markdown
 
+And finally if you want syntax highlighting:
+
+	pip install pygments
+
+
 Now to build the website, run:
 
 	python3 website_tool.py build
