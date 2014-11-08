@@ -6,7 +6,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <%block name="page_header"/>
+    ## Google analytics:
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-56550342-1', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+
+    ## Mathjax:
+    <script type="text/javascript"
+    src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    </script>
+
 
     ## css link for the syntax highlighting.
     <link rel="stylesheet" type="text/css" 
@@ -16,12 +32,45 @@
     <link rel="stylesheet" type="text/css"
         href="${self.utils.rel_file_link("page_style.css")}"/>
 
+    <%block name="page_header"/>
+
+<style type="text/css">
+
+#header {
+    text-align:center;
+    width:60em;
+    clear: both; margin: 0 auto; 
+    
+}
+
+#nav {
+    text-align:center;
+    width:60em;
+    clear: both; margin: 0 auto; 
+    padding-bottom:25px;
+}
+
+#content {
+    width:60em;
+    /* Probably center: */
+    clear: both; 
+    margin: 0 auto; 
+}
+
+#footer {
+    padding-top:25px;
+    text-align:center;
+    clear:both;
+    margin: 0 auto;
+    color:#808080;
+}
+</style> 
+
 </head>
 <body>
 
 <div id="header">
-The page header
-<br/><br/>
+<h1>Freedom Layer</h1>
 </div>
 <div id="nav">
     ${navbar.gen_navbar()}
@@ -30,7 +79,7 @@ The page header
     <%block name="page_body"/>
 </div>
 <div id="footer">
-The page footer
+real.flayer(&)outlook.com
 </div>
 
 </body>
