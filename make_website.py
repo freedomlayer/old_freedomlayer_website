@@ -39,12 +39,21 @@ def get_extension(filename):
     """
     return filename.split(".")[-1]
 
-def clean_empty_dirs(root_dir):
+def clean_empty_dirs(root_dir,ignore_prefixes=["."]):
     """
     Check the directory tree for any empty directories, or directories that
     contain only empty directories (etc.)
     Then delete any such directories.
+
+    Do not delete inside any directories which begin with one of the
+    ignore_prefixes.
     """
+    # We don't get into directories which begin with
+    # one of the ignore prefixes:
+    for iprefix in ignore_prefixes:
+        if os.path.basename(root_dir).startswith(iprefix):
+            return
+
     files = os.listdir(root_dir)
 
     for f in files:
@@ -134,7 +143,7 @@ class Website():
                     continue
 
         # Clean any empty directories inside output:
-        # clean_empty_dirs(output_path)
+        clean_empty_dirs(output_path,ignore_prefixes=["."])
 
 
 def go():
