@@ -83,6 +83,7 @@ def cmd_build():
 # http://stackoverflow.com/questions/10280691/
 #   cant-commit-from-fabric-script-for-github
 #
+CNAME_DOMAIN = "www.freedomlayer.org"
 def cmd_deploy(commit_msg):
     """
     First build the website.
@@ -97,7 +98,7 @@ def cmd_deploy(commit_msg):
     try:
         # Add a CNAME record if needed:
         # Set up the CNAME file:
-        run_sys('echo www.your-website.net > CNAME')
+        run_sys('echo ' + CNAME_DOMAIN + ' > CNAME')
         res_git_add = run_sys('git add -A')
         if res_git_add != 0:
             raise ExceptDeploy("git add -A didn't work.")
