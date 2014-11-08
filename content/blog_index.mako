@@ -2,7 +2,7 @@
 <%namespace name="bindex" module="content.bindex"/>
 
 <%block name="web_page_header">
-<title>Blog</title>
+<title>FreedomLayer | Blog</title>
 </%block>
 
 <%block name="web_page_body">

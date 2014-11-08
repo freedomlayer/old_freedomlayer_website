@@ -4,7 +4,7 @@
 	<%
 		p_meta = self.post_metadata()
 	%>
-	<title>xorpd | Blog | ${p_meta["title"]}</title>
+	<title>FreedomLayer | Blog | ${p_meta["title"]}</title>
 	<%block name="blog_post_header"/>
 </%block>
 
