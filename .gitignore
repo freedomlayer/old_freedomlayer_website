@@ -2,3 +2,4 @@
 *.swo
 output/
 __pycache__/
+temp/
