@@ -49,7 +49,7 @@ def clean_empty_dirs(root_dir):
 
     for f in files:
         new_root = os.path.join(root_dir,f)
-        if os.path.isdir(new_root):
+        if os.path.isdir(new_root): 
             clean_empty_dirs(new_root)
 
     # After some deleting, we get again the list of contents.
@@ -134,7 +134,7 @@ class Website():
                     continue
 
         # Clean any empty directories inside output:
-        clean_empty_dirs(output_path)
+        # clean_empty_dirs(output_path)
 
 
 def go():
