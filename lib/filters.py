@@ -14,7 +14,7 @@ def _mdown(text):
     This is a filter.
     """
     return markdown.markdown(text,\
-        extensions=['markdown.extensions.codehilite'])
+        extensions=['markdown.extensions.codehilite(linenums=True)'])
 
 def mdown(context,text):
     """
