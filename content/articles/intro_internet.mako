@@ -357,4 +357,11 @@ project](https://www.torproject.org/))
 It's pretty much a constant silent war, where the ISP has the initial advantage
 of access to the Internet.
 
+
+<h3>Final Summary</h3>
+That was a **very** general summary of what is the internet, how it basically work
+and what problem it tries to solve. We also pointed out some issues with the
+current structure. Some of those issues arise from the hierarchical structure
+of the Internet.
+
 </%block>
