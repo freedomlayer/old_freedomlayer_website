@@ -15,7 +15,27 @@ a:hover {
     color:red;
 }
 
-.wimage {
+h5 {
+    font-size: 1.20em;
+}
+
+h6 {
+    font-size: 1.10em;
+    font-weight:normal;
+    text-decoration:underline;
+}
+
+.cen_image {
     display:block;
     margin: 0 auto; 
 }
+
+.wimage {
+    /* Center image: */
+    display:block;
+    margin: 0 auto; 
+    /* Auto adjust size: */
+    max-width:100%;
+    max-height:100%;
+}
+
