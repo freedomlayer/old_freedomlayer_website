@@ -2,7 +2,7 @@
 <%def name="gen_navbar()">
     ## Generate a navigation bar
     <nav>
-    <a href="${utils.rel_file_link("index.html")}">Index</a> |
+    <a href="${utils.rel_file_link("index.html")}">Home</a> |
     <a href="${utils.rel_file_link("pages/links.html")}">Links</a> |
     <a href="${utils.rel_file_link("blog_index.html")}">Blog</a> |
     <a href="${utils.rel_file_link("articles_index.html")}">Articles</a> |
