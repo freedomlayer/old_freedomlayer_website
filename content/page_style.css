@@ -5,7 +5,9 @@ body {
 	background-color:#e0e0e0;
 
 }
-
+li {
+	margin: 1em 0;
+}
 a:link,a:visited {
     text-decoration:none;
     color:blue;
