@@ -1,0 +1,19 @@
+<%inherit file="/web_page.makoa"/>
+
+<%block name="web_page_header">
+	<%
+		p_meta = self.post_metadata()
+	%>
+	<title>FreedomLayer | Articles | ${p_meta["title"]}</title>
+	<%block name="article_header"/>
+</%block>
+
+<%block name="web_page_body">
+	<%
+		p_meta = self.post_metadata()
+	%>
+	<h1>Articles</h1>
+	## Article's title:
+	<h2>${p_meta["title"]}</h2>
+	<%block name="article_body"/>
+</%block>
