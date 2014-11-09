@@ -5,7 +5,7 @@
     <a href="${utils.rel_file_link("index.html")}">Index</a> |
     <a href="${utils.rel_file_link("pages/links.html")}">Links</a> |
     <a href="${utils.rel_file_link("blog_index.html")}">Blog</a> |
-    <a href="">Articles</a> |
+    <a href="${utils.rel_file_link("articles_index.html")}">Articles</a> |
     <a href="">About</a>
     </nav>
 
