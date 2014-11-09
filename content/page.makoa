@@ -51,7 +51,7 @@
 }
 
 #content {
-    width:60em;
+    width:48em;
     /* Probably center: */
     clear: both; 
     margin: 0 auto; 
