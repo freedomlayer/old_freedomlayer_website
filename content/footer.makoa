@@ -1,0 +1,14 @@
+<%namespace name="utils" module="lib.utils"/>
+
+<%def name="gen_footer()">
+
+<div id="email_address">real.flayer(&)outlook.com</div>
+<div id="copyright_notice">
+<br/><span
+xmlns:dct="http://purl.org/dc/terms/" property="dct:title">Freedom Layer</span>
+is licensed under a <a rel="license"
+href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons
+Attribution-ShareAlike 4.0 International License</a>.
+
+</div>
+</%def>

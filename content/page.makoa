@@ -2,6 +2,7 @@
 <%namespace name="utils" module="lib.utils" inheritable="True"/>
 <%namespace name="filters" module="lib.filters" inheritable="True"/>
 <%namespace name="navbar" file="/navbar.makoa"/>
+<%namespace name="footer" file="/footer.makoa"/>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -62,6 +63,12 @@
     text-align:center;
     clear:both;
     margin: 0 auto;
+}
+#copyright_notice {
+    font-size:50%;
+}
+
+#email_address {
     color:#808080;
 }
 </style> 
@@ -79,7 +86,7 @@
     <%block name="page_body"/>
 </div>
 <div id="footer">
-real.flayer(&)outlook.com
+    ${footer.gen_footer()}
 </div>
 
 </body>
