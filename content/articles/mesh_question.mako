@@ -15,8 +15,13 @@
 <%block name="article_body" filter="self.filters.math_mdown">
 
 <h3>Abstract</h3>
+We discuss motivation for creating a distributed network instead or on top of
+the internet. Then we write down a list of specific requirements from this
+network. Finally we introduce the Flooding idea as a naive solution for this
+problem, and explain why it won't do.
 
-<h3>Motivation</h3>
+
+<h3>Motivation for change</h3>
 In [Intro to the Internet](${self.utils.rel_file_link("articles/intro_internet.html")})
 we generally discussed how the internet works, and some of the drawbacks of the
 current situation. I remind you the main ones: 
@@ -113,7 +118,7 @@ though it is a start, and we can work with it at this point.
 As a summary, if somebody on the street asks you what I
 search for, it would be a **secure distributed and scalable mesh network**.
 
-<h3>Naive solutions</h3>
+<h3>First Naive solution</h3>
 Like every good researcher, we begin by trying a few simple solutions to the problem.
 
 In all the following solutions we will begin by wiring every computer to a few
@@ -146,7 +151,6 @@ neighbours. In turn, as we programmed all those nodes, every nodes that
 gets the message will forward it to all of his neighbours, and so on.
 Eventually the message will arrive at \(B\).
 
-
 This solution will not be enough for us, because it is not scalable. Note that
 sending a message from \(A\) to \(B\) involves all the nodes in the
 network. This means that as a node sitting in this network, you will have
@@ -172,5 +176,9 @@ methods:
   adversary to block a node from recieving a message destined to him. (Bitcoin,
   for example, relies on this feature for its security).
 
+<h3>Summary</h3>
+We made some progress in defining the kind of network we want, and introduced
+the Flooding solution. We also explained why it will not be suitable as a
+solution to our problem.
 
 </%block>
