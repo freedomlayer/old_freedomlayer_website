@@ -29,7 +29,7 @@ def sort_by_numbers(a_entries):
     """
     Sort the article entries by date.
     """
-    a_entries.sort(key=lambda x:x["props"]["post_metadata"]["number"],reverse=True)
+    a_entries.sort(key=lambda x:x["props"]["post_metadata"]["number"])
 
 
 def get_articles(context):
