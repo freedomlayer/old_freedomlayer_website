@@ -13,6 +13,9 @@
 </%def>
 
 <%block name="article_body" filter="self.filters.math_mdown">
+<h3>Abstract</h3>
+We introduce the idea of the Chord DHT from scratch, giving some intuition for
+the decisions made in the design of Chord.
 
 <h3>Building a phone list</h3>
 I want to begin with an example from life. You might want to read it even if you
@@ -25,7 +28,7 @@ More specifically - What if every person in the world could remember only about
 40 phone numbers. Given that structure, could we make sure that every person in
 the world will be able to call any other person in the world?
 
-In the spirit of no hierarchial related solutions, we will also want to have a
+In the spirit of no hierarchical related solutions, we will also want to have a
 solution where all the participants have more or less symmetric roles.
 
 <h4>First solution - Phone ring</h4>
@@ -161,14 +164,14 @@ people on the list?
 
 In this structure, every person has to remember \(2\) names and phone numbers,
 which is not so much more than the \(1\) that we previously had. However, the
-improvment in the search operation is major: A search operation will now cost
+improvement in the search operation is major: A search operation will now cost
 an average of \(\frac{n}{4}\) operations, instead of \(\frac{n}{2}\) that we
 had previously. (Implicitly, it also improves the cost of joining the network).
 
 We can add more and more records to remember for each of the people on the
-phone list, to get further improvment in the speed of one search operation.
+phone list, to get further improvement in the speed of one search operation.
 If each person on the list remembers \(k\) neighbors forward
-on the list, then the search opeartion will be \(k\) times
+on the list, then the search operation will be \(k\) times
 faster. As \(k\) can't be so big (Generally we will assume that people on the
 list can not remember more than \(O(\log(n))\) stuff), we can only get so far
 with this method.
@@ -199,7 +202,7 @@ satisfies the following requirements:
     network.
 
 Before dealing with solving this problem, I want to discuss some of the
-requirments.  Lets begin with the first requirement. What does it mean to be
+requirements.  Lets begin with the first requirement. What does it mean to be
 able to "contact" other computers? Let me give you a simple use case. Lets
 assume that every computer holds some chunk of information, some kind of a very
 big table.  Maybe this table is a distributed database. Maybe part of a file
@@ -251,7 +254,7 @@ network is a subject we will discuss in a later time.)
 Here, just like in our description of the previous problem (The phone list), we
 could also improve the speed of search if every node will keep more links to
 direct neighbours. However, as we have seen before, we can only get so much
-improvment in this method, and we would like to find a better idea for link
+improvement in this method, and we would like to find a better idea for link
 structures between the nodes.
 
 <h4>Improving the Search</h4>
@@ -293,7 +296,7 @@ array, we could find an element inside the array in \(O(log(n))\) operations,
 instead of the naive \(O(n)\).
 
 How could we apply Binary Search to our case? In the binary search algorithm in
-every iteration we cut the array to two halfs, and then continue searching in
+every iteration we cut the array to two halves, and then continue searching in
 the relevant half. We can do that because we have [random
 access](http://en.wikipedia.org/wiki/Random_access) to the elements of the
 array. That means - We could access any element that we want immediately. We
@@ -425,28 +428,114 @@ actually be \(s\), even if \(log(n)\) is much smaller.
 However if the names of the nodes are chosen somehow uniformly from the set
 \(B_s\), we should expect better results which are much closer to \(log(n)\).
 
-<h4>Using the search ability</h4>
+<h4>Some words about Chord</h4>
 Congratulations, you now know how to wire a collection of \(n\) nodes so that
 they can contact each other quickly, and at the same time each node doesn't have to
 remember too many addresses of other nodes.
 
-(TODO: Continue here)
+The construct we have described is related to an idea called [The Chord
+DHT](http://en.wikipedia.org/wiki/Chord_(peer-to-peer)). You can find the
+original article
+[here](http://pdos.csail.mit.edu/papers/chord:sigcomm01/chord_sigcomm.pdf)
 
-Let's discuss one use case for this structure: A **Distributed Hash Table (DHT)**.
+
+<h3>Distributed Hash Tables (DHTs)</h3>
+
+Lets discuss an important use case for the structure we have found so far.
 We want to be able to store a large table of keys and values over a large set
-of computers. The main operations that we want to be able to perform are as
+of computers. This is usually called a [Distributed Hash Table
+(DHT)](http://en.wikipedia.org/wiki/Distributed_hash_table).
+
+The main operations that we want to be able to perform are as
 follows:
 
 - set_value(key,value) - Sets the value of "key" in the table to be "value".
 
-- read_value(key) - Reads the value of "key" from the table.
+- get_value(key) - Reads the value of "key" from the table.
 
+The cool part is that we can invoke those operations from any of the computers,
+as all the computers have a symmetric role in the network. Instead of letting
+just one computer deal with requests from client, theoretically we could use
+all the computers on the network. (Though we might have to deal with some
+synchronization stuff, which are outside the scope of this document).
 
+There are still some questions to be asked here. What kind of values can the
+keys be? Must they be numbers, or could they be something else? Maybe
+strings?
 
+Lets begin with the case in which keys are also from the set \(B_s\). This is
+not always very realistic, but it would be easier to solve at this point. In that
+case, the keys are in the same "space" as the names of nodes.
 
+We could let node \(\left\lfloor{k}\right\rfloor\) keep the value of key \(k\),
+where \(\left\lfloor{k}\right\rfloor\) is the "last" node (clockwise) that has
+a name not bigger than the number \(k\).
 
+<img class="wimage"
+src="${self.utils.rel_file_link("articles/dht_intro/responsible_keys.svg")}"/>
+In the picture: The node \(z\) (A blue dot), and some keys that \(z\) is
+responsible to keep (Small orange dots). The keys and node names are of the
+same kind (Both are from \(B_s\), so we can also draw them on the ring
+according to their value. The next node (clockwise) after \(z\) marks the end
+of the domain \(z\) has responsibility over.<br/><br/>
 
+To invoke set_value(key=k,value=v), we first search (Using our search
+algorithm) for the node that is responsible for keeping the key \(k\). This is
+done by searching for the value \(k\). We are going to find the node \(z =
+\left\lfloor{k}\right\rfloor\), which is exactly the node that has the
+responsibility to keep the key \(k\). Then we just ask the node \(z\) to update
+\(k\) to have the value \(v\).
 
+To invoke get_value(key=k), again we search for \(k\), and find the node \(z =
+\left\lfloor{k}\right\rfloor\). We then ask \(z\) what is the value that
+corresponds to the key \(k\). \(z\) will then tell us the value \(v\).
 
+<h4>Dealing with complex keys</h4>
 
+But what if our keys are not from the set \(B_s\)? Maybe the keys are strings?
+Maybe they are names of files, or people? In that case all we need is some
+function \(f: K\rightarrow B_s\), where \(K\) is the world of keys. Hopefully
+the function \(f\) will also be some kind of a random function, which means
+a few things:
+
+- It is very unlikely for two keys \(k_1,k_2\) to satisfy \(f(k_1) = f(k_2)\).
+  (A property also known as [Collision Resistance](http://en.wikipedia.org/wiki/Collision_resistance)).
+
+- The keys will map evenly as possible between all the elements inside the set
+  \(B_s\). We don't want to have too much load of a few of the computers.
+
+If you were wondering where you can get such a function, don't worry. We have a
+few of those functions. They are called [Cryptographic Hash
+Functions](http://en.wikipedia.org/wiki/Cryptographic_hash_function).
+
+Now that we have the function \(f\), we will define two operations:
+
+- 	set_key_generic(key=k,value=v) will invoke
+  	set_key(key=\(f(k)\),value=v).
+
+- 	get_key_generic(key=k,value=v) will invoke get_key(key=\(f(k)\))
+
+And we get a DHT for a generic key space.
+
+<h3>Final Notes</h3>
+We have introduced a special way to wire a set of computers, so that we don't
+use too many wires, and at the same time it is easy to find any computer
+quickly. A major use case of this construct is the idea of DHT.
+
+Our main construction follows the idea of the [The Chord
+DHT](http://en.wikipedia.org/wiki/Chord_(peer-to-peer)), however there are
+other possible designs for DHT which we haven't talked about. Our space of
+names was a ring, with a distance function of walking clockwise. There are
+other spaces with different distance functions that give nice results. One
+notable example is the [Kademlia DHT](http://en.wikipedia.org/wiki/Kademlia),
+which uses XOR as a metric.
+
+We discussed the problem generally, but we didn't address a few important
+issues. We didn't address stability issues (What happens if some node on the
+way goes offline just when we want to search for some key?) and security
+issues. (What happens if a node gives us a wrong value for the key? Could an
+adversary block users from getting the value of a specific key in the DHT?)
+
+We will think about those topics and how to deal with some of them in the next
+articles.
 </%block>
