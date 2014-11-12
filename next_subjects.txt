@@ -1,0 +1,46 @@
+Wed Nov 12 12:18:01 IST 2014
+
+Next subjects to write about:
+
+First ideas
+------------
+- Intro to the internet and Issues.
+
+- The Mesh question.
+
+- Intro to DHTs.
+
+- Stability and security of DHTs.
+	- Simple stability tricks.
+	- Kademlia? Is it more reliable?
+	- Security models (Failsafe, byzantine)
+	- Dealing with the byzantine model. (Blackhole attack, DoS)
+
+- DHTs and the mesh.
+	- The CJDNS idea and its performance. (Virtual DHT article too?)
+	- Python examples?
+
+- Mesh navigation with GPS. (Embedding on the sphere).
+	- Missing the random large edges.
+	- The small world idea. (Kleinberg).
+
+- Random walks and the sqrt(n) idea.
+
+Mesh with Landmarks
+-------------------
+
+- Using the graph geometry
+	- Hierarchy using landmarks.
+	- How to choose landmarks. (Mining lowest hash?)
+	- Most of the burden falls on the landmarks.
+
+- The collective challenge response
+	- How to know that a landmark really exists?
+
+- Choosing the landmarks.
+
+- Navigating around the landmarks.
+	- Graph coordinates.
+	- Triangle inequalities and metrics.
+	- The random walk solution.
+	- The A* solution.
