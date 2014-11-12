@@ -397,7 +397,7 @@ before we find \(y\). This also proves that we always manage to find \(y\).
 Now let's do some math.
 We define the distance (going clockwise) between two nodes \(a\) and \(b\) to
 be \(d(a,b)\). If \(b > a\) then \(d(a,b) = b-a\). Otherwise \(d(a,b) = 2^{s} +
-a - b\). (Think why).
+b - a\). (Think why).
 
 Back to the searching algorithm, we can note that at every stage we are at
 point \(x_t\) on the ring, and we want to reach \(y\). We will pay attention to
@@ -408,7 +408,17 @@ finds the closest direct link he has to \(y\). Let that node be \(x_1\). As
 \(x\) is linked to \(\left\lceil{x + 1}\right\rceil, \left\lceil{x +
 2}\right\rceil, \left\lceil{x + 4}\right\rceil \dots ,\left\lceil{x +
 2^{s-1}}\right\rceil \), we conclude that
-\(d(x_1,y) < \frac{1}{2}\cdot d(x,y)\)
+\(d(x_1,y) < \frac{1}{2}\cdot d(x,y)\). 
+
+Let me explain it in a more detailed fashion:
+Assume that \(y = x +q\) for some \(q\) (The addition of \(x + q\) might be
+modulo the set \(B_s\)). There is some integer number \(r\) such that \(2^{r}
+\leq q < 2^{r+1}\). (You could understand it by counting the amount of bits in the
+[binary representation](http://en.wikipedia.org/wiki/Binary_number) of \(q\)
+for example). Therefore the closest link from \(x\) to \(y\) would be
+\(\left\lceil{x + 2^{r}}\right\rceil = x_1\). 
+And indeed, we get that \(d(x_1,y) = d(x_1,x+q) \leq d(x+2^r,x+q) \leq q - 2^r
+ < \frac{q}{2} = \frac{d(x,y)}{2}\). So we get that \(d(x_1,y) < \frac{d(x,y)}{2}\).
 
 The same is true at the next stages of the algorithm (When finding
 \(x_2,x_3,\dots\), therefore we conclude that on every stage we get
