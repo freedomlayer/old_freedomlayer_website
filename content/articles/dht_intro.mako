@@ -119,7 +119,7 @@ src="${self.utils.rel_file_link("articles/dht_intro/join_linear_dht_circle.svg")
 Whenever person \(A\) wants to find person \(B\) on the list, he will have to
 traverse the list of people one by one until he finds \(B\). It could take a
 very short time if \(A\) and \(B\) are close on this list, however it could
-also take a very long time if \(A\) and \(B\) are very var (In the cyclic
+also take a very long time if \(A\) and \(B\) are very far (In the cyclic
 sense. In the worst case, \(B\) is right before \(A\) on the list).
 
 However we could find the average time it takes for \(A\) to contact \(B\). It
