@@ -14,7 +14,7 @@
 
 <%block name="article_body" filter="self.filters.math_mdown">
 In the [Intro to
-DHTs](${self.utils.rel_file_link("articles/dht_intro/responsible_keys.svg")})
+DHTs](${self.utils.rel_file_link("articles/dht_intro.html")})
 article we presented a very basic idea of the chord DHT, and generally how to
 search it.
 
@@ -86,12 +86,28 @@ Two notes here:
     just look at the arbitrary "10 seconds" constant, and realize that there is
     nothing very deep here).
 
-<h4>Nodes that leave don't care</h4>
-(TODO)
+<h4>Leaving nodes don't care</h4>
+One might wonder what should a node do when he wants to leave the network. It
+might seem reasonable to have some kind of predefined procedure for a node that
+wants to leave the network. For example - Maybe that node would have to notify
+some of his neighbours about his intentions to leave.
+
+A way to simplify things would be to not distinguish between the case of a node
+dying and a node leaving the network intentionally. We will just assume that
+every node \(x\) that want to leave the network will just stop responding. After some
+time will pass, all the nodes that are linked to \(x\) will assume that \(x\)
+has left the network.
+
+This is also a good security assumption (that prepares us for our future
+discussions). Generally, we assume that **Leaving nodes don't care** about our
+network precedures. That is because generally they have no incentives to behave
+well. Joining nodes do have incentives to behave well. If they don't, we won't
+help them join the network. But leaving nodes really don't care. Most likely
+they have already got what they want from the network, and they can just pull
+the network plug.
 
 
-
-<h3>Stabilizing the ring</h3>
+<h3>Stabilizing the Ring</h3>
 I remind you that the chord network is just a ring of nodes (Each node
 connected to the next one), with some extra links. Those extra links make
 searches much faster, though they are not really needed for the search
@@ -99,8 +115,114 @@ operation to function. So lets forget about them for a moment, and go back to
 the basic ring idea.
 
 Now we are left with a very simple ring of nodes, where every node is connected
-to the next node.
+to the next node. This structure is pretty fragile. Every node that dies will
+destroy the ring structure. 
+
+One simple improvment would be that each node will remember two nodes, instead
+of one. Each node will remember the previous and the next node on the ring.
+Generalizing this idea: Every node will be linked to the closest node and to
+the farest node, with respect to the distance function \(d\). (I remind you
+that for \(x,y \in B_s\),  \(d(x,y) = y - x\) if \(y > x\), and \(d(x,y) = 2^s
+- (y - x)\) otherwise.
+
+(TODO: Picture of one way connection ring, and then two way connection ring.
+Maybe one next to each other)
+
+This time, if one node dies, the network is still fixable. Take a few moments
+to think about how to fix it.
+
+<h4>Basic Stabilize</h4>
+
+We could add some kind of a periodic maintanence job to each node, called
+"stabilize". Every node will invoke it every once in a while (Every 40 seconds,
+for example). It will be as follows:
+
+Stabilize [Performed by node \(x\)]
+
+1. Initialize set \(Known = \{x.previous,x.next\}\)
+2. Ask \(x\).next for his next and previous links. Add the links to the set
+   \(Known\).
+3. Ask \(x\).previous for his next and previous links. Add the links to the set
+   \(Known\).
+4. Remove \(x\) from the set \(Known\) (If he was there at all).
+5. Let \(new\_previous = argmin_{z \in Known}{d(z,x)}\). (In other words: Get
+   the node \(z \in Known\) such that \(z\) minimizes the value \(d(z,x\).)
+6. Let \(new\_next = argmin_{z \in Known}{d(x,z)}\)
+7. Set \(x\).next = \(new\_next\). Set \(x\).previous = \(new\_previous\).
 
 
+Let's try to understand how Stabilize works. Every node \(x\) asks his neighbours for
+their neighbours. He then takes a look at all the nodes he know (Except for
+himself), and try to find the two most suitable next and previous nodes.
+The most suitable "next node" will be the node \(z\) such that \(d(x,z)\) is
+minimized. The most suitable "previous node" will be the node \(z\) such that
+\(d(z,x)\) is minimized.
+
+In the usual case, performing stabilize will not change the node's next and
+previous node links, however it could be useful if something has changed in the
+network layout. Let's begin with the case of some node \(y\) that dies.
+
+Let's assume that \(y\)'s previous node was \(x\), and \(y\)'s next node was
+\(z\). Therefore at some point \(x\) and \(z\) will notice that \(y\) has died.
+Both of them will miss a link at this point. \(x\) will miss the "next" link,
+and \(z\) will miss the "previous" link. It could have been nice if \(x\) and
+\(z\) could just somehow connect to each other, resulting in \(x\).next = \(z\)
+and \(z\).previous = \(x\), but in our case \(x\) and \(z\) do not have enough
+information to do that. They just don't see far enough.
+
+(TODO: Add here a picture of the network after \(y\) has disconnected.)
+
+Now let's investigate what happens to \(x\) and \(z\) after a while. For
+reasons of readability, let's just think about \(x\), and conclude the same for
+\(z\) later. They are symmetric. \(x\) will invoke the Stabilize operation
+after a while. Let's mark \(x\).previous = \(x_1\). We will also mark the next
+nodes counter-clockwise to be \(x_2, x_3, \dots\).
+
+So \(x\) will ask \(x_1\) (His previous link) for all his neighbours. Those
+will be \(x\) and \(x_2\). \(x\) will finally set \(x\).next = \(x_1\), and
+\(x\).previous = \(x_1\). (This one was left unchanged). Please follow the
+Stabilize algorithm and make sure that you understand why).
+
+(TODO: Add here a picture after one iteration of stabilize).
+
+Note that all other nodes will in the ring will perform Stabilize too, however
+for every node that is not \(x\) or \(z\) the links are already optimized, so
+they will not change. 
+
+After one iteration of Stabilize we get that \(x\).previous = \(x_1\).
+\(x\).next = \(x_2\). In the next iteration we will get that \(x\).previous =
+\(x_1\), and \(x\).next = \(x_3\), and so on. After \(O(n)\) iterations of
+Stabilize, we expect that \(x\).next = \(z\).
+
+We expect the same from \(z\), but in the other direction. In the beginning we
+have that \(z\).previous is dead, and \(z\).next = \(z_1\). In the next
+iteration we have \(z\).previous = \(z_2\), and \(z\).next = \(z_1\) (Left
+unchanged). After \(O(n)\) iterations of Stabilize, we will get that
+\(z\).previous = \(x\).
+
+(TODO: Add symmetric pictures of \(z\) after some iterations of stabilize).
+
+It really takes a long time for this network to fix itself after one node dies,
+However it is interesting to see that it fixes itself eventually. As opposed to
+the one dying node case, if two nodes die the network is not connected anymore,
+and there is no hope to fix it.
+
+Generally, if the network becomes not connected (There are two nodes \(a,b\)
+for which there is no path of links leading from \(a\) to \(b\)), there is no
+hope to fix it.
+
+<h3>Thickening the Ring</h3>
+One simple way to make the simple ring more robust is to add links to
+more neighbours. Instead of having node \(x\) linked to his immediate next
+and previous neighbours on the ring, we will link \(x\) to his \(k\) immediate
+next neighbours on the ring, and \(k\) immediate previous neighbours on the
+ring.
+
+(TODO: Add a picture of the \(k\) neighbours scheme).
+
+We have already discussed this structure in [Intro to
+DHTs](${self.utils.rel_file_link("articles/dht_intro.html")})
+as a naive approach to increasing search speed. This time we want to use this
+structure to make the network more resilient to dying nodes.
 
 </%block>
