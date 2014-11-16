@@ -137,18 +137,18 @@ We could add some kind of a periodic maintanence job to each node, called
 "stabilize". Every node will invoke it every once in a while (Every 40 seconds,
 for example). It will be as follows:
 
-Stabilize [Performed by node \(x\)]
+Stabilize [Performed by node \(x\) in the case of Doubly linked ring]
 
-1. Initialize set \(Known = \{x.previous,x.next\}\)
-2. Ask \(x\).next for his next and previous links. Add the links to the set
-   \(Known\).
-3. Ask \(x\).previous for his next and previous links. Add the links to the set
-   \(Known\).
-4. Remove \(x\) from the set \(Known\) (If he was there at all).
-5. Let \(new\_previous = argmin_{z \in Known}{d(z,x)}\). (In other words: Get
-   the node \(z \in Known\) such that \(z\) minimizes the value \(d(z,x\).)
-6. Let \(new\_next = argmin_{z \in Known}{d(x,z)}\)
-7. Set \(x\).next = \(new\_next\). Set \(x\).previous = \(new\_previous\).
+1.  Initialize set \(x.Known = \{x.prev,x.next\}\)
+2.  Ask \(x\).next for his \(x.next.Known\) set, and add those links to
+    \(x.Known\). 
+3.  Ask \(x\).next for his \(x.prev.Known\) set, and add those links to
+    \(x.Known\). 
+4. Remove \(x\) from the set \(x.Known\) (If he was there at all).
+5. Let \(new\_prev = argmin_{z \in x.Known}{d(z,x)}\). (In other words: Get
+   the node \(z \in x.Known\) such that \(z\) minimizes the value \(d(z,x\).)
+6. Let \(new\_next = argmin_{z \in x.Known}{d(x,z)}\)
+7. Set \(x\).next = \(new\_next\). Set \(x\).prev = \(new\_prev\).
 
 
 Let's try to understand how Stabilize works. Every node \(x\) asks his neighbours for
@@ -157,8 +157,6 @@ himself), and try to find the two most suitable next and previous nodes.
 The most suitable "next node" will be the node \(z\) such that \(d(x,z)\) is
 minimized. The most suitable "previous node" will be the node \(z\) such that
 \(d(z,x)\) is minimized.
-
-<h5>Stabilize with dying nodes</h5>
 
 In the usual case, performing stabilize will not change the node's next and
 previous node links, however it could be useful if something has changed in the
@@ -169,7 +167,7 @@ Let's assume that \(y\)'s previous node was \(x\), and \(y\)'s next node was
 Both of them will miss a link at this point. \(x\) will miss the "next" link,
 and \(z\) will miss the "previous" link. It could have been nice if \(x\) and
 \(z\) could just somehow connect to each other, resulting in \(x\).next = \(z\)
-and \(z\).previous = \(x\), but in our case \(x\) and \(z\) do not have enough
+and \(z\).prev = \(x\), but in our case \(x\) and \(z\) do not have enough
 information to do that. They just don't see far enough.
 
 (TODO: Add here a picture of the network after \(y\) has disconnected.)
@@ -177,12 +175,12 @@ information to do that. They just don't see far enough.
 Now let's investigate what happens to \(x\) and \(z\) after a while. For
 reasons of readability, let's just think about \(x\), and conclude the same for
 \(z\) later. They are symmetric. \(x\) will invoke the Stabilize operation
-after a while. Let's mark \(x\).previous = \(x_1\). We will also mark the next
+after a while. Let's mark \(x\).prev = \(x_1\). We will also mark the next
 nodes counter-clockwise to be \(x_2, x_3, \dots\).
 
 So \(x\) will ask \(x_1\) (His previous link) for all his neighbours. Those
 will be \(x\) and \(x_2\). \(x\) will finally set \(x\).next = \(x_1\), and
-\(x\).previous = \(x_1\). (This one was left unchanged). Please follow the
+\(x\).prev = \(x_1\). (This one was left unchanged). Please follow the
 Stabilize algorithm and make sure that you understand why).
 
 (TODO: Add here a picture after one iteration of stabilize).
@@ -191,16 +189,16 @@ Note that all other nodes will in the ring will perform Stabilize too, however
 for every node that is not \(x\) or \(z\) the links are already optimized, so
 they will not change. 
 
-After one iteration of Stabilize we get that \(x\).previous = \(x_1\).
-\(x\).next = \(x_2\). In the next iteration we will get that \(x\).previous =
+After one iteration of Stabilize we get that \(x\).prev = \(x_1\).
+\(x\).next = \(x_2\). In the next iteration we will get that \(x\).prev =
 \(x_1\), and \(x\).next = \(x_3\), and so on. After \(O(n)\) iterations of
 Stabilize, we expect that \(x\).next = \(z\).
 
 We expect the same from \(z\), but in the other direction. In the beginning we
-have that \(z\).previous is dead, and \(z\).next = \(z_1\). In the next
-iteration we have \(z\).previous = \(z_2\), and \(z\).next = \(z_1\) (Left
+have that \(z\).prev is dead, and \(z\).next = \(z_1\). In the next
+iteration we have \(z\).prev = \(z_2\), and \(z\).next = \(z_1\) (Left
 unchanged). After \(O(n)\) iterations of Stabilize, we will get that
-\(z\).previous = \(x\).
+\(z\).prev = \(x\).
 
 (TODO: Add symmetric pictures of \(z\) after some iterations of stabilize).
 
@@ -213,31 +211,8 @@ Generally, if the network becomes not connected (There are two nodes \(a,b\)
 for which there is no path of links leading from \(a\) to \(b\)), there is no
 hope to fix it.
 
-<h5>Stabilize with joining nodes</h5>
-
-Joining the network is not complicated in the case of a simple (doubly
-connected) ring. If a node \(a\) wants to join the ring, he will contact some
-node \(x\) inside the ring. Then \(x\) will search \(a\) inside the ring. He
-will find the node \(y\) which is the closest node to \(a\) that is still
-smaller than \(a\). (That is because \(a\) is not inside the network yet.)
-
-We denote \(y\) current next node to be \(y_1\), and the next one to be \(y_2\)
-and so on. We also mark the previous node to be \(y_{-1}\).
-
-(TODO: Add a picture of the locations of \(x,a,y,y_1\). 
-
-TODO: Continue here
-
-
-
-
-
-
-
-
-
-
-
+Joining the network is simple in this case, and could be done without requiring
+any Stabilize iterations. Think how to do it.
 
 
 <h3>Thickening the Ring</h3>
@@ -251,7 +226,84 @@ ring.
 
 We have already discussed this structure in [Intro to
 DHTs](${self.utils.rel_file_link("articles/dht_intro.html")})
-as a naive approach to increasing search speed. This time we want to use this
-structure to make the network more resilient to dying nodes.
+as a naive approach for increasing search speed. This time we want to use this
+structure to make the network more resilient to network churn.
+
+We describe here the Stabilize algorithm for this case.
+
+Stabilize\(_k\) [Performed by node \(x\) in the case of \(k\)-linked ring]
+
+1. Initialize set \(x.Known =
+\{x.prev_1,x.prev_2,\dots,x.prev_k,x.next_1,x.next_2,\dots,x.next_k\}\)
+
+2.  for all \(1 \leq i \leq k\) Ask \(x\).next_i for his set \(x\).next_i.Known.
+    Add the contents of this set to \(x.Known\).
+3.  for all \(1 \leq i \leq k\) Ask \(x\).prev_i for his set \(x\).prev_i.Known.
+    Add the contents of this set to \(x.Known\).
+4.  Remove \(x\) from the set \(x.Known\) (If he was there at all).
+5.  Out of all nodes in \(x.Known\), find the best \(k\) nodes that minimize
+    \(d(z,x)\) for \(z \in x.Known\), and set those nodes to be
+    \(x.prev_1,\dots,x.prev_k\). (If there are not enough nodes in \(x.Known\),
+    the last prev link will be Null).
+6.  Out of all nodes in \(x.Known\), find the best \(k\) nodes that minimize
+    \(d(x,z)\) for \(z \in x.Known\), and set those nodes to be
+    \(x.prev_1,\dots,x.prev_k\).
+
+
+This Stabilize algorithm is not very different from the doubly connected ring
+one. (In fact, the previous Stabilize algorithm is just this one with \(k=1\). 
+This version of Stabilize communicates with more nodes (Usually with \(2\cdot
+k\) nodes). At all times a node \(x\) tries to maintain a list of \(k\) nodes
+that are closest as possible to \(x\) but not bigger than \(x\), and also a
+list of \(k\) nodes that are closest as possible to \(x\) but bigger than
+\(x\).
+
+In the k-connected ring with Stabilize\(_k\), if any \(k-1\) nodes die the ring
+will fix itself quickly. (It is enough to wait for one iteration of
+Stabilize\(_k\) done by all nodes in the ring). However if \(k\) consecutive
+nodes on the ring die at the same time, it will take longer for the ring to fix
+itself, just like the case of 1 node dying in the doubly linked ring.
+
+If \(2\cdot k\) nodes die at the same time, \(k\) consecutive nodes in one part
+of the ring, and other \(k\) consecutive nodes in another part, we expect the
+network to become disconnected. 
+
+(TODO: Add a picture of a 3 connected ring, with 2 consecutive dead nodes.)
+
+<h3>Adding the Far links</h3>
+I remind you that the fast search operation was obtained by adding links for
+far nodes. We could extend the \(k\)-connected ring to have those links too.
+That way we get a more reliable network in which we have a fast search
+operation. 
+
+Given that the name of nodes come from the set \(B_s := \{0,1,2,\dots,2^{s}-1
+\}\), the links we want to add to node \(x\) will be: 
+\(\left\lceil{x + 1}\right\rceil\),
+\(\left\lceil{x + 2}\right\rceil\), \(\dots\)
+\(\left\lceil{x + 2^{s-1}}\right\rceil\). For symmetry we will also add:
+\(\left\lfloor{x - 1}\right\rfloor\),
+\(\left\lfloor{x - 2}\right\rfloor\),
+\(\left\lfloor{x - 2^{s-1}}\right\rfloor\).
+
+I remind you that by \(\left\lceil{y}\right\rceil\) we mean the first node
+(clockwise) that has a name bigger or equal to \(y\). By
+\(\left\lfloor{y}\right\rfloor\) we mean the first name (counter-clockwise)
+that has a name smaller or equal to \(y\).
+
+For simplicity's sake we will call the original links from the \(k\)-connected
+ring *The Local links*. The new links we have just added will be called *The
+Far links*.
+
+
+
+
+
+
+
+
+
+
+
+
 
 </%block>
