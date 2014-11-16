@@ -13,6 +13,14 @@
 </%def>
 
 <%block name="article_body" filter="self.filters.math_mdown">
+<!--
+ceil and floor latex macros:
+-->
+\(
+\newcommand{\ceil}[1]{\left\lceil{#1}\right\rceil}
+\newcommand{\floor}[1]{\left\lfloor{#1}\right\rfloor}
+\)
+
 <h3>Abstract</h3>
 We introduce the idea of the Chord DHT from scratch, giving some intuition for
 the decisions made in the design of Chord.
@@ -323,13 +331,13 @@ We also want to treat the set \(B_s\) as cyclic
 Let \(x\) be some node on the ring. (\(x\) is the name of this node. \(x \in
 B_s\)). We will connect \(x\) to the following nodes on the ring:
 
-- \(\left\lceil{x + 1}\right\rceil\)
-- \(\left\lceil{x + 2}\right\rceil\)
-- \(\left\lceil{x + 4}\right\rceil\)
+- \(\ceil{x + 1}\)
+- \(\ceil{x + 2}\)
+- \(\ceil{x + 4}\)
 
 \(\cdots\)
 
-- \(\left\lceil{x + 2^{s-1}}\right\rceil\)
+- \(\ceil{x + 2^{s-1}}\)
 
 The notation \(\left\lceil{y}\right\rceil\) means the first node
 that his name is bigger than \(y\).
@@ -344,8 +352,8 @@ x+2,\dots,x+2^{s-1}\). The nodes of the form \(\left\lceil{x +
 The green lines represents links from the node \(x\) to other
 nodes.<br/><br/>
 
-Follow the picture and make sure you understand what \(\left\lceil{x +
-2^{q}}\right\rceil\) means - It is the "first" (clockwise) node with a name
+Follow the picture and make sure you understand what \(\ceil{x +
+2^{q}}\) means - It is the "first" (clockwise) node with a name
 bigger than the number \(x + 2^{q}\) on the ring.
 
 This idea of wiring is also known as a [Skip
@@ -405,9 +413,8 @@ the amount \(d(x_t,y)\) at any stage of the algorithm.
 
 We begin from \(x\). If \(x\) is not directly connected to \(y\), then \(x\)
 finds the closest direct link he has to \(y\). Let that node be \(x_1\). As
-\(x\) is linked to \(\left\lceil{x + 1}\right\rceil, \left\lceil{x +
-2}\right\rceil, \left\lceil{x + 4}\right\rceil \dots ,\left\lceil{x +
-2^{s-1}}\right\rceil \), we conclude that
+\(x\) is linked to \(\ceil{x + 1}, \ceil{x +
+2}, \ceil{x + 4} \dots ,\ceil{x + 2^{s-1}}\), we conclude that
 \(d(x_1,y) < \frac{1}{2}\cdot d(x,y)\). 
 
 Let me explain it in a more detailed fashion:
@@ -416,7 +423,7 @@ modulo the set \(B_s\)). There is some integer number \(r\) such that \(2^{r}
 \leq q < 2^{r+1}\). (You could understand it by counting the amount of bits in the
 [binary representation](http://en.wikipedia.org/wiki/Binary_number) of \(q\)
 for example). Therefore the closest link from \(x\) to \(y\) would be
-\(\left\lceil{x + 2^{r}}\right\rceil = x_1\). 
+\(\ceil{x + 2^{r}} = x_1\). 
 And indeed, we get that \(d(x_1,y) = d(x_1,x+q) \leq d(x+2^r,x+q) \leq q - 2^r
  < \frac{q}{2} = \frac{d(x,y)}{2}\). So we get that \(d(x_1,y) < \frac{d(x,y)}{2}\).
 
@@ -477,8 +484,8 @@ Lets begin with the case in which keys are also from the set \(B_s\). This is
 not always very realistic, but it would be easier to solve at this point. In that
 case, the keys are in the same "space" as the names of nodes.
 
-We could let node \(\left\lfloor{k}\right\rfloor\) keep the value of key \(k\),
-where \(\left\lfloor{k}\right\rfloor\) is the "last" node (clockwise) that has
+We could let node \(\floor{k}\) keep the value of key \(k\),
+where \(\floor{k}\) is the "last" node (clockwise) that has
 a name not bigger than the number \(k\).
 
 <img class="wimage"
@@ -492,12 +499,12 @@ of the domain \(z\) has responsibility over.<br/><br/>
 To invoke set_value(key=k,value=v), we first search (Using our search
 algorithm) for the node that is responsible for keeping the key \(k\). This is
 done by searching for the value \(k\). We are going to find the node \(z =
-\left\lfloor{k}\right\rfloor\), which is exactly the node that has the
+\floor{k}\), which is exactly the node that has the
 responsibility to keep the key \(k\). Then we just ask the node \(z\) to update
 \(k\) to have the value \(v\).
 
 To invoke get_value(key=k), again we search for \(k\), and find the node \(z =
-\left\lfloor{k}\right\rfloor\). We then ask \(z\) what is the value that
+\floor{k}\). We then ask \(z\) what is the value that
 corresponds to the key \(k\). \(z\) will then tell us the value \(v\).
 
 <h4>Dealing with complex keys</h4>
