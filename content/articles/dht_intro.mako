@@ -523,7 +523,7 @@ Now that we have the function \(f\), we will define two operations:
 - 	set_key_generic(key=k,value=v) will invoke
   	set_key(key=\(f(k)\),value=v).
 
-- 	get_key_generic(key=k,value=v) will invoke get_key(key=\(f(k)\))
+- 	get_key_generic(key=k) will invoke get_key(key=\(f(k)\))
 
 And we get a DHT for a generic key space.
 
