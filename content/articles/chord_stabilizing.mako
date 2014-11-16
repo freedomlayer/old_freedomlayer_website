@@ -158,6 +158,8 @@ The most suitable "next node" will be the node \(z\) such that \(d(x,z)\) is
 minimized. The most suitable "previous node" will be the node \(z\) such that
 \(d(z,x)\) is minimized.
 
+<h5>Stabilize with dying nodes</h5>
+
 In the usual case, performing stabilize will not change the node's next and
 previous node links, however it could be useful if something has changed in the
 network layout. Let's begin with the case of some node \(y\) that dies.
@@ -210,6 +212,33 @@ and there is no hope to fix it.
 Generally, if the network becomes not connected (There are two nodes \(a,b\)
 for which there is no path of links leading from \(a\) to \(b\)), there is no
 hope to fix it.
+
+<h5>Stabilize with joining nodes</h5>
+
+Joining the network is not complicated in the case of a simple (doubly
+connected) ring. If a node \(a\) wants to join the ring, he will contact some
+node \(x\) inside the ring. Then \(x\) will search \(a\) inside the ring. He
+will find the node \(y\) which is the closest node to \(a\) that is still
+smaller than \(a\). (That is because \(a\) is not inside the network yet.)
+
+We denote \(y\) current next node to be \(y_1\), and the next one to be \(y_2\)
+and so on. We also mark the previous node to be \(y_{-1}\).
+
+(TODO: Add a picture of the locations of \(x,a,y,y_1\). 
+
+TODO: Continue here
+
+
+
+
+
+
+
+
+
+
+
+
 
 <h3>Thickening the Ring</h3>
 One simple way to make the simple ring more robust is to add links to
