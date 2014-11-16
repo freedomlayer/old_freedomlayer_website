@@ -135,14 +135,17 @@ to think about how to fix it.
 
 We could add some kind of a periodic maintanence job to each node, called
 "stabilize". Every node will invoke it every once in a while (Every 40 seconds,
-for example). It will be as follows:
+for example). For every node \(x\) we denote \(x.Links\) to be the set of links
+from \(x\). In this case, we have that \(x.Links = \{x.next,x.pref\}\).
 
-Stabilize [Performed by node \(x\) in the case of Doubly linked ring]
+We now define the Stabilize algorithm:
+
+**Stabilize** [Performed by node \(x\) in the case of Doubly linked ring]
 
 1.  Initialize set \(x.Known = \{x.prev,x.next\}\)
-2.  Ask \(x\).next for his \(x.next.Known\) set, and add those links to
+2.  Ask \(x\).next for his \(x.next.Links\) set, and add those links to
     \(x.Known\). 
-3.  Ask \(x\).next for his \(x.prev.Known\) set, and add those links to
+3.  Ask \(x\).next for his \(x.prev.Links\) set, and add those links to
     \(x.Known\). 
 4. Remove \(x\) from the set \(x.Known\) (If he was there at all).
 5. Let \(new\_prev = argmin_{z \in x.Known}{d(z,x)}\). (In other words: Get
@@ -214,7 +217,6 @@ hope to fix it.
 Joining the network is simple in this case, and could be done without requiring
 any Stabilize iterations. Think how to do it.
 
-
 <h3>Thickening the Ring</h3>
 One simple way to make the simple ring more robust is to add links to
 more neighbours. Instead of having node \(x\) linked to his immediate next
@@ -229,23 +231,20 @@ DHTs](${self.utils.rel_file_link("articles/dht_intro.html")})
 as a naive approach for increasing search speed. This time we want to use this
 structure to make the network more resilient to network churn.
 
+As before, we denote \(x\).Links to be the set of links from \(x\).
 We describe here the Stabilize algorithm for this case.
 
-Stabilize\(_k\) [Performed by node \(x\) in the case of \(k\)-linked ring]
+**Stabilize\(_k\)** [Performed by node \(x\) in the case of \(k\)-linked ring]
 
-1. Initialize set \(x.Known =
-\{x.prev_1,x.prev_2,\dots,x.prev_k,x.next_1,x.next_2,\dots,x.next_k\}\)
-
-2.  for all \(1 \leq i \leq k\) Ask \(x\).next_i for his set \(x\).next_i.Known.
+1. Initialize set \(x.Known\) to be the set of links \(x\).Links.
+2.  for all \(t \in x.Links\) Ask \(t\) for his set \(t.Links\).
     Add the contents of this set to \(x.Known\).
-3.  for all \(1 \leq i \leq k\) Ask \(x\).prev_i for his set \(x\).prev_i.Known.
-    Add the contents of this set to \(x.Known\).
-4.  Remove \(x\) from the set \(x.Known\) (If he was there at all).
-5.  Out of all nodes in \(x.Known\), find the best \(k\) nodes that minimize
+3.  Remove \(x\) from the set \(x.Known\) (If he was there at all).
+4.  Out of all nodes in \(x.Known\), find the best \(k\) nodes that minimize
     \(d(z,x)\) for \(z \in x.Known\), and set those nodes to be
     \(x.prev_1,\dots,x.prev_k\). (If there are not enough nodes in \(x.Known\),
     the last prev link will be Null).
-6.  Out of all nodes in \(x.Known\), find the best \(k\) nodes that minimize
+5.  Out of all nodes in \(x.Known\), find the best \(k\) nodes that minimize
     \(d(x,z)\) for \(z \in x.Known\), and set those nodes to be
     \(x.prev_1,\dots,x.prev_k\).
 
@@ -292,8 +291,78 @@ that has a name smaller or equal to \(y\).
 
 For simplicity's sake we will call the original links from the \(k\)-connected
 ring *The Local links*. The new links we have just added will be called *The
-Far links*.
+Far links*. We denote \(x.Local\) to be \(x\)'s local links,
+\(x.Far\) to be the far links, and \(x.Links = x.Local \cup
+x.Far\) to be all the nodes \(x\) is linked to.
 
+The new stabilize algorithm is as follows:
+
+**Stabilize\(^*_k\)** [Performed by node \(x\) in the case of \(k\)-linked ring with Far nodes.]
+
+1.  Initialize \(x\).Known to be the \(x\).Links.
+2.  for all \(t \in x.Links\) Ask \(t\) for his set \(t\).Links.
+    Add the contents of this set to \(x.Known\).
+3.  Remove \(x\) from the set \(x.Known\) (If he was there at all).
+4.  Out of all nodes in \(x.Known\), find the best \(k\) nodes that minimize
+    \(d(z,x)\) for \(z \in x.Known\), and set those nodes to be
+    \(x.prev_1,\dots,x.prev_k\). (If there are not enough nodes in \(x.Known\),
+    the last prev link will be Null).
+5.  Out of all nodes in \(x.Known\), find the best \(k\) nodes that minimize
+    \(d(x,z)\) for \(z \in x.Known\), and set those nodes to be
+    \(x.prev_1,\dots,x.prev_k\).
+
+6.  For all \(1 \leq j < s\): Set \(x.next\_far_{j} := \arg\min_{z \in
+    x.Known}{d(x+2^{j},z)}\). (In other words: We take the first (Clockwise) \(z \in
+    x.Known\) that has a name bigger than \(x + 2^{j}\).)
+7.  For all \(1 \leq j < s\): Set \(x.prev\_far_{j} := \arg\min_{z \in
+    x.Known}{d(z,x-2^{j})}.\)
+
+
+A short explanation of the Stabilize\(^*_k\) algorithm:
+Every node \(x\) first asks all the nodes he is linked to for all the nodes
+they are linked to. Just to make sure you follow me here, \(x\) should be
+linked to about \(c := \left|x.Links\right| =  2\cdot k + 2\cdot (s-1)\) nodes.
+He might be actually linked to less nodes, because some Local links coincide
+with Far links.
+
+\(x\) collects a set of known links. This set consists of \(x\) own immediate
+links, and the links sets of \(x\) immediate links. This will result in no more
+than \(c^2 + c\) links to unique nodes.
+
+Out of this collected \(x.Known\) set, \(x\) sets up the new Local and Far
+links. The Local links will be the \(k\) closest nodes to \(x\) from the set
+\(x\).Known. (From both sides of \(x\)). To find the new Far links, \(x\) will
+try to find the nodes closest to \(x + 2^{j}\) (and \(x - 2^{j}\) for the
+symmetric side).
+
+<h4>Constructing the Far from the Local</h4>
+One easy way to think about this new structure (k-linked ring + Far links) is
+to separate the analysis of Local links and Far links. To get away with it, we
+will first show that the Far links could always be built from the Local links
+quickly. A good start would be to think about it yourself. Given a \(k\)-linked
+ring, how can you build the Far links to enable fast search?
+
+A good idea would be to run Stabilize\(^*_k\) a few times. It seems like
+Stabilize deals with the Far links. Maybe it will manage to build them
+correctly.
+
+To simplify things, we assume a perfect world where all the nodes in the ring
+perform Stabilize\(^*_k\) exactly at the same time. (I will not discuss here
+the asynchronous case, but it's a good thought experiment). We call it a
+Stabilize\(^*_k\) iteration.
+
+Let's begin by analyzing the first Stabilize\(^*_k\) iteration. (Assuming that
+we initially have a \(k\)-linked ring.) Let \(x\) be some node in the ring. As
+we have a \(k\)-linked ring, \(x\) is already connected to the \(k\) closest
+nodes to him from both directions (Clockwise and counter-clockwise). Therefore
+the \(x\).Known set will contain the nodes \(\left\lceil{x+1}\right\rceil\) and
+\(\left\lfloor{x-1}\right\rfloor\). Therefore \(x\) will obtain the two Far
+links \(x.next\_far_1\) and \(x.prev\_far_1\).
+
+We continue with the next Stabilize\(^*_k\) iteration. Let \(x\) be some node
+in the ring. \(x\).Known is going to contain \(x.next\_far_1.next\_far_1\) and
+also \(x.prev\_far_1.prev\_far\_1\). (Because \(x\).Known contains all of \(x\)
+direct links, and also all the links of \(x\)'s direct links).
 
 
 
