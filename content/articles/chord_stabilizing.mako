@@ -13,6 +13,15 @@
 </%def>
 
 <%block name="article_body" filter="self.filters.math_mdown">
+<!--
+ceil and floor latex macros:
+-->
+\(
+\newcommand{\ceil}[1]{\left\lceil{#1}\right\rceil}
+\newcommand{\floor}[1]{\left\lfloor{#1}\right\rfloor}
+  
+\)
+
 In the [Intro to
 DHTs](${self.utils.rel_file_link("articles/dht_intro.html")})
 article we presented a very basic idea of the chord DHT, and generally how to
@@ -277,16 +286,16 @@ operation.
 
 Given that the name of nodes come from the set \(B_s := \{0,1,2,\dots,2^{s}-1
 \}\), the links we want to add to node \(x\) will be: 
-\(\left\lceil{x + 1}\right\rceil\),
-\(\left\lceil{x + 2}\right\rceil\), \(\dots\)
-\(\left\lceil{x + 2^{s-1}}\right\rceil\). For symmetry we will also add:
-\(\left\lfloor{x - 1}\right\rfloor\),
-\(\left\lfloor{x - 2}\right\rfloor\),
-\(\left\lfloor{x - 2^{s-1}}\right\rfloor\).
+\(\ceil{x + 1}\),
+\(\ceil{x + 2}\), \(\dots\),
+\(\ceil{x + 2^{s-1}}\). For symmetry we will also add:
+\(\floor{x - 1}\),
+\(\floor{x - 2}\),\(\dots\),
+\(\floor{x - 2^{s-1}}\).
 
-I remind you that by \(\left\lceil{y}\right\rceil\) we mean the first node
+I remind you that by \(\ceil{y}\) we mean the first node
 (clockwise) that has a name bigger or equal to \(y\). By
-\(\left\lfloor{y}\right\rfloor\) we mean the first name (counter-clockwise)
+\(\floor{y}\) we mean the first node (counter-clockwise)
 that has a name smaller or equal to \(y\).
 
 For simplicity's sake we will call the original links from the \(k\)-connected
@@ -343,32 +352,32 @@ quickly. A good start would be to think about it yourself. Given a \(k\)-linked
 ring, how can you build the Far links to enable fast search?
 
 A good idea would be to run Stabilize\(^*_k\) a few times. It seems like
-Stabilize deals with the Far links. Maybe it will manage to build them
-correctly.
+Stabilize\(^*_k\) deals with the Far links. Maybe it will manage to build them
+correctly. We hope that running some iterations of Stabilize\(^*_k\) will
+converge to a structure where all the Local and Far links are optimal.
 
 To simplify things, we assume a perfect world where all the nodes in the ring
 perform Stabilize\(^*_k\) exactly at the same time. (I will not discuss here
 the asynchronous case, but it's a good thought experiment). We call it a
 Stabilize\(^*_k\) iteration.
 
-Let's begin by analyzing the first Stabilize\(^*_k\) iteration. (Assuming that
-we initially have a \(k\)-linked ring.) Let \(x\) be some node in the ring. As
-we have a \(k\)-linked ring, \(x\) is already connected to the \(k\) closest
-nodes to him from both directions (Clockwise and counter-clockwise). Therefore
-the \(x\).Known set will contain the nodes \(\left\lceil{x+1}\right\rceil\) and
-\(\left\lfloor{x-1}\right\rfloor\). Therefore \(x\) will obtain the two Far
-links \(x.next\_far_1\) and \(x.prev\_far_1\).
+We are going to use some kind of [inductive
+argument](http://en.wikipedia.org/wiki/Mathematical_induction). Let \(i_g\) be
+the first iteration number where all the Far links
+\(x.next\_far_1,\dots,x.next\_far_g\) and \(x.prev\_far_1,\dots,x.prev\_far_g\)
+are optimal. As those far links are optimal, they are not going to change in
+the next Stabilize\(^*_k\) iterations.  We want to find out how far is
+\(i_{g+1}\). In other words: When are the links \(x.next\_far_{g+1}\) and
+\(x.prev\_far_{g+1}\) going to be optimal?
 
-We continue with the next Stabilize\(^*_k\) iteration. Let \(x\) be some node
-in the ring. \(x\).Known is going to contain \(x.next\_far_1.next\_far_1\) and
-also \(x.prev\_far_1.prev\_far\_1\). (Because \(x\).Known contains all of \(x\)
-direct links, and also all the links of \(x\)'s direct links).
+In the end of iteration \(i_g + 1\) we should get that \(d(x +
+2^{g+1},x.next\_far_{g+1}) \leq
+d(x + 2^{g+1},\ceil{\ceil{x + 2^{g}} + 2^{g}})\). Hence in the end of Iteration
+\(i_g + 2\) we get that 
 
-
-
-
-
-
+TODO:
+\[\floor{\ceil{\ceil{x + 2^{g}} + 2^{g}} - 2^{g}}\]
+\[d(x,\floor{\ceil{x + t} - t}) \leq t\]
 
 
 
