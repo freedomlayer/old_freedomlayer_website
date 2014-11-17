@@ -1,5 +1,6 @@
 *.swp
 *.swo
+*.swn
 output/
 __pycache__/
 temp/
