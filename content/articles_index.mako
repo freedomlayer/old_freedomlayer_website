@@ -13,9 +13,14 @@
 
     <ul>
     % for a_entry in a_entries:
+    <%
+        pmeta = a_entry["props"]["post_metadata"]
+    %>
+	
+	
 	<li>
         <a href="${a_entry["link_addr"]}">
-        ${a_entry["props"]["post_metadata"]["title"]}</a>
+        ${pmeta["title"]}</a>
 	</li>
         
     % endfor
