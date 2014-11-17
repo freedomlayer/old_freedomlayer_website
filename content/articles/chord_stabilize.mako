@@ -3,7 +3,7 @@
 <%def name="post_metadata()">
 <%
     return {\
-    "title": "Ideas about Practical DHT Stabilizing",\
+    "title": "Stabilizing Chord",\
     "date": "2014-11-13 19:41",\
     "author": "real",\
     "number":4,\
@@ -22,20 +22,17 @@ ceil and floor latex macros:
   
 \)
 
+<h3>Abstract</h3>
 In the [Intro to
 DHTs](${self.utils.rel_file_link("articles/dht_intro.html")})
 article we presented a very basic idea of the chord DHT, and generally how to
-search it.
-
-We treated it pretty much as a static network of computers. We did not invest
+search it. We treated it pretty much as a static network of computers. We did not invest
 much time on thinking about what happens when nodes join or leave the network
 (Or what happens when nodes fail).
 
-In this article we are going to discuss (Very briefly) some ideas regarding
-stabilization of the Chord DHT. In other words: How to make sure our DHT
-survives, despite all the frequent changes that happen to the DHT structure -
-Of nodes joining and leaving the network, or just failing from time to time.
-
+In this article we are going to discuss (Very briefly) some ideas regarding how
+to preserve the connectedness and structure of the network, despite all the
+frequent changes that happen, such as: Nodes joins, node leaves and failures.
 
 <h3>The origin of Churn</h3>
 Before we get into the details, I want us to have some general picture of what
@@ -293,10 +290,9 @@ Given that the name of nodes come from the set \(B_s := \{0,1,2,\dots,2^{s}-1
 \(\floor{x - 2}\),\(\dots\),
 \(\floor{x - 2^{s-1}}\).
 
-I remind you that by \(\ceil{y}\) we mean the first node
-(clockwise) that has a name bigger or equal to \(y\). By
-\(\floor{y}\) we mean the first node (counter-clockwise)
-that has a name smaller or equal to \(y\).
+I remind you that by \(\ceil{y}\) we mean the first node (clockwise) that has a
+name bigger or equal to \(y\). By \(\floor{y}\) we mean the first node
+(counter-clockwise) that has a name smaller or equal to \(y\).
 
 For simplicity's sake we will call the original links from the \(k\)-connected
 ring *The Local links*. The new links we have just added will be called *The
@@ -361,27 +357,49 @@ perform Stabilize\(^*_k\) exactly at the same time. (I will not discuss here
 the asynchronous case, but it's a good thought experiment). We call it a
 Stabilize\(^*_k\) iteration.
 
-We are going to use some kind of [inductive
-argument](http://en.wikipedia.org/wiki/Mathematical_induction). Let \(i_g\) be
-the first iteration number where all the Far links
-\(x.next\_far_1,\dots,x.next\_far_g\) and \(x.prev\_far_1,\dots,x.prev\_far_g\)
-are optimal. As those far links are optimal, they are not going to change in
-the next Stabilize\(^*_k\) iterations.  We want to find out how far is
-\(i_{g+1}\). In other words: When are the links \(x.next\_far_{g+1}\) and
-\(x.prev\_far_{g+1}\) going to be optimal?
+I claim that in about \(O(log(n))\) iterations of Stabilize\(^*_k\) the Far
+links will be fully constructed. I thought that I know how to prove it, but it
+seems like I can't find an elegant way to explain it. If you have any
+interesting proof (Even with conditions that are a bit different), please tell
+me about it.
 
-In the end of iteration \(i_g + 1\) we should get that \(d(x +
-2^{g+1},x.next\_far_{g+1}) \leq
-d(x + 2^{g+1},\ceil{\ceil{x + 2^{g}} + 2^{g}})\). Hence in the end of Iteration
-\(i_g + 2\) we get that 
+<h5>Stabilize code example</h5>
+I don't want you to leave empty handed (You got so far already), so I
+wrote a simple simulation for the Stabilize\(^*_k\) algorithm in Python. It
+shows how Stabilize\(^*_k\) can create the Far links from the Local links in
+about \(O(\log(n))\) iterations. You can find it [here
+[github]](https://github.com/realcr/freedomlayer_code/blob/master/chord_stabilize/build_far_from_local.py).
 
-TODO:
-\[\floor{\ceil{\ceil{x + 2^{g}} + 2^{g}} - 2^{g}}\]
-\[d(x,\floor{\ceil{x + t} - t}) \leq t\]
+Some words about the code. It is not very fast. (You could optimize it though).
+On my computer you could simulate a ring of 2^10 nodes, though you will have to
+wait a few minutes to get a result. To use it, just run it with python. (I use
+PYthon3). If you want to tweak the parameters, go to the last function and
+change them. You can change both \(n\) and \(k\). \(n\) is the amount of nodes
+in the ring, and \(k\) is the ring constant. (Every node is connected to his
+\(k\) closest neighbours from both sides).
 
+<h5>Local Links are enough</h5>
+By showing that the Far links could be constructed from the Local links in a
+short time, we can conclude that as long as the k-linked ring could be
+reconstructed, the whole structure of Far Links could be reconstructed.
 
+<h3>Final notes</h3>
+We showed that a k-linked ring with Far links should survive the
+sudden death of any \(2k-1\) nodes. This is a pretty weak result, as we only
+considered the Local links when deriving it. The Far links probably add much
+more to the stability of the structure. At this point we didn't bother to fully
+analyze it, though I'm pretty sure that there many articles and research about
+this subject out there.
 
+Another interesting thing that we have found is that it is enough to invoke the
+Stabilize\(^*_k\) operation periodically (by all nodes) to preserve the
+total structure (k-linked ring + Far links). We don't have to remember lots of
+rules that apply in different cases or times. We just have to keep invoking
+Stabilize(\^*_k\). It might not be the most optimal thing to do, however it is
+a very safe way of constructing a simple and stable structure that stays both
+connected and searchable.
 
-
+As a thought exercise, think about a simple way to handle node joins. (Just
+follow what happens when enough Stabilize\(^*_k\) iterations are invoked).
 
 </%block>
