@@ -17,8 +17,24 @@ a:hover {
     color:red;
 }
 
+h1 {
+    font-size: 1.85em;
+}
+
+h2 {
+    font-size: 1.70em;
+}
+
+h3 {
+    font-size: 1.55em;
+}
+
+h4 {
+    font-size: 1.40em;
+}
+
 h5 {
-    font-size: 1.20em;
+    font-size: 1.25em;
 }
 
 h6 {
