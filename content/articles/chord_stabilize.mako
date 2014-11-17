@@ -25,14 +25,20 @@ ceil and floor latex macros:
 <h3>Abstract</h3>
 In the [Intro to
 DHTs](${self.utils.rel_file_link("articles/dht_intro.html")})
-article we presented a very basic idea of the chord DHT, and generally how to
-search it. We treated it pretty much as a static network of computers. We did not invest
-much time on thinking about what happens when nodes join or leave the network
-(Or what happens when nodes fail).
+article we presented a very basic idea of the chord DHT (See also [original
+article](http://pdos.csail.mit.edu/papers/chord:sigcomm01/chord_sigcomm.pdf)
+ and generally how to search it. We treated it pretty much as a static network
+of computers. We did not invest much time on thinking about what happens when
+nodes join or leave the network (Or what happens when nodes fail).
 
 In this article we are going to discuss (Very briefly) some ideas regarding how
 to preserve the connectedness and structure of the network, despite all the
 frequent changes that happen, such as: Nodes joins, node leaves and failures.
+
+Particularly, we are going to present an operation called Stabilize (Which all
+nodes perform periodically). This operation allows the network to preserve its
+structure. (We note that Stabilize as presented here is not the same
+as Stabilize presented in the original Chord article.)
 
 <h3>The origin of Churn</h3>
 Before we get into the details, I want us to have some general picture of what
@@ -106,12 +112,11 @@ has left the network.
 
 This is also a good security assumption (that prepares us for our future
 discussions). Generally, we assume that **Leaving nodes don't care** about our
-network precedures. That is because generally they have no incentives to behave
+network procedures. That is because generally they have no incentives to behave
 well. Joining nodes do have incentives to behave well. If they don't, we won't
 help them join the network. But leaving nodes really don't care. Most likely
 they have already got what they want from the network, and they can just pull
 the network plug.
-
 
 <h3>Stabilizing the Ring</h3>
 I remind you that the chord network is just a ring of nodes (Each node
@@ -124,22 +129,24 @@ Now we are left with a very simple ring of nodes, where every node is connected
 to the next node. This structure is pretty fragile. Every node that dies will
 destroy the ring structure. 
 
-One simple improvment would be that each node will remember two nodes, instead
+One simple improvement would be that each node will remember two nodes, instead
 of one. Each node will remember the previous and the next node on the ring.
 Generalizing this idea: Every node will be linked to the closest node and to
-the farest node, with respect to the distance function \(d\). (I remind you
+the farthest node, with respect to the distance function \(d\). (I remind you
 that for \(x,y \in B_s\),  \(d(x,y) = y - x\) if \(y > x\), and \(d(x,y) = 2^s
-- (y - x)\) otherwise.
++ (y - x)\) otherwise.
 
-(TODO: Picture of one way connection ring, and then two way connection ring.
-Maybe one next to each other)
+<img class="wimage"
+src="${self.utils.rel_file_link("articles/chord_stabilize/single_vs_double_link.svg")}"/>
+(On the left: A one way link ring network. Every node is connected to the next
+one. On the right: A two way link ring network. It is a bit more robust.)<br/><br/>
 
 This time, if one node dies, the network is still fixable. Take a few moments
 to think about how to fix it.
 
 <h4>Basic Stabilize</h4>
 
-We could add some kind of a periodic maintanence job to each node, called
+We could add some kind of a periodic maintenance job to each node, called
 "stabilize". Every node will invoke it every once in a while (Every 40 seconds,
 for example). For every node \(x\) we denote \(x.Links\) to be the set of links
 from \(x\). In this case, we have that \(x.Links = \{x.next,x.pref\}\).
@@ -179,7 +186,11 @@ and \(z\) will miss the "previous" link. It could have been nice if \(x\) and
 and \(z\).prev = \(x\), but in our case \(x\) and \(z\) do not have enough
 information to do that. They just don't see far enough.
 
-(TODO: Add here a picture of the network after \(y\) has disconnected.)
+<img class="wimage"
+src="${self.utils.rel_file_link("articles/chord_stabilize/y_disconnected.svg")}"/>
+(On the left: The original state of the network. On the right: The state of the
+network after \(y\) has failed.<br/><br/>
+
 
 Now let's investigate what happens to \(x\) and \(z\) after a while. For
 reasons of readability, let's just think about \(x\), and conclude the same for
@@ -192,7 +203,11 @@ will be \(x\) and \(x_2\). \(x\) will finally set \(x\).next = \(x_1\), and
 \(x\).prev = \(x_1\). (This one was left unchanged). Please follow the
 Stabilize algorithm and make sure that you understand why).
 
-(TODO: Add here a picture after one iteration of stabilize).
+<img class="wimage"
+src="${self.utils.rel_file_link("articles/chord_stabilize/y_disconnected_stb1.svg")}"/>
+In this picture: The state of the network after one Stabilize iteration. We
+mark by purple arrows the links that are not yet optimal. (They are going to
+change in the next iteration of Stabilize)<br/><br/>
 
 Note that all other nodes will in the ring will perform Stabilize too, however
 for every node that is not \(x\) or \(z\) the links are already optimized, so
@@ -209,12 +224,16 @@ iteration we have \(z\).prev = \(z_2\), and \(z\).next = \(z_1\) (Left
 unchanged). After \(O(n)\) iterations of Stabilize, we will get that
 \(z\).prev = \(x\).
 
-(TODO: Add symmetric pictures of \(z\) after some iterations of stabilize).
-
 It really takes a long time for this network to fix itself after one node dies,
 However it is interesting to see that it fixes itself eventually. As opposed to
 the one dying node case, if two nodes die the network is not connected anymore,
 and there is no hope to fix it.
+
+<img class="wimage"
+src="${self.utils.rel_file_link("articles/chord_stabilize/y_disconnected_stb_all.svg")}"/>
+In the picture: The self fixing process of the network using iterations of
+Stabilize (After a node \(y\) failed). It is very slow.
+<br/><br/>
 
 Generally, if the network becomes not connected (There are two nodes \(a,b\)
 for which there is no path of links leading from \(a\) to \(b\)), there is no
@@ -230,7 +249,11 @@ and previous neighbours on the ring, we will link \(x\) to his \(k\) immediate
 next neighbours on the ring, and \(k\) immediate previous neighbours on the
 ring.
 
-(TODO: Add a picture of the \(k\) neighbours scheme).
+<img class="wimage"
+src="${self.utils.rel_file_link("articles/chord_stabilize/ring_2.svg")}"/>
+In the picture: An example ring with \(k = 2\). In this network one failed node
+will be fixed quickly.
+<br/><br/>
 
 We have already discussed this structure in [Intro to
 DHTs](${self.utils.rel_file_link("articles/dht_intro.html")})
@@ -273,8 +296,6 @@ If \(2\cdot k\) nodes die at the same time, \(k\) consecutive nodes in one part
 of the ring, and other \(k\) consecutive nodes in another part, we expect the
 network to become disconnected. 
 
-(TODO: Add a picture of a 3 connected ring, with 2 consecutive dead nodes.)
-
 <h3>Adding the Far links</h3>
 I remind you that the fast search operation was obtained by adding links for
 far nodes. We could extend the \(k\)-connected ring to have those links too.
@@ -290,9 +311,15 @@ Given that the name of nodes come from the set \(B_s := \{0,1,2,\dots,2^{s}-1
 \(\floor{x - 2}\),\(\dots\),
 \(\floor{x - 2^{s-1}}\).
 
-I remind you that by \(\ceil{y}\) we mean the first node (clockwise) that has a
+I also remind you that by \(\ceil{y}\) we mean the first node (clockwise) that has a
 name bigger or equal to \(y\). By \(\floor{y}\) we mean the first node
 (counter-clockwise) that has a name smaller or equal to \(y\).
+
+<img class="wimage"
+src="${self.utils.rel_file_link("articles/chord_stabilize/floor_ceil.svg")}"/>
+In the picture: Some value \(v\), and the nodes \(\floor{v}, \ceil{v}\)
+<br/><br/>
+
 
 For simplicity's sake we will call the original links from the \(k\)-connected
 ring *The Local links*. The new links we have just added will be called *The
@@ -373,33 +400,95 @@ about \(O(\log(n))\) iterations. You can find it [here
 Some words about the code. It is not very fast. (You could optimize it though).
 On my computer you could simulate a ring of 2^10 nodes, though you will have to
 wait a few minutes to get a result. To use it, just run it with python. (I use
-PYthon3). If you want to tweak the parameters, go to the last function and
+Python3). If you want to tweak the parameters, go to the last function and
 change them. You can change both \(n\) and \(k\). \(n\) is the amount of nodes
 in the ring, and \(k\) is the ring constant. (Every node is connected to his
 \(k\) closest neighbours from both sides).
+
+If you just want to see how Stabilize\(^*_k\) looks like in the code, I
+include it here:
+<%text>
+
+    :::python
+    def stabilize(self,node_name):
+        """
+        Try improving immediate links by asking first level links.
+        Done according to the Chord Stabilizing article.
+        """
+        # Get the node's class:
+        nd = self.nodes[node_name]
+        # Initialize the Known nodes set:
+        known = set(nd.links)
+
+        for ln in nd.links:
+            known.update(self.nodes[ln].links)
+
+        # Remove myself from the known set:
+        known.discard(node_name)
+
+        # Find the optimal local links:
+
+        known_lst = list(known)
+        nd.local_links = set()
+        # Find "before nd" k best local links:
+        known_lst.sort(key=lambda z:self.name_dist(z,node_name))
+        nd.local_links.update(set(known_lst[:self.k]))
+        # Find "after nd" k best local links:
+        known_lst.sort(key=lambda z:self.name_dist(node_name,z))
+        nd.local_links.update(set(known_lst[:self.k]))
+
+        # Find optimal far links:
+        nd.far_links = set()
+        for j in range(NODE_NAMESPACE):
+            # First direction:
+            opt = min(known_lst,key=lambda z:self.name_dist(\
+                    (node_name + (2**j)) % NODE_NAMESPACE_SIZE,z))
+            nd.far_links.add(opt)
+
+            # Second direction:
+            opt = min(known_lst,key=lambda z:self.name_dist(\
+                    z,(node_name - (2**j)) % NODE_NAMESPACE_SIZE))
+            nd.far_links.add(opt)
+
+        nd.links = nd.local_links.union(nd.far_links)
+
+</%text>
+
+
 
 <h5>Local Links are enough</h5>
 By showing that the Far links could be constructed from the Local links in a
 short time, we can conclude that as long as the k-linked ring could be
 reconstructed, the whole structure of Far Links could be reconstructed.
 
-<h3>Final notes</h3>
-We showed that a k-linked ring with Far links should survive the
-sudden death of any \(2k-1\) nodes. This is a pretty weak result, as we only
-considered the Local links when deriving it. The Far links probably add much
-more to the stability of the structure. At this point we didn't bother to fully
-analyze it, though I'm pretty sure that there many articles and research about
-this subject out there.
+<h3>Final notes</h3> 
+We showed that a k-linked ring survives and quickly
+recovers from the sudden failure of any \(k-1\) nodes. Therefore this result
+applies also to a k-linked ring with Far links (Because the Far links could
+always be reconstructed quickly from the Local links). This is a pretty weak
+theoretical result, as we only considered the Local links when deriving it.
+
+However, the Stabilize algorithm we have presented is much stronger than we
+managed to prove here. The Far links probably add much more to the stability of
+the structure. At this point we don't bother to fully analyze or prove it,
+though I'm pretty sure that there many articles and research about this subject
+out there.
 
 Another interesting thing that we have found is that it is enough to invoke the
 Stabilize\(^*_k\) operation periodically (by all nodes) to preserve the
-total structure (k-linked ring + Far links). We don't have to remember lots of
-rules that apply in different cases or times. We just have to keep invoking
-Stabilize(\^*_k\). It might not be the most optimal thing to do, however it is
-a very safe way of constructing a simple and stable structure that stays both
+total structure (k-linked ring + Far links). In fact, this is the only
+operation we ever have to invoke to keep up with network events. (Node failures
+and joins). We don't have to remember lots of rules that apply in different cases
+or times. It might not be the most optimal thing to do, however it is a very
+safe way of constructing a simple and stable structure that stays both
 connected and searchable.
 
-As a thought exercise, think about a simple way to handle node joins. (Just
-follow what happens when enough Stabilize\(^*_k\) iterations are invoked).
+As a thought exercise, follow what happens when a new node joins. (See how many
+Stabilize Iterations it takes for him to obtain all the optimal Far links).
 
+Another thing to mention is what we haven't discussed here: How to preserve the
+information inside the nodes in the network, if we use it as a DHT. In other
+words: If a few nodes fail, we already know how to reconstruct the network.
+What we still have to think about is how to deal with losing the data inside
+those failed nodes.
 </%block>
