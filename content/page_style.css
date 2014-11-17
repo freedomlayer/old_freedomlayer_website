@@ -2,7 +2,8 @@ body {
     /* font-family:"Lucida Console", Monaco, monospace; */
 	/* font-family:Georgia,"Times New Roman",Times,serif;  */
 	font-family:"Lucida Sans Unicode", "Lucida Grande", sans-serif;
-	background-color:#e0e0e0;
+	/* background-color:#e0e0e0; */
+	background-color:#f0f0f0;
 
 }
 li {
@@ -16,6 +17,8 @@ a:link,a:visited {
 a:hover {
     color:red;
 }
+
+/* Headers: */
 
 h1 {
     font-size: 1.85em;
@@ -43,6 +46,15 @@ h6 {
     text-decoration:underline;
 }
 
+/* Code Highlight settings */
+.codehilite {
+      padding-top: 3px;  
+      padding-right: 10px;  
+      padding-bottom: 3px;  
+      padding-left: 10px;  
+}
+
+
 .cen_image {
     display:block;
     margin: 0 auto; 
@@ -56,4 +68,5 @@ h6 {
     max-width:100%;
     max-height:100%;
 }
+
 
