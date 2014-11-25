@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<rss version="2.0">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 <%namespace name="conf_general" module="conf.general" inheritable="True"/>
 <%namespace name="entries_index" module="content.entries_index"/>
 
@@ -13,12 +13,14 @@
 % for e in entries:
 <%
     emeta = e["props"]["post_metadata"]
+    link_addr = conf_general.module.WEBSITE_ROOT_ADDR + e["link_addr"]
 %>
     ## Show only posts that are not drafts:
     % if dict.get(emeta,"draft","False") == "False":
         <item>
         <title>${emeta["title"]}</title>
-        <link>${conf_general.module.WEBSITE_ROOT_ADDR + e["link_addr"]}</link>
+        <link>${link_addr}</link>
+	<guid>${link_addr}</guid>
         <description>${emeta["description"]}</description>
         <author>${emeta["author"]}</author>
         </item>
