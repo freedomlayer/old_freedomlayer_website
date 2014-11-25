@@ -1,7 +1,7 @@
-<%namespace name="conf_general" module="conf.general" inheritable="True"/>
-<%namespace name="entries_index" module="content.entries_index"/>
 <?xml version="1.0" encoding="UTF-8" ?>
 <rss version="2.0">
+<%namespace name="conf_general" module="conf.general" inheritable="True"/>
+<%namespace name="entries_index" module="content.entries_index"/>
 
 <channel>
 <%block name="entries_feed_page_channel"/>
