@@ -7,7 +7,11 @@
     "date": "2014-11-09 10:34",\
     "author": "real",\
     "number":1,\
-    "tags": []}
+    "tags": [],\
+    "draft":"False",\
+    "description": "General words about the current structure \
+of the internet, and some issues that\
+arise from that structure."}
 
 %>
 </%def>

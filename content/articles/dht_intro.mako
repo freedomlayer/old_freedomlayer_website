@@ -7,7 +7,10 @@
     "date": "2014-11-11 13:07",\
     "author": "real",\
     "number":3,\
-    "tags": []}
+    "tags": [],\
+    "draft":"False",\
+    "description": "How to keep in touch with the \
+whole world, remembering only a few phone numbers?"}
 
 %>
 </%def>

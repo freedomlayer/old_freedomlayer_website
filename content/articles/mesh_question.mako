@@ -7,7 +7,11 @@
     "date": "2014-11-09 18:31",\
     "author": "real",\
     "number":2,\
-    "tags": []}
+    "tags": [],\
+    "draft":"False",\
+    "description": "General introduction to the Mesh question: \
+How to connect a few computers together in a symmetric way to \
+obtain Internet like communication."}
 
 %>
 </%def>

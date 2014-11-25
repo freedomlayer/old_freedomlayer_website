@@ -7,7 +7,10 @@
     "date": "2014-11-13 19:41",\
     "author": "real",\
     "number":4,\
-    "tags": []}
+    "tags": [],\
+    "draft":"False",\
+    "description": "General ideas about keeping \
+the chord structure connected"}
 
 %>
 </%def>
