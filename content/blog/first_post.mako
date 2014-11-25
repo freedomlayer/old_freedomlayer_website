@@ -6,7 +6,10 @@
     "title": "First post",\
     "date": "2014-11-09 21:20",\
     "author": "real",\
-    "tags": []}
+    "tags": [],\
+    "draft":"False",\
+    "description":"First blog post on Freedom Layer"\}
+
 %>
 </%def>
 
