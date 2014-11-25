@@ -18,7 +18,7 @@ def rel_file_link(context,file_path):
     cur_path = os.path.join(context['my_output_dir'],context['my_rel_dir'])
     file_path = os.path.join(context['my_output_dir'],file_path)
     href_addr = os.path.relpath(file_path,cur_path)
-    return href_addr
+    return os.path.normpath(href_addr)
 
 def inspect_temp(context,file_path,key):
     """
