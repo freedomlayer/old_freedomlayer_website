@@ -2,9 +2,14 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 <%namespace name="conf_general" module="conf.general" inheritable="True"/>
 <%namespace name="entries_index" module="content.entries_index"/>
-
+<%namespace name="utils" module="lib.utils" inheritable="True"/>
 <channel>
 <%block name="entries_feed_page_channel"/>
+<%
+    my_addr = conf_general.module.WEBSITE_ROOT_ADDR + \
+        self.utils.get_my_dest_path()
+%>
+<atom:link href="${my_addr}" rel="self" type="application/rss+xml" />
 <%
     entries = entries_index.get_entries(dir_name=self.attr.entries_dir,\
 	sort_field=self.attr.sort_field,reverse=self.attr.reverse)
