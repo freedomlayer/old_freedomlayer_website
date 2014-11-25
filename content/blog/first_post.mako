@@ -8,7 +8,7 @@
     "author": "real",\
     "tags": [],\
     "draft":"False",\
-    "description":"First blog post on Freedom Layer"\}
+    "description":"First blog post on Freedom Layer"}
 
 %>
 </%def>
