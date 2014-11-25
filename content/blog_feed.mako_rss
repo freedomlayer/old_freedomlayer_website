@@ -1,0 +1,15 @@
+<%inherit file="/entries_feed_page.makoa"/>
+
+<%!
+    entries_dir = "blog"
+    sort_field = "date"
+    reverse = False
+%>
+
+<channel>
+<%block name="entries_feed_page_channel">
+<title>Freedom Layer Articles</title>
+<link>${self.conf_general.module.WEBSITE_ROOT_ADDR}</link>
+<description>Freedom Layer's Articles Feed</description>
+<language>en-US</language>
+</%block>
