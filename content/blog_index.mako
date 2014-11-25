@@ -1,24 +1,19 @@
-<%inherit file="/web_page.makoa"/>
-<%namespace name="bindex" module="content.bindex"/>
+<%inherit file="/entries_page.makoa"/>
 
-<%block name="web_page_header">
+<%!
+    entries_dir = "blog"
+    sort_field = "date"
+    reverse = True
+%>
+
+<%block name="entries_page_header">
 <title>FreedomLayer | Blog</title>
 </%block>
 
-<%block name="web_page_body">
-<h1>Blog</h1>
-    <%
-        b_entries = bindex.get_blog_entries()
-    %>
 
-    <ul>
-    % for b_entry in b_entries:
-	<li>
-        <a href="${b_entry["link_addr"]}">
-        ${b_entry["props"]["post_metadata"]["title"]}</a>
-	</li>
-        
-    % endfor
-    </ul>
+<%block name="entries_page_body_begin">
+<h1>Blog</h1>
 </%block>
 
+<%block name="entries_page_body_end">
+</%block>
