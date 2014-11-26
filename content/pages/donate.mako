@@ -16,9 +16,9 @@ Money from donations will be used for:
 
 - Covering the time invested in research and articles.
 
-
+<br/><br/>
 Donations could be sent using paypal, by clicking on this button:
-## <%include file="/pages/paypal_button.makoa" />
+<%include file="/pages/paypal_button.makoa" />
 
 
 </%block>

@@ -7,7 +7,7 @@
     <a href="${utils.rel_file_link("blog_index.html")}">Blog</a> |
     <a href="${utils.rel_file_link("articles_index.html")}">Articles</a> |
     <a href="${utils.rel_file_link("pages/mailing_lists.html")}">Mailing Lists</a> |
-    ## <a href="${utils.rel_file_link("pages/donate.html")}">Donate</a> |
+    <a href="${utils.rel_file_link("pages/donate.html")}">Donate</a> |
     <a href="${utils.rel_file_link("pages/about.html")}">About</a>
     </nav>
 
