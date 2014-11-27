@@ -197,12 +197,13 @@ Changing Adversary:
 - Node bounded: The adversary controls no more than \(\alpha n\) corrupt nodes,
   where \(\alpha < 0.5\)
 
-- **Slow changing**: Every time interval \(T_c\) (You can think about
-  this interval as 3 seconds for example), The adversary has the
-  ability to perform the **random change step**: changing one random corrupt node
-  into a correct node, and some other random correct node into a corrupt
-  node. (The adversary doesn't get to pick those correct and corrupt node. They
-  are chosen randomly.)
+- **Slow changing**: Every big enough time interval \(T_c\) (You can think
+  about this interval as 3 seconds for example), The adversary has the ability
+  to perform the **random change step**: A pair of correct node and corrupt node
+  are chosen randomly. Then they change types: The correct node becomes corrupt,
+  and the corrupt node becomes correct.
+  (The adversary doesn't get to pick those correct and corrupt node. They are
+  chosen randomly in a uniform manner.)
 
 In this model, as usual, the corrupt nodes are fully controlled by the
 adversary, and can do pretty much anything. The correct nodes work by the rules
@@ -214,15 +215,17 @@ We begin by understanding the properties of the Bounded Slow Changing
 Adversary. The first property is being Node Bounded. This just means that the
 adversary can't have too many corrupt nodes. 
 
-The next property is "slow changing".  Basically "slow changing" means that the
+The next property is "slow changing". Basically "slow changing" means that the
 adversary could change (slowly and randomly) the set of nodes under his
-control. 
+control. Don't worry if you don't fully grasp the meaning of this property at
+this point. We will keep talking about it as we go. You can safely continue
+reading.
 
-Note that this property is not a limitation. We know this because the adversary
-has a choice: Every time interval \(T_c\) the adversary could perform some
-step, however he doesn't have to do that. Therefore we are sure that the second
-property makes the adversary "stronger". It gives the adversary more options.
-
+One thing to note about this property is that it is not a limitation. We know
+this because the adversary has a choice: Every time interval \(T_c\) the
+adversary could perform some step, however he doesn't have to do that. Therefore
+we are sure that the second property makes this adversary "stronger" than the
+earlier model of Node Bounded Adversary. That it because it has more options.
 
 <h6>Some Observations</h6>
 
@@ -241,11 +244,16 @@ Therefore in the Node Bounded Slow Changing Adversary model, every node might
 fail after long enough time. This is a nice model of what could happen in
 reality.
 
-Next, note that the Slow requirement is important. Assume that the time interval
-\(T_c\) was a very small number, or even zero. In that case at any given
-moment the adversary could gain control over any specific node. This could be
-done by running the random change step many times, until the desired result is
-obtained. Having a large 
+In some sense, the adversary encapsulates inside him both our wicked enemy that
+tries to destroy our network, and at the same time the bad luck of having nodes
+failing randomly from time to time.
+
+
+The next observation is that the "Slow" requirement is important. Assume that
+the time interval \(T_c\) was a very small number, or even zero. In that case at
+any given moment the adversary could gain control over any specific node. This
+could be done by running the random change step many times, until the desired
+result is obtained. Having a large 
 
 
 
