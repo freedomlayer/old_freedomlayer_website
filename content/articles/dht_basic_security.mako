@@ -245,15 +245,20 @@ fail after long enough time. This is a nice model of what could happen in
 reality.
 
 In some sense, the adversary encapsulates inside him both our wicked enemy that
-tries to destroy our network, and at the same time the bad luck of having nodes
+tries to destroy our network, and at the same time the "bad luck" of having nodes
 failing randomly from time to time.
-
 
 The next observation is that the "Slow" requirement is important. Assume that
 the time interval \(T_c\) was a very small number, or even zero. In that case at
 any given moment the adversary could gain control over any specific node. This
 could be done by running the random change step many times, until the desired
-result is obtained. Having a large 
+result is obtained. Having \(T_c\) close to zero is somehow equivalent to
+letting the adversary have control over all the nodes in the network. (Just like
+[being very fast in the real world](https://www.youtube.com/watch?v=qckKMEySSYg)
+could be equivalent to being everywhere at the same time]). Having a large
+enough time interval \(T_c\) avoids this issue.
+
+
 
 
 
