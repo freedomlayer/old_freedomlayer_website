@@ -40,10 +40,12 @@ adversary. Generally speaking, in our case the adversary is some entity that
 wants to disrupt the DHT functions. 
 
 By entity we don't just mean one node, or one computer, or even one person. The
-adversary could mean many things. More than something realistic, it is an entity
-that helps us think about security. It's like a game. We give the adversary
-certain powers, and see if our model can deal with it. If all of this sounds too
-abstract to you, don't worry, we are soon going to see some examples.
+adversary could mean many things. More than something realistic, it is an
+entity that helps us think about security. It's like a game. We give the
+adversary certain powers, and see if our model can deal with it. In some sense,
+our Adversariel model is really our understanding of reality. If all of this
+sounds too abstract to you, don't worry, we are soon going to see some
+examples.
 
 Before we move on to checking out some adversaries, We review again the basic
 functions of our DHT.  In the lower level of the DHT structure, it means the
@@ -198,16 +200,22 @@ Changing Adversary:
   where \(\alpha < 0.5\)
 
 - **Slow changing**: Every big enough time interval \(T_c\) (You can think
-  about this interval as 3 seconds for example), The adversary has the ability
-  to perform the **random change step**: A pair of correct node and corrupt node
-  are chosen randomly. Then they change types: The correct node becomes corrupt,
-  and the corrupt node becomes correct.
-  (The adversary doesn't get to pick those correct and corrupt node. They are
-  chosen randomly in a uniform manner.)
+  about this interval as 10 seconds for example), The adversary has the ability
+  to perform the **random change step**: The set of corrupt nodes changes to
+  some random subset of the network nodes. The Adversary doesn't have control
+  over which subset will be chosen. It happens randomly.
 
 In this model, as usual, the corrupt nodes are fully controlled by the
 adversary, and can do pretty much anything. The correct nodes work by the rules
 of the network (In our case, the DHT), and never fail.
+
+In addition, to complement the time constant \(T_c\), we also assume that
+sending messages between two connected nodes in the network takes no more than
+\(T_s\) time. (You can think about this time interval as 1 second for example). 
+Note that if we don't consider this quantity \(T_s\), defining \(T_c\) is
+pretty much meaningless. The absolute speed of changing of the Adversary
+doesn't say much by itself. We care about it with respect to the speed of
+message delivery in the network.
 
 (TODO: Add a picture of the slow changing property)
 
@@ -217,9 +225,8 @@ adversary can't have too many corrupt nodes.
 
 The next property is "slow changing". Basically "slow changing" means that the
 adversary could change (slowly and randomly) the set of nodes under his
-control. Don't worry if you don't fully grasp the meaning of this property at
-this point. We will keep talking about it as we go. You can safely continue
-reading.
+control. This step just randomly changes all the corrupt nodes to a new set of
+corrupt nodes. 
 
 One thing to note about this property is that it is not a limitation. We know
 this because the adversary has a choice: Every time interval \(T_c\) the
@@ -227,7 +234,7 @@ adversary could perform some step, however he doesn't have to do that. Therefore
 we are sure that the second property makes this adversary "stronger" than the
 earlier model of Node Bounded Adversary. That it because it has more options.
 
-<h6>Some Observations</h6>
+<h6>Observations about the Slow Changing Adversary</h6>
 
 First, we note that The Node Bounded Slow Changing Adversary takes into account
 "network churn". In our previous model, the Node Bounded Adversary, If some
@@ -241,7 +248,7 @@ correct. However, after enough time intervals \(T_c\) the adversary might gain
 control over \(x\), and then \(x\) might fail.
 
 Therefore in the Node Bounded Slow Changing Adversary model, every node might
-fail after long enough time. This is a nice model of what could happen in
+fail after long enough time. This is a nice "model" of what could happen in
 reality.
 
 In some sense, the adversary encapsulates inside him both our wicked enemy that
@@ -250,14 +257,55 @@ failing randomly from time to time.
 
 The next observation is that the "Slow" requirement is important. Assume that
 the time interval \(T_c\) was a very small number, or even zero. In that case at
-any given moment the adversary could gain control over any specific node. This
-could be done by running the random change step many times, until the desired
-result is obtained. Having \(T_c\) close to zero is somehow equivalent to
-letting the adversary have control over all the nodes in the network. (Just like
-[being very fast in the real world](https://www.youtube.com/watch?v=qckKMEySSYg)
-could be equivalent to being everywhere at the same time]). Having a large
-enough time interval \(T_c\) avoids this issue.
+any given moment the adversary could gain control over any specific node \(x\).
+This could be done by running the random change step many times, until \(x\) is 
+part of the new randomly chosen corrupt nodes set.
 
+Having \(T_c\) close to zero is somehow equivalent to letting the adversary
+have control over all the nodes in the network. (Just like [being very fast in
+the real world](https://www.youtube.com/watch?v=qckKMEySSYg) could be
+equivalent to being everywhere at the same time]). Having a large enough time
+interval \(T_c\) avoids this issue.
+
+Finally I want to shortly note that the definition we have seen for the Slow
+Changing "model" is not very formal. We might discuss this model in a formal
+manner in the future though. For the interested,
+try to think about the following issue: How can one [measure
+time](http://en.wikipedia.org/wiki/Theory_of_relativity) in a decentralized
+network of computers?
+
+But please don't worry about it now. This informal model should be enough to
+understand the following ideas.
+
+<h4>Securing a DHT</h4>
+
+(TODO: continue here)
+
+
+
+In the following sections we will try to deal with various security issues that
+might arise in a DHT. We have met the Chord DHT (TODO: Add link to article),
+but this might apply to a wider range of DHT structures.
+
+Regarding the Adversarial model: We are going to assume a Node Bounded Slow
+Changing Adversary. To avoid writing those 5 words every time I want to refer
+the Adversary, we will call it just Adversary on the rest of this text.
+
+Most of our security consideration here will relate to choosing the nodes
+identities in the 
+
+
+
+
+One important thing to choose when designing a DHT is a way to deal with
+choosing Identities for joining nodes. Recall that in Chord, every node has an
+Identity number which is from a set \(B_s := \{0,1,2,\dots,2^{s}-1 \}\) (A
+number of size \(s\) bits). Identities in a DHT are very important, as they
+determine the range of keys a node has responsibility over.
+
+Given that we know the set of possible identities, we are left with the task of
+choosing the Identity for new nodes who join the network. We will observe a few
+methods here 
 
 
 
