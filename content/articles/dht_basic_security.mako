@@ -326,40 +326,116 @@ with our Adversary.
 
 <h5>Public keys as Identities</h5>
 
-Another possibility for Identity choice is Public keys, using any form of
+Following the previous attempt, we want to make sure the Adversary could not
+choose any arbitrary DHT Identity that he wants. We want to make it hard for the
+adversary to choose arbitrary DHT identities. 
+
+One possibility for Identity choice is Public keys, using any form of
 [asymmetric
 cryptography](http://en.wikipedia.org/wiki/Public-key_cryptography). (Also
-known as Public Cryptography).
+known as Public key Cryptography).
 
 In this method, every node that joins the network first generates a key pair of
 public key and private key. Then the node uses his own public key as his DHT
-Identity.
+Identity. Whenever a node \(y\) comes in contact with a node \(x\), \(y\) will
+ask \(x\) to prove his claimed identity. \(x\) will then prove his identity
+using the Public Key Cryptography system. This way the Adversary will have to
+use a valid Identity for his corrupt nodes, if he wants to be able to
+communicate with correct nodes.
 
-If you don't have any experience with public key cryptography, let me try to
-make it more concrete for you in a few sentences, introducing you to the
-[RSA](http://en.wikipedia.org/wiki/RSA_%28cryptosystem%29) method. A new node
-\(x\) that wants to join the network first generates two large and random prime
-numbers \(p,q\). Then he multiplies those two prime numbers, getting as a
-result a large number \(pq = N\). This number \(N\) is going to be \(x\) Identity
-inside the DHT. The numbers \(p,q\) are considered to be the \(x\)'s private
-key, and he will keep them secret. This was just an example of one Public key
-cryptosystem. Almost any such cryptosystem will be enough for our purposes
-here, however I choose to stick with the RSA system notation for clarity.
+We somehow hope that it is going to be hard for the Adversary to generate an
+Identity that is both valid and close to a specified wanted number.
 
-Generating a public key and using it as a DHT Identity is still not enough, as
-any corrupt node could still claim any DHT Identity \(N\), just like in the
-previous proposal. Therefore we have to add some kind of verification -
-Whenever a node joins the network and claims an Identity, he will have to prove
-somehow that he owns the private key for this public key. (In the RSA case, He
-will have to prove that he knows some two prime numbers \(p,q\) such that
-\(pq=N\)). 
+<h6>Some words about Public Key Cryptography</h6>
 
-TODO: CONTINUE HERE.
+All those Cryptography stuff might sound very strange to you if you have never
+heard about Public Key Cryptography before. I will try to explain shortly what
+Public Key Cryptography feels like, however if you want to really understand
+things, please take the time to read more about it from some more serious
+sources. It will really make a difference in your understanding of things.
 
-Proving that you know the private key for a given identity \(N\) is in this
-case equivalent to proving that you "own" the identity \(N\). One can prove
-that he knows the private key using a [digital
-signature](http://en.wikipedia.org/wiki/Digital_signature).
+Public Key cryptography is a system with a few participants. Every participant
+initially generates somehow two keys: A public key and a private key. Those keys
+are usually generated randomly (By the participants), and they are related
+somehow to each other. Then every participant shares his public key with the
+rest of the participants, but keeps his private key a secret.
+
+What could be done with those public and private keys? Using the public key one
+can encrypt data. The corresponding private key could be used to decrypt that
+data.
+
+If for example Bob generates a key pair of Public key and private key, he will
+share the public key with all the participants in the system. Then every
+participant can encrypt messages with Bob's public key, but only Bob could
+decrypt those messages with his secret private key.
+
+Another feature that some Public Key cryptography systems has is the **ability to
+sign**. Bob could sign some message, and then every participant could verify the
+signature Bob's signature, and be sure that Bob wrote the message. It's pretty
+much like signatures in the real world (Though a bit more secure :) )
+
+In our case we are really interested in the signing ability that we get from
+Public Key Cryptography. (Hint: We are going to use it later to prove that we own an
+Identity in the DHT).
+
+I don't want to get too abstract on you, so let me follow with a real example of
+a Public Key Cryptography system. A famous example is
+[RSA](http://en.wikipedia.org/wiki/RSA_%28cryptosystem%29). If Alice wants to
+generate a key pair, she has to generate two big random prime numbers. Let's
+call those \(p,q\). Then Alice multiplies them, to get the value \(N=pq\). \(N\)
+is then called the public key, and \(p,q\) are the private keys. Alice can share
+the public key (\(N\)) with anyone, however she will never tell \(p,q\). This is
+the private (Or secret) key. Note that concluding the numbers \(p,q\) knowing
+only \(N\) is considered to be a difficult computational problem. (See [Integer
+Factorization](http://en.wikipedia.org/wiki/Integer_factorization))
+
+In RSA the public key could be used to Encrypt messages, and the private key
+could be used to decrypt messages. In a similar way, we could use the private
+key to sign messages, and the public key to verify those messages. For the
+interested, the operation of signing a message in RSA is the same as decrypting
+a message using the private key. The operation of verifying an RSA signature is
+the same as encrypting a message using the public key.
+
+<h6>Using Public keys as Identities</h6>
+
+As we mentioned in the beginning of this section, we planned that every node
+\(x\) will generate a key pair, and use the Public key as a DHT Identity.
+When a node \(x\) joins the network and presents his Public key (Which is his
+claimed DHT Identity), we will send him to prove his identity.
+
+How could we ask \(x\) to prove it his identity? A naive method would be to send
+him some random value \(t\), and ask him ask him to sign it. If \(x\) manages to
+create a valid signature over \(t\), we will conclude that his identity is
+confirmed.
+
+Again let's assume that the Adversary wants to block some key \(k\) in the DHT,
+and see what happens in this case. The Adversary has to position some corrupt
+node with an Identity very close to \(k\) (But not bigger than \(k\)) inside the
+network. If we are dealing with RSA, then all the Adversary needs to do is find
+some two prime number \(p,q\) such that \(pq\) is very close to \(k\). Then the
+adversary will use \(N=pq\) as the corrupt node's Identity (Public Key), and
+\(p,q\) as the private key. 
+
+There are many prime numbers, so this should not really be a problem. It's a bit
+harder than the previous case, where the Adversary could just pick and Identity
+that he wants for his corrupt nodes, however it is not much harder.
+
+<h6>Using Hashed Public Keys as identities</h6>
+We could make it a bit harder, though. For a node \(x\) with public key \(N\)
+and private key \(p,q\), we could declare \(x\)'s identity to be \(f(N)\), where
+\(f\) is some [cryptographic hash
+function](http://en.wikipedia.org/wiki/Cryptographic_hash_function).
+
+Let's go over all the process of \(x\) joining the network to make sure that
+this makes sense. \(x\) first generates a pair \(p,q\) of random big primes, and
+then derives \(N=pq\) to be his public key. Next, \(x\) calculates \(Id=f(N)\), and
+this is \(x\)'s DHT Identity.
+
+When \(x\) joins the network, he has to confirm his identity. He will claim his
+identity to be \(Id=F(N)\), and he will also supply the value \(N\). (The verifier
+will check that \(Id=F(N)\)). Next, the verifier will send \(x\) some random
+value \(t\), and ask \(x\) to sign it. \(x\) will create a signature over \(t\)
+and send it back to the verifier.
 
 
 
