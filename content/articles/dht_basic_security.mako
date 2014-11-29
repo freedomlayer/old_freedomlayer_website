@@ -282,7 +282,6 @@ understand the following ideas.
 (TODO: continue here)
 
 
-
 In the following sections we will try to deal with various security issues that
 might arise in a DHT. We have met the Chord DHT (TODO: Add link to article),
 but this might apply to a wider range of DHT structures.
@@ -291,24 +290,76 @@ Regarding the Adversarial model: We are going to assume a Node Bounded Slow
 Changing Adversary. To avoid writing those 5 words every time I want to refer
 the Adversary, we will call it just Adversary on the rest of this text.
 
-Most of our security consideration here will relate to choosing the nodes
-identities in the 
-
-
-
-
-One important thing to choose when designing a DHT is a way to deal with
-choosing Identities for joining nodes. Recall that in Chord, every node has an
-Identity number which is from a set \(B_s := \{0,1,2,\dots,2^{s}-1 \}\) (A
-number of size \(s\) bits). Identities in a DHT are very important, as they
-determine the range of keys a node has responsibility over.
+Most of our security considerations presented here will relate to the way we
+choose the Identities of nodes in the network. I remind you that in Chord, every
+node has an Identity number which is from a set \(B_s := \{0,1,2,\dots,2^{s}-1
+\}\) (A number of size \(s\) bits). Identities in a DHT are very important, as
+they determine the range of keys a node has responsibility over.
 
 Given that we know the set of possible identities, we are left with the task of
 choosing the Identity for new nodes who join the network. We will observe a few
-methods here 
+methods here.
 
+<h5>Random Identities</h5>
 
+A simple solution for the Identity choice would be to let every new node in the
+network pick a random Identity number. If we are talkin about Chord, that random
+Identity number will be a random bit string of size \(s\) bits. If all the nodes
+are correct and \(s\) is [large
+enough](http://en.wikipedia.org/wiki/Birthday_problem), we can be pretty sure
+that no two nodes are going to have the exact same Identity number.
 
+However, if we take into consideration an Adversary as discussed above, we are
+expected to have problems. One thing the adversary can do, for example, is to
+block or modify the value for any wanted key. Assume that the Adversary wants
+to block the value of key \(k\). It is enough that the Adversary will insert
+just one corrupt node \(z\) into the network, choosing for him the Identity
+\(k\).
+
+Then for sure the node \(z\) will have the responsibility of keeping the key
+\(k\) and its corresponding value. Whenever some other node \(x\) will search
+for the key \(k\) and ask for its value, the node \(z\) could not respond (Thus
+blocking access to the key \(k\)), or give a different value \(v'\).
+
+The idea of Random Identities gets us started, but obviously it can not deal
+with our Adversary.
+
+<h5>Public keys as Identities</h5>
+
+Another possibility for Identity choice is Public keys, using any form of
+[asymmetric
+cryptography](http://en.wikipedia.org/wiki/Public-key_cryptography). (Also
+known as Public Cryptography).
+
+In this method, every node that joins the network first generates a key pair of
+public key and private key. Then the node uses his own public key as his DHT
+Identity.
+
+If you don't have any experience with public key cryptography, let me try to
+make it more concrete for you in a few sentences, introducing you to the
+[RSA](http://en.wikipedia.org/wiki/RSA_%28cryptosystem%29) method. A new node
+\(x\) that wants to join the network first generates two large and random prime
+numbers \(p,q\). Then he multiplies those two prime numbers, getting as a
+result a large number \(pq = N\). This number \(N\) is going to be \(x\) Identity
+inside the DHT. The numbers \(p,q\) are considered to be the \(x\)'s private
+key, and he will keep them secret. This was just an example of one Public key
+cryptosystem. Almost any such cryptosystem will be enough for our purposes
+here, however I choose to stick with the RSA system notation for clarity.
+
+Generating a public key and using it as a DHT Identity is still not enough, as
+any corrupt node could still claim any DHT Identity \(N\), just like in the
+previous proposal. Therefore we have to add some kind of verification -
+Whenever a node joins the network and claims an Identity, he will have to prove
+somehow that he owns the private key for this public key. (In the RSA case, He
+will have to prove that he knows some two prime numbers \(p,q\) such that
+\(pq=N\)). 
+
+TODO: CONTINUE HERE.
+
+Proving that you know the private key for a given identity \(N\) is in this
+case equivalent to proving that you "own" the identity \(N\). One can prove
+that he knows the private key using a [digital
+signature](http://en.wikipedia.org/wiki/Digital_signature).
 
 
 
