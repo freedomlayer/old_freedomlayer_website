@@ -179,8 +179,7 @@ We used the scarcity of id cards in the real world to make Sybil attacks hard
 to perform.
 
 
-<h4>Securing a DHT</h4>
-
+<h4>Security of Identities' choice</h4>
 
 In the following sections we will try to deal with various security issues that
 might arise in a DHT. We have met the Chord DHT (TODO: Add link to article),
@@ -413,8 +412,62 @@ we did make some progress. Recall that in the previous sections the adversary
 could gain control over some key \(k\) without much effort. Here the adversary
 has to do some effort to take control over some key.
 
-<h6>Hashing the IPs</h6>
+<h5>Hashing IPs</h5>
 
-TODO: Continue here.
+We have already considered the idea of hash functions to make it harder for the
+adversary to control the Identity of corrupt nodes. Another idea would be to
+use the hash of a the IP address of a node as its DHT Identity. This solution
+relies on the hierarchical structure of the Internet and the fact that it is
+hard to obtain many different IP addresses (At least for simple Adversaries).
+
+Let's be more detailed. For a new node \(x\) with IP Address \(x_a\) that wants
+to join the DHT, we define \(x\)'s Identity to be \(f(x_a)\), where \(f\) is a
+known cryptographic hash function. Every other node \(y\) on the network that
+contacts \(x\) knows \(x\)'s IP Address (Or else, how could \(y\) contact \(x\)
+from the first place). Therefore \(y\) knows automatically the value \(f(x_a)\)
+which is \(x\)'s DHT Identity.
+
+This time, if an Adversary wants to take control over a key \(k\) in the DHT,
+he will have to create a corrupt node with IP address \(a\) such that \(f(a)\)
+is close to the value \(k\) (But not bigger than \(k\)).
+
+In IPv4 There are no more than \(2^{32}\) possible addresses. By the calculations
+we have seen in the idea of Public keys as Identities, we conclude that about
+\(\frac{2^{32}}{n}\) Addresses will be suitable for the adversary if he wants
+to take control over some specific key \(k\). 
+
+Obtaining specific IPs could be pretty hard these days (Though not impossible).
+Therefore this method does make it hard to take control over a specific key in
+the DHT. Thinking about it, the change to IPv6 (Where there are \(2^{128}\)
+possible addresses) might make this method less effective. 
+
+Generally speaking, in a network where every node has the freedom to choose his
+Address in some fast manner (And there are many possibilities for addresses),
+this method might not work well. The Adversary could generate many Addresses
+(We have seen that about \(n\) addresses should be enough), until one address
+has a hash value in the correct range. Assuming that \(n\) is not too big, this
+shouldn't be a hard calculation.
+
+<h4>Bounding the Adversary</h4>
+
+We talked earlier about our assumption of a Node Bounded Adversary - An
+Adversary that can insert only so many corrupt nodes into the network. At this
+point I want to show an example of achieving this property - Making sure that
+the Adversary doesn't have too many corrupt nodes in the network.
+
+Recall that the very naive solution we initially proposed for this was using
+some kind of **external scarcity**, like real world ID cards. Every node that
+wants to join the network should first be represented by a person in the real
+world, handing over his (real world) ID card to some central authority.
+
+TODO: Continue here. (Explain about why we tend to follow the scarcity idea. We
+assume that there are more good people than bad ones in the world?)
+
+Following this naive idea, we will try to use a different kind of scarcity:
+Computing power. This kind of scarcity is widely used in
+[Bitcoin](http://en.wikipedia.org/wiki/Bitcoin) based crypto currencies.
+
+
+
 
 </%block>
