@@ -179,12 +179,12 @@ corrupt nodes in a network. Another formulation of that example would be:
 We used the scarcity of id cards in the real world to make Sybil attacks hard
 to perform.
 
-
 <h4>Security of Identities' choice</h4>
 
 In the following sections we will try to deal with various security issues that
-might arise in a DHT. We have met the Chord DHT (TODO: Add link to article),
-but this might apply to a wider range of DHT structures.
+might arise in a DHT. We have met the [Chord
+DHT](${self.utils.rel_file_link("articles/dht_intro.html")}) but this might
+apply to a wider range of DHT structures.
 
 Regarding the Adversarial model: We are going to assume a Node Bounded Slow
 Changing Adversary. To avoid writing those 5 words every time I want to refer
@@ -373,7 +373,11 @@ We have some interval that we want to "land on", when getting a random value
 between the node that is currently responsible over the key \(k\), and the key
 \(k\) itself.
 
-(TODO: Add a picture of the place we want to be in on the ring)
+<img class="wimage"
+src="${self.utils.rel_file_link("articles/dht_basic_security/wanted_interval_floor_k.svg")}"/>
+In the picture: The interval that the Adversary wants to land on to take over
+the key \(k\) is marked with the green color.
+<br/><br/>
 
 Now we want to know how many different values \(N=pq\) we have to generate
 before we get that \(f(N)\) is inside the wanted interval on the ring.
@@ -489,16 +493,25 @@ computationally bounded Adversary will not be able to insert too many nodes, as
 he won't be able to maintain all the links.
 
 One way to make the task of maintaining links more difficult is using a [proof of
-work](http://en.wikipedia.org/wiki/Proof-of-work_system) puzzle. We will extend
-the idea of heartbeat, by adding a difficult riddle to the heartbeat. If \(x\)
-and \(y\) are two linked nodes in the DHT, \(x\) will send a riddle to \(y\)
-every 10 seconds, for example. \(x\) will then expect \(y\) to answer the riddle
-in a short time. If \(y\) doesn't manage to solve the riddle, \(x\) will
-disconnect the link to \(y\). The same happens the other way: \(y\) will send
-\(x\) periodic riddles, and ask \(x\) to solve those riddles. If \(x\) doesn't
-manage to solve the riddles in time, \(y\) will disconnect \(x\).
+work](http://en.wikipedia.org/wiki/Proof-of-work_system) puzzle. These are
+special riddles that are very easy to generate, very hard to solve but it is
+very easy to verify their solution.
 
-(TODO: Add a picture describing the idea of riddles in a full DHT picture)
+We will extend the idea of heartbeat, by adding a difficult riddle to
+the heartbeat. If \(x\) and \(y\) are two linked nodes in the DHT, \(x\) will
+send a riddle to \(y\) every 10 seconds, for example. \(x\) will then expect
+\(y\) to answer the riddle in a short time. If \(y\) doesn't manage to solve
+the riddle, \(x\) will disconnect the link to \(y\). The same happens the other
+way: \(y\) will send \(x\) periodic riddles, and ask \(x\) to solve those
+riddles. If \(x\) doesn't manage to solve the riddles in time, \(y\) will
+disconnect \(x\).
+
+
+<img class="wimage"
+src="${self.utils.rel_file_link("articles/dht_basic_security/riddle_exchange.svg")}"/>
+In the picture: Illustration of the riddles exchange between two linked nodes.
+Each node sends periodically a riddle to the other, and waits for a correct
+solution. <br/><br/>
 
 This is somehow like the alarm clock applications that make you solve a hard
 problem, to prove that you are awake and present. Here we use a riddle to make a
@@ -506,16 +519,22 @@ remote computer prove that he is present, and not scattered as many different
 nodes in the network.
 
 You might be wondering about the kind of "riddles" we are going to use. As we
-are dealing with computers here, it must be a hard riddle. We could use
+are dealing with computers here, it must be a hard riddle. We also have to make
+sure that the riddle is hard to solve, but easy to verify. We could use
 cryptographic hash functions to create some pretty hard riddles. Assuming that
 we have a cryptographic hash function \(f\), A famous riddle is
 to find a value \(a\) such that \(f(a|b)\) begins with \(k\) binary zeroes. (By
-| we mean concatenation of strings). As \(f\) is some general cryptographic hash
-function, we expect that the best strategy to solve this would be to randomize
-many values \(a\) until we get that \(f(a|b)\) begins with \(k\) binary zeroes.
-We should generate about \(2^k\) random values \(a\) until we get a good result
-for \(f(a|b)\). For a large enough \(k\), this would be a hard question for a
-computer.
+| we mean concatenation of strings). We could call this riddle riddle\(_b\). 
+
+As \(f\) is some general cryptographic hash function, we expect that the best
+strategy to solve this would be to randomize many values \(a\) until we get
+that \(f(a|b)\) begins with \(k\) binary zeroes.  We should generate about
+\(2^k\) random values \(a\) until we get a good result for \(f(a|b)\). For a
+large enough \(k\), this would be a hard question for a computer.
+
+Note that it is pretty easy to verify that a solution \(s\) is a correct
+solution to a given riddle\(_b\). We just make sure that \(f(s|b)\) begins with
+\(k\) binary zeroes.
 
 Now let's go back to the Adversary point of view. We want to check if we managed
 to bound the amount of corrupt nodes an adversary can insert into the network.
@@ -555,6 +574,7 @@ network. Next we discussed different methods of choosing the Identities for a
 DHT from the security perspective. We found that using Hashed IP addresses could
 be practical as a DHT Identity, but they rely on the structure of the Internet,
 somehow. Finally we showed a simple method of bounding the amount of corrupt
-nodes in our network, relying on the scarcity of computing power.
+nodes in our network, relying on the scarcity of computing power. Generally
+speaking, we have seen that DHT are pretty hard to secure in the wild.
 
 </%block>
