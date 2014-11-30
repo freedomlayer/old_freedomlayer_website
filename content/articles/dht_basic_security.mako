@@ -8,8 +8,7 @@
     "author": "real",\
     "number":5,\
     "tags": [],\
-    "draft":"True",\
-    
+    "draft":"True"}
 
 %>
 </%def>
@@ -24,15 +23,17 @@ ceil and floor latex macros:
   
 \)
 
-In (TODO: previous article) we talked about the Chord ring structure and about
-how to "stabilize" it. By stabilizing we referred to the task of maintaining the
-structure, despite the rapid changes the happen in the network. (Nodes joining,
-leaving and failing).
+<h4>Abstract</h4>
+We are going to talk about some very basic techniques of securing a DHT
+(Distributed Hash Table). We begin by discussing the kind of Adversary are we
+going to defend against. We then move on to some ideas regarding the choice of
+Identities in a DHT. Finally we present a simple idea about bounding the amount
+of adversarial nodes that manage to get into our network.
 
-We haven't addressed some issues yet though. To some of them we are going to
-come back in future articles. This time I want to talk about general ideas of
-securing Chord, or even more generally, **securing a DHT**.
+Most of the talk is going to be pretty informal, though it serves as a useful
+down to earth introduction to the subject.
 
+<h5>DHT Reminder</h5>
 Before we move on to talk about security , We review again the basic functions
 of our DHT. In the lower level of the DHT structure, it means the ability to
 search for node \(\floor{v}\) given the value \(v\). In the higher level
@@ -127,14 +128,14 @@ wanted he could make anything out of this network, because really, he owns this
 network. He was a majority of "corrupt" nodes.
 
 This kind of attack where an adversary inserts a large amount of "corrupt" nodes
-into a network is also known as Sybil Attack. (TODO: Add link here)
+into a network is also known as [Sybil Attack](http://en.wikipedia.org/wiki/Sybil_attack)
 This kind of attack is not specific to DHTs. It is related to any distributed
 network where all the nodes have symmetric roles. It is probably the first
 attack to consider when you hear about a fully distributed technology.
 
-You might be wondering what could be done about the Sybil Attack. We won't solve
-it now, sorry. We need something extra to solve it. I just wanted you to know
-about it. At this point we will try to come up with a weaker adversary.
+The Sybil attack is one of the fundamental issues we have to deal with when
+designing anything that is really distributed. We will not solve this at this
+point, but we are going to talk about it more in the future.
 
 <h5>Node bounded Adversary</h5>
 
@@ -460,14 +461,100 @@ some kind of **external scarcity**, like real world ID cards. Every node that
 wants to join the network should first be represented by a person in the real
 world, handing over his (real world) ID card to some central authority.
 
-TODO: Continue here. (Explain about why we tend to follow the scarcity idea. We
-assume that there are more good people than bad ones in the world?)
+There is probably something deeper about the scarcity idea. I say probably,
+because we don't have any rigorous theory yet about it, but it seems like most
+distributed systems today that are able to deal with Sybil attacks are based
+on some kind of scarcity. That scarcity makes it hard for any participant to
+insert many nodes into the network, as every node is linked to some amount of
+that scarce resource.
 
-Following this naive idea, we will try to use a different kind of scarcity:
-Computing power. This kind of scarcity is widely used in
+In this example we are going to use Computing power as a scarce resource. This
+kind of scarcity is widely used in
 [Bitcoin](http://en.wikipedia.org/wiki/Bitcoin) based crypto currencies.
 
+Recall that a DHT structure is based on links between nodes. Every node is
+linked to a few other nodes, allowing strong network connectivity and fast
+network traversal (Fast searching) at the same time. Also recall that to
+maintain a link between two nodes, we proposed the idea of
+[heartbeats](http://en.wikipedia.org/wiki/Heartbeat_%28computing%29). Messages
+are sent in constant time interval between two nodes, to make sure that the
+remote node is alive.
 
+Every node in the network has to maintain a few links with other nodes.
+Maintaining a link requires sending periodic heartbeat messages, which is not
+very computationaly expensive. It would be interesting if we could make the task
+of maintaining a link computationly expensive. In that case, the more nodes the
+adversary inserts into the network, the more links he will have to maintain. A
+computationally bounded Adversary will not be able to insert too many nodes, as
+he won't be able to maintain all the links.
 
+One way to make the task of maintaining links more difficult is using a [proof of
+work](http://en.wikipedia.org/wiki/Proof-of-work_system) puzzle. We will extend
+the idea of heartbeat, by adding a difficult riddle to the heartbeat. If \(x\)
+and \(y\) are two linked nodes in the DHT, \(x\) will send a riddle to \(y\)
+every 10 seconds, for example. \(x\) will then expect \(y\) to answer the riddle
+in a short time. If \(y\) doesn't manage to solve the riddle, \(x\) will
+disconnect the link to \(y\). The same happens the other way: \(y\) will send
+\(x\) periodic riddles, and ask \(x\) to solve those riddles. If \(x\) doesn't
+manage to solve the riddles in time, \(y\) will disconnect \(x\).
+
+(TODO: Add a picture describing the idea of riddles in a full DHT picture)
+
+This is somehow like the alarm clock applications that make you solve a hard
+problem, to prove that you are awake and present. Here we use a riddle to make a
+remote computer prove that he is present, and not scattered as many different
+nodes in the network.
+
+You might be wondering about the kind of "riddles" we are going to use. As we
+are dealing with computers here, it must be a hard riddle. We could use
+cryptographic hash functions to create some pretty hard riddles. Assuming that
+we have a cryptographic hash function \(f\), A famous riddle is
+to find a value \(a\) such that \(f(a|b)\) begins with \(k\) binary zeroes. (By
+| we mean concatenation of strings). As \(f\) is some general cryptographic hash
+function, we expect that the best strategy to solve this would be to randomize
+many values \(a\) until we get that \(f(a|b)\) begins with \(k\) binary zeroes.
+We should generate about \(2^k\) random values \(a\) until we get a good result
+for \(f(a|b)\). For a large enough \(k\), this would be a hard question for a
+computer.
+
+Now let's go back to the Adversary point of view. We want to check if we managed
+to bound the amount of corrupt nodes an adversary can insert into the network.
+Assume that some adversary wants to insert many corrupt nodes into the network.
+Each of those corrupt nodes has to maintain a few links, to be considered as
+part of the network. If the adversary wants to insert \(m\) corrupt nodes, and
+maintaining links of some node inside the network costs \(t\) basic calculation
+units per second, then the adversary will need about \(mt\) basic calculation
+units per second to maintain \(m\) corrupt nodes inside the network.
+
+Assuming that the Adversary is capable of \(Q\) calculation units per second, we
+get that the maximum amount of corrupt nodes that could stay inside the network
+is about \(\frac{Q}{t}\). Note that if the cost of maintaining a node inside the
+network, \(t\), is increased, the adversary can insert less corrupt nodes into
+the network, however at the same time it becomes less comfortable for a correct
+node to stay linked in the network. There is some tradeoff here.
+
+One question that I leave you to think about - How could we avoid the following
+situation: Assume that a corrupt node \(z\) is connected to two correct nodes
+\(x\) and \(y\). \(x\) sends a riddle \(R\) to \(z\), but \(z\) (As a corrupt
+node) doesn't want to invest the time in solving the riddle \(R\). Therefore
+\(z\) forwards the riddle \(R\) to \(y\), asking him to solve that riddle. \(y\)
+is an innocent correct node, and he solves the riddle \(R\), sending back the
+solution \(S\) to \(z\). \(z\) then returns the solution \(S\) back to \(x\),
+and \(x\) accepts the solution. This way \(z\) doesn't have to solve any riddles
+that \(x\) sends.
+
+As a final note about this example - We managed to find a way to bound the
+amount of corrupt nodes in the network, assuming that our adversary is
+computationally bounded. We used scarcity of computing power, and linked it to
+maintanence of a node in the network.
+
+<h4>Summary</h4>
+We described shortly our network enemy - The Adversary, and talked about the
+Sybil attack: An attack that happens when too many corrupt nodes are inside the
+network. Next we discussed different methods of choosing the Identities for a
+DHT from the security perspective. We found that using Hashed IP addresses could
+be practical as a DHT Identity, but they rely on the structure of the Internet,
+somehow. Finally we showed a simple method of bounding the amount of corrupt
+nodes in our network, relying on the scarcity of computing power.
 
 </%block>
