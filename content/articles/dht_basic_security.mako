@@ -553,14 +553,21 @@ the network, however at the same time it becomes less comfortable for a correct
 node to stay linked in the network. There is some tradeoff here.
 
 One question that I leave you to think about - How could we avoid the following
-situation: Assume that a corrupt node \(z\) is connected to two correct nodes
-\(x\) and \(y\). \(x\) sends a riddle \(R\) to \(z\), but \(z\) (As a corrupt
-node) doesn't want to invest the time in solving the riddle \(R\). Therefore
-\(z\) forwards the riddle \(R\) to \(y\), asking him to solve that riddle. \(y\)
-is an innocent correct node, and he solves the riddle \(R\), sending back the
-solution \(S\) to \(z\). \(z\) then returns the solution \(S\) back to \(x\),
-and \(x\) accepts the solution. This way \(z\) doesn't have to solve any riddles
-that \(x\) sends.
+situation (Riddle redirection): Assume that a corrupt node \(z\) is connected
+to two correct nodes \(x\) and \(y\). \(x\) sends a riddle \(R\) to \(z\), but
+\(z\) (As a corrupt node) doesn't want to invest the time in solving the riddle
+\(R\). Therefore \(z\) forwards the riddle \(R\) to \(y\), asking him to solve
+that riddle. \(y\) is an innocent correct node, and he solves the riddle \(R\),
+sending back the solution \(S\) to \(z\). \(z\) then returns the solution \(S\)
+back to \(x\), and \(x\) accepts the solution. This way \(z\) doesn't have to
+solve any riddles that \(x\) sends.  
+
+<img class="wimage"
+src="${self.utils.rel_file_link("articles/dht_basic_security/riddle_redirection.svg")}"/>
+In the picture: The riddle redirection attack illustrated. How can you solve
+it?
+<br/><br/>
+
 
 As a final note about this example - We managed to find a way to bound the
 amount of corrupt nodes in the network, assuming that our adversary is
