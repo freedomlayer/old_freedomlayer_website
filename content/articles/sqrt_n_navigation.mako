@@ -137,14 +137,118 @@ maintains \(r = \sqrt{n \log{n}}\) randomly chosen virtual neighbours.
 
 <h4>Randomizing Virtual Neighbours</h4>
 
+As one of the nodes in the network, Getting random virtual neighbours is
+nontrivial. This is mostly because a node in the network doesn't have a full
+view of the network. He only knows about his immediate neighbours.
+
+One approach to get a random virtual neighbour is **random walking**. Random
+walking in a graph (Or a network) means that we begin from some node, and in
+every iteration we pick a neighbour randomly, and move to that neighbour.
+
+(TODO: A picture of a random walk in a graph)
+
+Can we really get to random nodes in the graph using this method? 
+It turns out that if we walk a really long time on a graph, the [probability to
+end up on a node is proportional to his graph
+degree](http://www.cs.elte.hu/~lovasz/erdos.pdf). This is pretty random if most
+nodes have the same amount of immediate neighbours.
+
+Next, we want to figure out how many steps we should random walk before we get
+close enough to the stated distribution. The amount of steps required is also
+known as the [mixing
+time](http://en.wikipedia.org/wiki/Markov_chain_mixing_time) of the system. 
+ 
+For some graphs we will have to random walk for a very long time before we get
+to somehow random nodes. In other words: Some graphs have a very large mixing
+time. We will be generous and assume that our network has a small mixing time.
+About \(\log{n}\) steps. In another formulation, we will say that it is **Fast
+Mixing**. How can we know that our network is really fast mixing? We don't
+know, but we will assume it is for now, and see what we can do with it.
 
 
+<h5>Getting Random nodes by random walking</h5>
 
+Given the fast mixing assumption on our network, we can obtain random virtual
+neighbours using the following method:
 
+A node \(x\) will generate a "random walking message" \(m\). It will then
+include his identity on the message, and send \(m|x\) to one of his immediate
+neighbours (He will pick one randomly). Assume that the immediate neighbour
+\(x_1\) was picked. \(x_1\) will then forward the message to some random
+immediate neighbour of his, \(x_2\). \(x_1\) will send \(x_2\) the message
+\(m|x|x_1\). \(x_2\) will send the message \(m|x|x_1|x_2\) to a random
+immediate neighbour of his, \(x_3\), and so on.
 
+The message forwarding will stop after \(\log{n}\) iterations. (The message
+contains the full path history, so it is possible to know the path length).
+Then the last node that got the random walking message, \(x_w\), will send a
+message to \(x\) along the reversed path. \(x_w\) and \(x\) will then become
+virtual neighbours.
 
+As we assume that the network is fast mixing, \(x_w\) should be a random node
+in the network, and therefore we found a way to get random virtual neighbours
+for the node \(x\).
 
+\(x\) will repeat the same process, to obtain a total of \(\r =
+sqrt{n\log{n}}\) virtual neighbours. \(x\) will also have to maintain those
+virtual neighbours by sending (and responding to) periodic heartbeats. If any
+of those virtual neighbours fail, \(x\) will find a new virtual neighbour.
 
+<h5>Putting everything together</h5>
+
+Let's review our full solution. Every node sends "random walk messages" to
+obtain a total of \(\r = sqrt{n\log{n}}\). Then whenever a node \(a\) wants to
+send a message to some other node \(b\), \(a\) will ask all of its virtual
+neighbours if they have \(b\) as a virtual neighbour. With high probability
+(more than \(1 - \frac{1}{n}\)) one of \(a\)'s virtual neighbours, \(x\), will have
+\(b\) as a virtual neighbour. Then \(a\) already know a path of nodes from
+\(a\) to \(x\), and \(x\) knows a path of nodes from \(x\) to \(b\). Using
+information from \(x\), \(a\) could learn about a path from \(a\) to \(b\).
+That path could be used to send messages between \(a\) and \(b\). Note that the
+path between \(a\) and \(b\) will be of length about \(2\cdot\log{n}\), which
+is not very long.
+
+<h4>Practicality questions</h4>
+
+In the proposal above we get that every node has to maintain contact with about
+\(r = \sqrt{n\log{n}}\) virtual nodes. That means that every node \(x\) in the
+network has to receive and send heartbeats periodically to \(r\) nodes.
+
+In addition, whenever a node \(a\) wants to set up a path to some other node
+\(b\), \(a\) will first ask all of its \(r\) virtual neighbours if they know
+\(a\). 
+
+For big values of \(n\), this could get impractical. For example,
+If \(n = 2^{40}\), we get that \(r = 2^{20}\cdot 20 \approx 2^{24}\). Sending
+\(2^{24}\) messages to form connection with a remote node could be too much. In
+addition, every node has to keep sending periodic heartbeats to his \(2^{24}\)
+virtual neighbours. This could be expensive.
+
+A further question might be regarding the fast mixing nature of networks. You
+might be wondering if the network in our case is expected to be fast mixing.
+(In other words - It has the property that random walks produce random nodes
+pretty quickly). We don't have an exact answer for this one.
+
+If our network looks like a [random
+graph](http://en.wikipedia.org/wiki/Random_graph), we expect it to be fast
+mixing. In addition, it seems like some researchers believe typical social
+networks are fast mixing. (There are many articles about it, just search for
+"social networks fast mixing" and see what you get). However, If our networks
+looks like a grid (This could happen if we just connect close devices using
+wireless), it is probably not very fast mixing.
+
+Going backwards a bit, why do we care at all about the network being fast
+mixing? What if it is "slow mixing"? Couldn't we just use very long random
+walks until we get a random node? The answer is that we could take longer
+random walks, however the longer the path between a node \(x\) and a virtual
+node \(y\), the less reliable the connection. We haven't considered adversarial
+nodes in this case, but note that the longer the path, the more likely it is
+that it contains some corrupt node that belongs to the adversary.
+
+Longer paths also mean higher latency (It takes longer time to send and receive
+messages), but we have more serious issues to care about at this point.
+
+<h4>Summary</h4>
 
 
 </%block>
