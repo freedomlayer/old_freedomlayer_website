@@ -8,7 +8,8 @@
     "author": "real",\
     "number":5,\
     "tags": [],\
-    "draft":"True"}
+    "draft":"False",\
+    "description":"Basic ideas regarding the security of a DHT."}
 
 %>
 </%def>
