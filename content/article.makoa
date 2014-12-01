@@ -1,19 +1,41 @@
 <%inherit file="/web_page.makoa"/>
 
 <%block name="web_page_header">
-	<%
-		p_meta = self.post_metadata()
-	%>
-	<title>FreedomLayer | Articles | ${p_meta["title"]}</title>
-	<%block name="article_header"/>
+<%
+        p_meta = self.post_metadata()
+%>
+<title>FreedomLayer | Articles | ${p_meta["title"]}</title>
+<%block name="article_header"/>
 </%block>
 
 <%block name="web_page_body">
-	<%
-		p_meta = self.post_metadata()
-	%>
-	<h1>Articles</h1>
-	## Article's title:
-	<h2>${p_meta["title"]}</h2> by ${p_meta["author"]}, ${p_meta["date"]}
-	<%block name="article_body"/>
+<%
+        p_meta = self.post_metadata()
+%>
+<h1>Articles</h1>
+## Article's title:
+<h2>${p_meta["title"]}</h2> by ${p_meta["author"]}, ${p_meta["date"]}
+<%block name="article_body"/>
+
+<br/><br/>
+<h3>What to do now?</h3>
+<ul>
+
+<li>Have a question, comment or an interesting idea? 
+Send it at the <a
+href="${self.utils.rel_file_link("pages/mailing_lists.html")}">
+Research mailing list</a>, or contact us at real(&)freedomlayer.org</li>
+
+<li>
+<a href="${self.utils.rel_file_link("articles_feed.rss")}">
+<img src="${self.utils.rel_file_link("pics/feed_icon_small.png")}"/>
+Subscribe</a> to the articles feed.
+</li>
+
+<li>Read other articles at the <a
+href="${self.utils.rel_file_link("articles_index.html")}">articles index</a>.</li>
+
+<li>Read <a href="${self.utils.rel_file_link("pages/about.html")}">about</a> the Freedom Layer project.</li>
+
+</ul>
 </%block>
