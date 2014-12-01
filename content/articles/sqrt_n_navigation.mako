@@ -4,12 +4,13 @@
 <%
     return {\
     "title": "Sqrt(n) mesh navigation",\
-    "date": "2014-11-27 10:03",\
+    "date": "2014-12-01 20:22",\
     "author": "real",\
-    "number":5,\
+    "number":6,\
     "tags": [],\
     "draft":"True",\
-    "description":""}
+    "description":"Routing messages in a fast mixing mesh network by making every node 
+maintain \(\sqrt{n\log{n}}\) virtual connections."}
 
 %>
 </%def>
