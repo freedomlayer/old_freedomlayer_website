@@ -3,14 +3,14 @@
 <%def name="post_metadata()">
 <%
     return {\
-    "title": "Sqrt(n) mesh navigation",\
+    "title": "Sqrt(n) mesh routing",\
     "date": "2014-12-01 20:22",\
     "author": "real",\
     "number":6,\
     "tags": [],\
     "draft":"True",\
-    "description":"Routing messages in a fast mixing mesh network by making every node 
-maintain \(\sqrt{n\log{n}}\) virtual connections."}
+    "description":"Routing messages in a fast mixing mesh network by making \
+every node maintain \(\sqrt{n\log{n}}\) virtual connections."}
 
 %>
 </%def>
@@ -129,7 +129,7 @@ virtual neighbours. The probability that some specific virtual neighbour of
 Thus the probability that all of \(a\)'s virtual neighbours don't know \(b\)
 is: 
 
-\[p = (1 - \frac{r}{n})^r \leq e^{\frac{-r^2}{n}}\]
+\[p = \left(1 - \frac{r}{n}\right)^r \leq e^{\frac{-r^2}{n}}\]
 
 We want to get a value for \(p\) that is very close to \(0\), and becomes
 smaller as \(n\) increases.
@@ -196,15 +196,15 @@ As we assume that the network is fast mixing, \(x_w\) should be a random node
 in the network, and therefore we found a way to get random virtual neighbours
 for the node \(x\).
 
-\(x\) will repeat the same process, to obtain a total of \(\r =
-sqrt{n\log{n}}\) virtual neighbours. \(x\) will also have to maintain those
+\(x\) will repeat the same process, to obtain a total of \(r =
+\sqrt{n\log{n}}\) virtual neighbours. \(x\) will also have to maintain those
 virtual neighbours by sending (and responding to) periodic heartbeats. If any
 of those virtual neighbours fail, \(x\) will find a new virtual neighbour.
 
 <h5>Putting everything together</h5>
 
 Let's review our full solution. Every node sends "random walk messages" to
-obtain a total of \(\r = sqrt{n\log{n}}\). Then whenever a node \(a\) wants to
+obtain a total of \(r = \sqrt{n\log{n}}\). Then whenever a node \(a\) wants to
 send a message to some other node \(b\), \(a\) will ask all of its virtual
 neighbours if they have \(b\) as a virtual neighbour. With high probability
 (more than \(1 - \frac{1}{n}\)) one of \(a\)'s virtual neighbours, \(x\), will have
@@ -257,7 +257,7 @@ messages), but we have more serious issues to care about at this point.
 
 <h4>Summary</h4>
 In a fast mixing network, given that every node maintains connections to \(r
-= \sqrt{n\log{n}} virtual nodes, every node \(a\) in the network can form a short
+= \sqrt{n\log{n}}\) virtual nodes, every node \(a\) in the network can form a short
 path to any other node \(b\). Using that path \(a\) could send messages that
 will arrive at \(b\). Forming the path from \(a\) to \(b\) requires \(a\) to
 send about \(r = \sqrt{n\log{n}}\) messages first, though.
