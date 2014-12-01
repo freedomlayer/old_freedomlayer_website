@@ -52,7 +52,7 @@ wants to disrupt the DHT functions.  By entity we don't just mean one node, or
 one computer, or even one person. The adversary could mean many things. More
 than something realistic, it is an entity that helps us think about security.
 It's like a game. We give the adversary certain powers, and see if our model can
-deal with it. In some sense, our Adversariel model is really our understanding
+deal with it. In some sense, our Adversarial model is really our understanding
 of reality. If all of this sounds too abstract to you, don't worry, we are soon
 going to see some examples.
 
@@ -119,7 +119,7 @@ things the adversary can do:
   a key \(k\)).  To do this, The adversary could insert many nodes into the
   network with random IDs (Remember that every node has some ID). If the
   adversary has a very big amount of nodes, with some high probability the key
-  \(k\) will be under the responsibility of a corrupt node. Then whever that
+  \(k\) will be under the responsibility of a corrupt node. Then whenever that
   key is asked for, the adversary could return some other value \(v'\) instead
   of \(v\), or just not return anything.
 
@@ -139,7 +139,7 @@ point, but we are going to talk about it more in the future.
 
 <h5>Node bounded Adversary</h5>
 
-We have seen that we can't defend outselves at this point from an adversary that
+We have seen that we can't defend ourselves at this point from an adversary that
 inserts unlimited amount of nodes into the network. So let's put a limit to the
 amount of nodes the adversary can insert.
 
@@ -203,7 +203,7 @@ methods here.
 <h5>Random Identities</h5>
 
 A simple solution for the Identity choice would be to let every new node in the
-network pick a random Identity number. If we are talkin about Chord, that random
+network pick a random Identity number. If we are talking about Chord, that random
 Identity number will be a random bit string of size \(s\) bits. If all the nodes
 are correct and \(s\) is [large
 enough](http://en.wikipedia.org/wiki/Birthday_problem), we can be pretty sure
@@ -486,8 +486,8 @@ remote node is alive.
 
 Every node in the network has to maintain a few links with other nodes.
 Maintaining a link requires sending periodic heartbeat messages, which is not
-very computationaly expensive. It would be interesting if we could make the task
-of maintaining a link computationly expensive. In that case, the more nodes the
+very computationally expensive. It would be interesting if we could make the task
+of maintaining a link computationally expensive. In that case, the more nodes the
 adversary inserts into the network, the more links he will have to maintain. A
 computationally bounded Adversary will not be able to insert too many nodes, as
 he won't be able to maintain all the links.
@@ -550,7 +550,7 @@ get that the maximum amount of corrupt nodes that could stay inside the network
 is about \(\frac{Q}{t}\). Note that if the cost of maintaining a node inside the
 network, \(t\), is increased, the adversary can insert less corrupt nodes into
 the network, however at the same time it becomes less comfortable for a correct
-node to stay linked in the network. There is some tradeoff here.
+node to stay linked in the network. There is some trade-off here.
 
 One question that I leave you to think about - How could we avoid the following
 situation (Riddle redirection): Assume that a corrupt node \(z\) is connected
@@ -572,7 +572,7 @@ it?
 As a final note about this example - We managed to find a way to bound the
 amount of corrupt nodes in the network, assuming that our adversary is
 computationally bounded. We used scarcity of computing power, and linked it to
-maintanence of a node in the network.
+maintenance of a node in the network.
 
 <h4>Summary</h4>
 We described shortly our network enemy - The Adversary, and talked about the
