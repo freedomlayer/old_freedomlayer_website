@@ -26,7 +26,14 @@ ceil and floor latex macros:
 
 <h4>Abstract</h4>
 
-(TODO: fill in)
+We introduce a message routing mechanism in which every node has to maintain
+contact with a bit more than \(\sqrt{n}\) random nodes in the network. Given
+that set up, every two nodes can form a short communication path between them
+that allows to send and receive messages. This mechanism is a bit more
+efficient than flooding, but it is expected to work well only on some kinds of
+networks.
+
+<h4>The message routing problem</h4>
 
 Assume that we have a set of \(n\) correct nodes (No adversary). Each
 node is directly connected to some other nodes (About \(log(n)\) direct
@@ -45,7 +52,6 @@ discussed the
 [flooding](http://en.wikipedia.org/wiki/Flooding_%28computer_networking%29)
 solution. We have seen that it works, but it is not very efficient: Every
 message sent in the network has to pass through all the nodes in the network.
-
 
 <h4>Virtual Neighbours</h4>
 
@@ -249,6 +255,14 @@ Longer paths also mean higher latency (It takes longer time to send and receive
 messages), but we have more serious issues to care about at this point.
 
 <h4>Summary</h4>
+In a fast mixing network, given that every node maintains connections to \(r
+= \sqrt{n\log{n}} virtual nodes, every node \(a\) in the network can form a short
+path to any other node \(b\). Using that path \(a\) could send messages that
+will arrive at \(b\). Forming the path from \(a\) to \(b\) requires \(a\) to
+send about \(r = \sqrt{n\log{n}}\) messages first, though.
 
+This result might be enough for small networks, however for larger networks
+This is not a very efficient result. It is better than flooding, though,  which
+is a step forward.
 
 </%block>
