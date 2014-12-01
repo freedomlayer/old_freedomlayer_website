@@ -42,6 +42,12 @@ search for node \(\floor{v}\) given the value \(v\). In the higher level
 
 <h4>The Adversary</h4>
 
+<span class="famous_quote">
+"It is not cowardly, quite the contrary, to seek to meet the adversary and know
+his intentions. However, it is cowardly, shameful and treasonable to lay down
+arms."</span> (King Hassan II.)
+
+
 The first thing we want to do when talking about security is to define the
 adversary. We will discuss it in a very informal manner, because this is just an
 introduction to this subject. Our informal definitions here will be good enough
