@@ -14,7 +14,7 @@ First ideas
 	- Simple stability tricks.  V
 	- Basic security ideas (The Sybil Attack, Choosing the Identities) V
 
-- Random walks and the sqrt(n) idea.
+- Random walks and the sqrt(n) idea. V
 
 - DHTs and the mesh.
 	- The CJDNS idea and its performance. (Virtual DHT article too?)
