@@ -1,3 +1,4 @@
+## -*- coding: utf-8 -*-
 <%inherit file="/article.makoa"/>
 
 <%def name="post_metadata()">
@@ -454,9 +455,10 @@ they can contact each other quickly, and at the same time each node doesn't have
 remember too many addresses of other nodes.
 
 The construct we have described is related to an idea called [The Chord
-DHT](http://en.wikipedia.org/wiki/Chord_(peer-to-peer)). You can find the
-original article
-[here](http://pdos.csail.mit.edu/papers/chord:sigcomm01/chord_sigcomm.pdf)
+DHT](http://en.wikipedia.org/wiki/Chord_(peer-to-peer)). You are encouraged to
+check the original article: [Chord: A scalable Peer-to-peer Lookup Service for
+internet
+Applications](http://pdos.csail.mit.edu/papers/chord:sigcomm01/chord_sigcomm.pdf).
 
 
 <h3>Distributed Hash Tables (DHTs)</h3>
@@ -548,7 +550,10 @@ other possible designs for DHT which we haven't talked about. Our space of
 names was a ring, with a distance function of walking clockwise. There are
 other spaces with different distance functions that give nice results. One
 notable example is the [Kademlia DHT](http://en.wikipedia.org/wiki/Kademlia),
-which uses XOR as a metric.
+which uses XOR as a metric. You can (And probably should) read the original
+Kademlia article: [Kademlia: A peer-to-peer Information System based on the XOR
+metric](http://pdos.csail.mit.edu/~petar/papers/maymounkov-kademlia-lncs.pdf),
+by Petar Maymounkov and David Mazières.
 
 We discussed the problem generally, but we didn't address a few important
 issues. We didn't address stability issues (What happens if some node on the
