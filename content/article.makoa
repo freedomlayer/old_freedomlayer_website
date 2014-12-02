@@ -14,7 +14,7 @@
 %>
 <h1>Articles</h1>
 ## Article's title:
-<h2>${p_meta["title"]}</h2> by ${p_meta["author"]}, ${p_meta["date"]}
+<h2>${p_meta["title"]}</h2> by ${p_meta["author"]}
 <%block name="article_body"/>
 
 <br/><br/>
