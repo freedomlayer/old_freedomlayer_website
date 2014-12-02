@@ -8,7 +8,7 @@
     "author": "real",\
     "number":6,\
     "tags": [],\
-    "draft":"True",\
+    "draft":"False",\
     "description":"Routing messages in a fast mixing mesh network by making \
 every node maintain \(\sqrt{n\log{n}}\) virtual connections."}
 
@@ -34,7 +34,7 @@ that allows to send and receive messages. This mechanism is a bit more
 efficient than flooding, but it is expected to work well only on some kinds of
 networks.
 
-This article was inspired by the ideas in [A sybil Proof one hop
+This article was inspired by the ideas in [A sybil proof one hop
 DHT](http://pdos.csail.mit.edu/papers/sybil-dht-socialnets08.pdf) by Chris
 Lesniewski-Laas. 
 
@@ -300,7 +300,7 @@ This result might be enough for small networks, however for larger networks
 This is not a very efficient result. It is better than flooding, though,  which
 is a step forward.
 
-As a note about further reading, the article [A sybil Proof one hop
+As a note about further reading, the article [A sybil proof one hop
 DHT](http://pdos.csail.mit.edu/papers/sybil-dht-socialnets08.pdf)
 by Chris Lesniewski-Laas also talks about dealing with an adversary using the
 scarcity of network connections (The adversary might find it difficult to get
