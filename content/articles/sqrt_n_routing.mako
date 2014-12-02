@@ -34,6 +34,10 @@ that allows to send and receive messages. This mechanism is a bit more
 efficient than flooding, but it is expected to work well only on some kinds of
 networks.
 
+This article was inspired by the ideas in [A sybil Proof one hop
+DHT](http://pdos.csail.mit.edu/papers/sybil-dht-socialnets08.pdf) by Chris
+Lesniewski-Laas. 
+
 <h4>The message routing problem</h4>
 
 Assume that we have a set of \(n\) correct nodes (No adversary). Each
@@ -65,7 +69,12 @@ If a node \(x\) knows a path to some other node \(y\), \(x\) could send
 messages to \(y\) through that path, assuming that all the nodes on that path
 cooperate.
 
-(TODO: Add a picture of a path between \(x\) and \(y\)).
+<img class="wimage"
+src="${self.utils.rel_file_link("articles/sqrt_n_routing/path_x_to_y.svg")}"/>
+In the picture: Nodes are are blue points. Immediate links between nodes are
+drawn as black lines. The green lines mark a chosen path of links between the
+nodes \(x\) and \(y\).
+<br/><br/>
 
 It might be very likely that \(y\) will want to send a message back to \(x\).
 (After all, they are having a conversation). In that case, \(y\) will need to
@@ -96,8 +105,14 @@ they know \(b\) (As their virtual neighbour). One of \(a\)'s virtual
 neighbours, \(z\), should have \(b\) as a virtual neighbour. Then we could send
 a message to \(z\), and \(z\) will forward that message to \(b\).
 
-(TODO: Show a picture of \(z\) being a virtual neighbour both of \(a\) and
-\(b\))
+
+<img class="wimage"
+src="${self.utils.rel_file_link("articles/sqrt_n_routing/z_common_virtual_neighbour.svg")}"/>
+In the picture: \(a\) and \(b\) are two nodes in the network. The lines from
+\(a\) and \(b\) are paths to virtual neighbours of \(a\) and \(b\). \(z\) is
+both a virtual neighbour of \(a\) and a virtual neighbour of \(b\). With the
+help of \(z\), \(a\) and \(b\) can communicate.
+<br/><br/>
 
 To make this solution valid, we have to make sure somehow that every two nodes
 in the network have a virtual neighbour in common.
@@ -152,7 +167,13 @@ One approach to get a random virtual neighbour is **random walking**. Random
 walking in a graph (Or a network) means that we begin from some node, and in
 every iteration we pick a neighbour randomly, and move to that neighbour.
 
-(TODO: A picture of a random walk in a graph)
+<img class="wimage"
+src="${self.utils.rel_file_link("articles/sqrt_n_routing/random_walk_graph.svg")}"/>
+In the picture: An example for a random walk on a graph. Follow the numbers to
+get a feeling of the random walk. (Begin from 1). Note that some vertices have
+more than one number next to them. That is because the random walk has visited
+those vertices more than once.
+<br/><br/>
 
 Can we really get to random nodes in the graph using this method? 
 It turns out that if we walk a really long time on a graph, the [probability to
@@ -208,7 +229,7 @@ obtain a total of \(r = \sqrt{n\log{n}}\). Then whenever a node \(a\) wants to
 send a message to some other node \(b\), \(a\) will ask all of its virtual
 neighbours if they have \(b\) as a virtual neighbour. With high probability
 (more than \(1 - \frac{1}{n}\)) one of \(a\)'s virtual neighbours, \(x\), will have
-\(b\) as a virtual neighbour. Then \(a\) already know a path of nodes from
+\(b\) as a virtual neighbour. Then \(a\) already knows a path of nodes from
 \(a\) to \(x\), and \(x\) knows a path of nodes from \(x\) to \(b\). Using
 information from \(x\), \(a\) could learn about a path from \(a\) to \(b\).
 That path could be used to send messages between \(a\) and \(b\). Note that the
@@ -244,6 +265,19 @@ networks are fast mixing. (There are many articles about it, just search for
 looks like a grid (This could happen if we just connect close devices using
 wireless), it is probably not very fast mixing.
 
+<img class="wimage"
+src="${self.utils.rel_file_link("articles/sqrt_n_routing/random_graph.svg")}"/>
+In the picture: An Erdos-Renyi random graph with \(n=2^6\) and
+\(p=\frac{2\cdot 6}{2^6}\). This is an example of a fast mixing graph. You can
+browse for the code [here
+[github]](https://github.com/realcr/freedomlayer_code).
+<br/><br/>
+
+<img class="wimage"
+src="${self.utils.rel_file_link("articles/sqrt_n_routing/grid.svg")}"/>
+A grid is an example of a non fast mixing graph.
+<br/><br/>
+
 Going backwards a bit, why do we care at all about the network being fast
 mixing? What if it is "slow mixing"? Couldn't we just use very long random
 walks until we get a random node? The answer is that we could take longer
@@ -265,5 +299,11 @@ send about \(r = \sqrt{n\log{n}}\) messages first, though.
 This result might be enough for small networks, however for larger networks
 This is not a very efficient result. It is better than flooding, though,  which
 is a step forward.
+
+As a note about further reading, the article [A sybil Proof one hop
+DHT](http://pdos.csail.mit.edu/papers/sybil-dht-socialnets08.pdf)
+by Chris Lesniewski-Laas also talks about dealing with an adversary using the
+scarcity of network connections (The adversary might find it difficult to get
+links to many correct nodes), which is a pretty interesting idea.
 
 </%block>
