@@ -144,7 +144,11 @@ virtual neighbours. The probability that some specific virtual neighbour of
 Thus the probability that all of \(a\)'s virtual neighbours don't know \(b\)
 is: 
 
-\[p = \left(1 - \frac{r}{n}\right)^r \leq e^{\frac{-r^2}{n}}\]
+\[p = \left(1 - \frac{r}{n}\right)^r \leq \left(e^{-\frac{r}{n}}\right)^r =
+e^{\frac{-r^2}{n}}\]
+
+The first inequality is derived from the inequality \(1 + x \leq
+e^x\).
 
 We want to get a value for \(p\) that is very close to \(0\), and becomes
 smaller as \(n\) increases.
