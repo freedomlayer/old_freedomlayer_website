@@ -39,7 +39,9 @@ Flooding was pretty inefficient (However pretty robust and secure). The idea of
 node will maintain contact with \(\sqrt{n\log{n}}\) virtual neighbours.
 
 We will consider here a different approach for routing messages in a
-decentralized mesh network: Using a "Virtual DHT".
+decentralized mesh network: Using a "Virtual DHT". This idea is based on the
+article [Virtual Ring Routing: Network Routing Inspired by
+DHTs](http://research.microsoft.com/pubs/75325/virtualring.pdf)
 
 A similar method apparently has a working implementation in the
 [CJDNS](http://en.wikipedia.org/wiki/Cjdns) project. (Also see the
@@ -70,6 +72,8 @@ be able to find any wanted node quickly, and also pass messages quickly between
 nodes.
 
 <h4>Setup</h4>
+
+
 
 
 </%block>
