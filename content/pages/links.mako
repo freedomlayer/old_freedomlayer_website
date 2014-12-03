@@ -10,7 +10,7 @@
 Some interesting links:
 
 - [The Tor Project](https://www.torproject.org/)
+- [GNUnet](https://gnunet.org/)
 - [Project meshnet](https://projectmeshnet.org/)
-
 
 </%block>
