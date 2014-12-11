@@ -180,10 +180,42 @@ It seems like our message will go through more than \(n\) nodes, which is too
 much. Flooding could probably perform better.
 
 But it is still a start. Maybe sending messages will be very inefficient, but
-we still get a way to find a path from one node to another. As a conclusion,
-our first task is finding the successor and predecessor (With respect to the
-DHT) for every node \(x\) in the network.
+we still get a way to find a path from one node to another. It might give us
+some ideas about how to move on. As a conclusion, our first task is finding the
+successor and predecessor (With respect to the DHT) for every node \(x\) in the
+network.
 
+<h5>Asking the neighbours</h5>
+
+Every node \(x\) has only local knowledge of the network. In fact, a node \(x\)
+in the mesh network really knows nothing besides his immediate neighbours. We
+may also assume that \(x\) knows the DHT Identity of each of his neighbours.
+(This information could be passed in a message between every two adjacent nodes
+in the mesh).
+
+(TODO: Picture of what a node knows about the network: Only the immediate
+neighbours. The rest should be pictured as unknown).
+
+A naive approach would be to ask our neighbours about their neighbours, and
+then keep the result. Using this approach, every node \(x\) will have
+information about the all the nodes of network distance at most 2 from \(x\).
+
+(TODO: A picture of what \(x\) knows after asking his neighbours about their
+neighbours). 
+
+We made some progress. We could move on to let every node \(x\) know all the
+nodes in network distance 3, however as we continue exploring the network in
+this fashion it becomes less practical to remember all the nodes in distance
+\(k\) from \(x\) (Because there could be many such nodes. Probably \(c^k\),
+where \(c\) is the amount of neighbours every node has in the network). 
+In addition, it is not very useful for \(x\) to keep all those nodes, as we are
+currently only interested in \(x\)'s immediate successor and predecessors with
+respect to the DHT.
+
+One possible improvment would be to keep only the relevant nodes.
+
+
+TODO: Continue here.
 
 
 
