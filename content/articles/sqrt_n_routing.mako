@@ -271,7 +271,9 @@ wireless), it is probably not very fast mixing.
 
 <img class="wimage"
 src="${self.utils.rel_file_link("articles/sqrt_n_routing/random_graph.svg")}"/>
-In the picture: An Erdos-Renyi random graph with \(n=2^6\) and
+In the picture: An
+[Erdos-Renyi](http://en.wikipedia.org/wiki/Erd%C5%91s%E2%80%93R%C3%A9nyi_model)
+random graph with \(n=2^6\) and
 \(p=\frac{2\cdot 6}{2^6}\). This is an example of a fast mixing graph. You can
 browse for the code [here
 [github]](https://github.com/realcr/freedomlayer_code).
