@@ -248,7 +248,7 @@ Then at every iteration, the node \(x\) sends to the set of nodes closest to
 him the set of all nodes known to him. Finally, whenever a node \(x\) gets a
 set of nodes, he updates his set of closest nodes accordingly.
 
-<h6>An example</h6>
+<h5>An example</h5>
 
 Assume that \(k=3\), and that a node \(x\) has the DHT Identity 349085. Also
 assume that the set \(S_x\) of \(x\) currently contains:
@@ -260,6 +260,8 @@ Next, assume that some node \(y\) (of DHT Identity 384126) sent a message to
 \(\{(ident=349085,path_len=2), (ident=372115,path_len=1), 
 (ident=383525,path_len=2),(ident=391334,path_len=3),
 (ident=401351,path_len=4),(ident=412351,path_len=1)\}\)
+
+(TODO: Add a picture of the mentioned nodes on the chord ring.)
 
 Some explanations: In the set of nodes we mention two values: ident and
 path_len. Ident is the identity of the remote node, and path_len is the length
@@ -305,11 +307,14 @@ new shorter path. Finally we get the following \(S_x\):
 \(S_x = \{(ident=359123,path_len=6), (ident=372115,path_len=3),
 (ident=383525,path_len=4)\}\)
 
+(TODO: Add a picture of the new \(S_x\) set.)
+
 Note that after the transformation on the \(S_x\) set, \(x\) no longer has
 \(y\) inside \(S_x\). That's the irony of life. \(y\) sent \(x\) so many "good"
 nodes, that \(x\) no longer needs \(y\) as a node inside \(S_x\).
 
-<h6>Algorithm for a node</h6>
+<h5>Algorithm for a node: Converging the ring</h5>
+
 Let's put our previous words into some more formal writing.
 This is the algorithm for a node \(x\) in the network:
 
@@ -335,19 +340,81 @@ On arrival of a set of nodes \(T\) from some node \(y\):
     - Add \(t\) to \(S_x\) or \(P_x\) if it is "better" than any other node in
       one of those sets. Make sure that the sets \(S_x\) and \(P_x\) do not
       exceed the size of \(k\).
-      Note that "better" means with respect to the lexicographical order of
-      virtual distance and then network distance.
+      Note that "better" means better with respect to the lexicographical order
+      of virtual distance and then network distance.
 
 
+It could be a good point to show some code implementation, but hold on with
+this for now. We first want to generalize this idea a bit. Also note that we
+didn't yet prove anything. This is generally an interesting idea, but we don't
+yet have any mathematical (Or even experimental) results that confirm the
+correctness of this idea.
 
-    
+<h4>Converging all the fingers</h4>
 
+Recall that to have a Chord DHT with a quick lookup function, every node \(x\)
+has to maintain not only his immediate successor and predecessor, but also the
+best successor to \(x+2^{t}\) for every \(0 \leq t < s\). (And symmetrically:
+the best predecessor to \(x-2^{t}\)). The value \(x+2^{t}\) is called the
+successor finger \(t\) of \(x\). The value \(x-2^{t}\) is called the
+predecessor finger \(t\) of \(x\). (Note: recall that the addition here is done
+modulo \(2^s\)).
 
+(TODO: Add a picture here of the ring with the fingers.)
 
+So far we only dealt with the fingers \(x+1\) and \(x-1\). Those are the
+successor finger \(0\) of \(x\) and the predecessor finger \(0\) of \(x\)
+respectively. We can probably generalize our idea to the rest of the fingers,
+so that eventually every node \(x\) will find the best successor of
+\(x+2^{t}\) and the best predecessor of \(x-2^{t}\)
 
+Instead of letting every node \(x\) keep the two sets \(S_x,P_x\), we will use
+more sets, to keep the best candidates to every finger. We will call those sets
+\(S_x^0,S_x^1,\dots,S_x^{s-1}\) and \(P_x^0,P_x^1,\dots,P_x^{s-1}\). Every such
+set will be bounded to size \(k\). Note that \(S_x^0\) of the new notation is
+exactly \(S_x\) of the old notation (When we kept only the best successor).
 
+Two examples: \(P_x^3\) contains the best candidates to minimize
+\(dist(z,x+2^{3})\). \(S_x^5\) contains the best canditates to minimize
+\(dist(x+2^{5},z)\).
 
+This time, whenever a node \(x\) gets a message from some other node \(y\)
+about a set of nodes, \(x\) will update each of his \(S_x^i,P_x^i\)
+accordingly. (For \(0 \leq i < s\).
 
+<h5>Algorithm for a node: Converging the fingers</h5>
+
+We describe in a more detailed fashion the algorithm for fingers convergence
+for one node. This algorithm is not very different from the one described
+earlier. I write it here for completeness:
+
+Initialize:
+
+- for every \(0 \leq i \leq s\):
+    - Initialize \(S_x^i\) to be the \(k\) nodes that minimize
+      [lexicographically](http://en.wikipedia.org/wiki/Lexicographical_order) the
+      virtual distance **from** \(x + 2^{i}\) and the length of path known to \(x\).
+
+- for every \(0 \leq i \leq s\):
+    - Initialize \(P_x^i\) to be the \(k\) nodes that minimize
+      lexicographically the virtual distance **to** \(x - 2^{i}\) and the
+      length of path known to \(x\).
+
+Do every few seconds:
+
+Denote \(close_x = \bigcup _{0 \leq i < s} \left(S_x^i \cup P_x^i\right)\)
+
+- For every node \(z\) in \(close_x\):
+    - Send \(close_x\) to \(z\) (This includes paths description).
+
+On arrival of a set of nodes \(T\) from some node \(y\):
+
+- For every node \(t\) in \(T\):
+    - Figure out the full path from \(x\) to \(t\).
+    - for every \(0 \leq i \leq s\):
+      - Add \(t\) to \(S_x^i\) or \(P_x^i\) if it is "better" than any other
+        node in one of those sets. Make sure that the sets \(S_x^i\) and \(P_x^i\)
+        do not exceed the size of \(k\).
 
 
 
