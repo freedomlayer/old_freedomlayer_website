@@ -417,5 +417,37 @@ On arrival of a set of nodes \(T\) from some node \(y\):
         do not exceed the size of \(k\).
 
 
+<h4>Experimenting</h4>
+
+As noted above, we didn't include any proof or confirmation of the correctness
+of the presented ideas. Currently I don't know of any rigorous mathematical
+proof that shows that the methods here work.
+
+You might be curious to know what could go wrong with the idea of converging
+the fingers, for example. Let me address a few of my concerns here:
+
+- Maybe the best successor (or predecessor) for some finger is never found: for
+  some node \(x\) in the network, \(x\)'s direct successor \(y\) with respect
+  to the DHT is somewhere on the network, but \(x\) never manages to find
+  \(y\).
+
+- It could be that the best successors and predecessors are eventually found, but the
+  paths to them are too long. If the paths are too long, we get higher
+  [latency](http://en.wikipedia.org/wiki/Latency_%28engineering%29) for sending
+  messages, and it becomes harder to maintain a link to a remote node (As the
+  link existence depends on many nodes in the mesh being online at the same time).
+
+(TODO: Add a picture that demonstrates high latency).
+
+One thing that we can do to get some quick verification of our ideas is to
+write simulation code. If the simulation code shows good results, it is
+encouraging (Though it doesn't prove anything mathematically). If, however, the
+simulation shows bad results, we are pretty sure that we should try something
+else. 
+
+
+
+
+
 
 </%block>
