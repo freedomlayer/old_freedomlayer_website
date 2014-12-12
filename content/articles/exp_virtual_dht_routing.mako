@@ -449,7 +449,7 @@ I wrote simulation code for the Fingers Convergence idea in Python3. [You can
 find it here
 [github]](https://github.com/realcr/freedomlayer_code/tree/master/exp_virtual_dht_routing)
 
-I will begin with a summary of the results. 
+Let's begin with a summary of the results. 
 
 <h5>Results for Random graphs</h5>
 I run the code with networks of
@@ -461,6 +461,8 @@ Renyi](http://en.wikipedia.org/wiki/Erd%C5%91s%E2%80%93R%C3%A9nyi_model) random
 graphs. Every edge has a probability \(p = \frac{2i}{2^i}\) to exist. I chose
 \(k = i\). Recall that \(k\) is the size of set being maintained for each
 finger. In the python3 source code, \(k\) shows up as \(fk\).
+
+(TODO: Add raw results here)
 
 (TODO: Add picture: Converge_all_fingers_results.svg)
 
