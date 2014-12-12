@@ -1,5 +1,4 @@
 <%inherit file="/article.makoa"/>
-
 <%def name="post_metadata()">
 <%
     return {\
@@ -196,26 +195,157 @@ in the mesh).
 (TODO: Picture of what a node knows about the network: Only the immediate
 neighbours. The rest should be pictured as unknown).
 
-A naive approach would be to ask our neighbours about their neighbours, and
-then keep the result. Using this approach, every node \(x\) will have
-information about the all the nodes of network distance at most 2 from \(x\).
+For a node \(x\), we could traverse the whole network and find the best
+successor and predecessor (With respect to the DHT), however this will be too
+inefficient. Another idea would be to let \(x\) stay in contact only with the
+"best" nodes he knows. The nodes that have DHT Identity closest to \(x\)'s DHT
+Identity.
 
-(TODO: A picture of what \(x\) knows after asking his neighbours about their
-neighbours). 
+How to do this? \(x\) will begin from his neighbours. \(x\) will pick \(k\)
+neighbours that minimize \(dist(x,z)\), and keep them in a set called
+\(S_x\). Those are the best successors that \(x\) knows. If you were wondering
+about \(k\): we will have to choose it at some point. For now you may assume it
+is some number like \(5\).
 
-We made some progress. We could move on to let every node \(x\) know all the
-nodes in network distance 3, however as we continue exploring the network in
-this fashion it becomes less practical to remember all the nodes in distance
-\(k\) from \(x\) (Because there could be many such nodes. Probably \(c^k\),
-where \(c\) is the amount of neighbours every node has in the network). 
-In addition, it is not very useful for \(x\) to keep all those nodes, as we are
-currently only interested in \(x\)'s immediate successor and predecessors with
-respect to the DHT.
+In the same way, \(x\) will look at all of his neighbours, and pick \(k\)
+neighbours that minimize \(dist(z,x)\). (This is not the same as
+\(dist(x,z)\) !). We will denote those nodes as the set \(P_x\). This is the
+set of the best predecessors \(x\) knows so far.
 
-One possible improvment would be to keep only the relevant nodes.
+Edge case: It might be possible that \(x\) has less than \(k\) neighbours. In
+that case, the sets \(S_x,P_x\) will both contain all the neighbours of \(x\).
+
+\(x\) will also keep the path to each of the nodes inside the sets
+\(S_x,P_x\). It doesn't have much meaning in the first step of keeping the
+immediate neighbours, but if \(x\) wants to remember some other more distant
+nodes, he will have to keep the path to them too.
+
+After performing the initial step of filling in \(S_x\) and \(P_x\) from \(x\)'s
+neighbours, \(x\) will keep performing the following step: For every node \(z\)
+in \(S_x \cup P_x\): \(x\) will send to \(z\) the set \(S_x \cup P_x\). In
+other words: \(x\) sends to all of his known best successor and predecessors
+his set of best known successors and predecessors. (\(x\) can send those
+messages to all the nodes in \(S_x,P_x\) because \(x\) remembers a path to
+those nodes.)
+
+As every nodes performs this step, \(x\) itself will get sets of nodes from
+other nodes. \(x\) will then look at the set of nodes he got and update his
+sets \(S_x,P_x\) accordingly. (For example: if better successor or predecessor
+nodes were found. We prioritize "better" by first comparing virtual distance,
+and then comparing network distance). 
+
+Note that every node \(z\) that \(x\) from some other node \(y\) also contains
+a path description, to make sure \(x\) will be able to send messages to \(z\)
+in the future. This path might not be the shortest path from \(x\) to \(z\).
+
+We somehow expect that if every node performs this operation, after enough
+iterations every node \(x\) will have inside his sets \(S_x,P_x\) the best
+successor and the best predecessor (With respect to the DHT).
+
+A simple words summary of what we have done here: Every node \(x\) keeps at all
+times a size-bounded set of the nodes closest to him with respect to the DHT.
+Then at every iteration, the node \(x\) sends to the set of nodes closest to
+him the set of all nodes known to him. Finally, whenever a node \(x\) gets a
+set of nodes, he updates his set of closest nodes accordingly.
+
+<h6>An example</h6>
+
+Assume that \(k=3\), and that a node \(x\) has the DHT Identity 349085. Also
+assume that the set \(S_x\) of \(x\) currently contains:
+\(\{(ident=359123,path_len=6), (ident=372115,path_len=4),
+(ident=384126,path_len=2)\}\)
+
+Next, assume that some node \(y\) (of DHT Identity 384126) sent a message to
+\(x\) with the following set of nodes:
+\(\{(ident=349085,path_len=2), (ident=372115,path_len=1), 
+(ident=383525,path_len=2),(ident=391334,path_len=3),
+(ident=401351,path_len=4),(ident=412351,path_len=1)\}\)
+
+Some explanations: In the set of nodes we mention two values: ident and
+path_len. Ident is the identity of the remote node, and path_len is the length
+of the shortest network path known to the remote node. For clarity we don't
+show here the full description of the path, but that information should be kept
+too.
+
+Another thing to note in this example is that \(y\) is inside \(S_x\). You can
+also find \(x\) inside the set of nodes sent from \(y\). Although in this
+example \(y \in S_x\), this will not always be the case. \(x\) might get a
+message from nodes that he doesn't know, because of some referral from another
+node that knows \(x\).
+
+Let's analyze what happens in the above example. \(x\) receives the message,
+and now he should update his sets \(S_x,P_x\). For clarity in this example we
+only look at what happens to the set \(S_x\). The nodes with idents
+391334,401351,412351 will not fit into \(S_x\), because all the nodes inside
+\(S_x\) have shorter virtual distance from \(x\). Therefore we are left to deal
+with the nodes of DHT identities: 349085,372115,383525.
+
+349085 is \(x\)'s DHT Identity value, so \(x\) can just discard it. 383525
+seems to be a better choice than 384126 that \(x\) currently have inside his
+\(S_x\) set. To put 383525 into \(S_x\) we first have to calculate the path
+from \(x\) to 383525. \(x\) knows the path from \(x\) to \(y\). (It is of size
+2 in this example). The length of the path known to \(y\) from \(y\) to 383525
+is 2. (See the path_len argument of ident 383525). Therefore we get a total of
+path length \(2+2 = 4\). Thus the new \(S_x\) will now contain:
+
+\(S_x = \{(ident=359123,path_len=6), (ident=372115,path_len=4),
+(ident=383525,path_len=4)\}\)
+
+We are not done yet. We still have to deal with 372115. \(x\) already has
+372115 inside his set \(S_x\), but maybe \(x\) could get a shorter path to
+372115. \(y\)'s network distance from 372115 is 1 (See the path_len argument
+for 372115 inside the message sent from \(y\).) \(y\)'s network distance from
+\(x\) is 2. Therefore we get a total path length of \(2+1=3\) between \(x\) and
+372115. This new path length is shorter than the older path \(x\) has to
+372115.
+
+In this case, \(x\) will just update the path description to 372115 to be the
+new shorter path. Finally we get the following \(S_x\):
+
+\(S_x = \{(ident=359123,path_len=6), (ident=372115,path_len=3),
+(ident=383525,path_len=4)\}\)
+
+Note that after the transformation on the \(S_x\) set, \(x\) no longer has
+\(y\) inside \(S_x\). That's the irony of life. \(y\) sent \(x\) so many "good"
+nodes, that \(x\) no longer needs \(y\) as a node inside \(S_x\).
+
+<h6>Algorithm for a node</h6>
+Let's put our previous words into some more formal writing.
+This is the algorithm for a node \(x\) in the network:
+
+Initialize:
+
+- Initialize \(S_x\) to be the \(k\) nodes that minimize
+  [lexicographically](http://en.wikipedia.org/wiki/Lexicographical_order) the
+  virtual distance **from** \(x\) and the length of path known to \(x\).
+
+- Initialize \(P_x\) to be the \(k\) nodes that minimize
+  lexicographically the virtual distance **to** \(x\) and the length of path
+  known to \(x\).
+
+Do every few seconds:
+
+- For every node \(z\) in \(S_x \cup P_x\):
+    - Send \(S_x \cup P_x\) to \(z\) (This includes paths description).
+
+On arrival of a set of nodes \(T\) from some node \(y\):
+
+- For every node \(t\) in \(T\):
+    - Figure out the full path from \(x\) to \(t\).
+    - Add \(t\) to \(S_x\) or \(P_x\) if it is "better" than any other node in
+      one of those sets. Make sure that the sets \(S_x\) and \(P_x\) do not
+      exceed the size of \(k\).
+      Note that "better" means with respect to the lexicographical order of
+      virtual distance and then network distance.
 
 
-TODO: Continue here.
+
+    
+
+
+
+
+
 
 
 
