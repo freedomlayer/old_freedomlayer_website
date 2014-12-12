@@ -462,6 +462,8 @@ graphs. Every edge has a probability \(p = \frac{2i}{2^i}\) to exist. I chose
 \(k = i\). Recall that \(k\) is the size of set being maintained for each
 finger. In the python3 source code, \(k\) shows up as \(fk\).
 
+(TODO: Add picture: Converge_all_fingers_results.svg)
+
 
 
 
