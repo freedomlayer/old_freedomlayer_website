@@ -2,13 +2,14 @@
 <%def name="post_metadata()">
 <%
     return {\
-    "title": "Virtual DHT Routing",\
-    "date": "2014-12-02 17:45",\
+    "title": "Experimenting with Virtual DHT Routing",\
+    "date": "2014-14-02 15:51",\
     "author": "real",\
     "number":7,\
     "tags": [],\
     "draft":"False",\
-    "description":"We introduce the Virtual DHT idea for routing messages in a mesh network."}
+    "description":"We introduce the Virtual DHT idea for routing messages in a \
+mesh network and show some related experiments."}
 
 %>
 </%def>
