@@ -7,7 +7,7 @@
     "author": "real",\
     "number":7,\
     "tags": [],\
-    "draft":"True",\
+    "draft":"False",\
     "description":"We introduce the Virtual DHT idea for routing messages in a mesh network."}
 
 %>
