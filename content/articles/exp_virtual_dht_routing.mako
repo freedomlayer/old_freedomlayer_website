@@ -27,9 +27,11 @@ ceil and floor latex macros:
 
 We introduce the Virtual DHT idea for routing messages in a mesh network. We
 describe a crude algorithm that builds a Chord Virtual DHT. We then run some
-experiments to measure the algorithm's ability to create a Virtual DHT
-efficiently. We also measure the expected amount of hops required to deliver a
-message using this method. 
+[experiments
+[github]](https://github.com/realcr/freedomlayer_code/tree/master/exp_virtual_dht_routing)
+to measure the algorithm's ability to create a Virtual DHT efficiently. We also
+measure the expected amount of hops required to deliver a message using this
+method. 
 
 Our experiments results show that Virtual DHT routing might work for networks
 of certain size, but at this time we do not know how the results scale to
