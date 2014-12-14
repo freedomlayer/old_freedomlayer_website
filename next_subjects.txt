@@ -16,7 +16,7 @@ First ideas
 
 - Random walks and the sqrt(n) idea. V
 
-- DHTs and the mesh.
+- DHTs and the mesh. -- done experimental.
 	- The CJDNS idea and its performance. (Virtual DHT article too?)
 	- Python examples?
 
