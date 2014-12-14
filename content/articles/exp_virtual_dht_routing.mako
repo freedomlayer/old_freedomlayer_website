@@ -25,8 +25,32 @@ ceil and floor latex macros:
 
 <h4>Abstract</h4>
 
-TODO: Abstract
+We introduce the Virtual DHT idea for routing messages in a mesh network. We
+describe a crude algorithm that builds a Chord Virtual DHT. We then run some
+experiments to measure the algorithm's ability to create a Virtual DHT
+efficiently. We also measure the expected amount of hops required to deliver a
+message using this method. 
 
+Our experiments results show that Virtual DHT routing might work for networks
+of certain size, but at this time we do not know how the results scale to
+larger networks.
+
+We don't present any formal (mathematical) results regarding the idea of
+Virtual DHT, and we don't discuss reliability and security issues.
+
+<h4>The message routing problem and related work</h4>
+
+Assume that we have \(n\) correct (honest) nodes (We will not consider any
+Adversary at the moment), connected somehow in a mesh. Every node is linked to
+a few other nodes. We call these nodes his immediate neighbours.  
+Nodes in the mesh have only local knowledge. They only know about their
+immediate neighbours. They don't know about the general structure of the mesh
+network.
+
+For any two nodes \(a,b\) in the network, we want to be able to send a message
+from \(a\) to \(b\). We care that this message will arrive with high
+probability, quickly enough, and also that it won't disturb too many nodes in
+the network.
 
 We have seen so far a few ways of routing messages in a mesh network: Flooding
 (See [The mesh
@@ -52,20 +76,6 @@ A similar method apparently has a working implementation in the
 I didn't manage to figure out from CJDNS whitepaper the specific details of the
 implementation, though it seems like it uses the Kademlia DHT. We are going to
 use Chord in this text.
-
-<h4>The message routing problem</h4>
-
-Assume that we have \(n\) correct (honest) nodes (We will not consider any
-Adversary at the moment), connected somehow in a mesh. Every node is linked to
-a few other nodes. We call these nodes his immediate neighbours.  
-Nodes in the mesh have only local knowledge. They only know about their
-immediate neighbours. They don't know about the general structure of the mesh
-network.
-
-For any two nodes \(a,b\) in the network, we want to be able to send a message
-from \(a\) to \(b\). We care that this message will arrive with high
-probability, quickly enough, and also that it won't disturb too many nodes in
-the network.
 
 <h4>Motivation for using a DHT</h4>
 
@@ -149,11 +159,17 @@ Identity value and the node itself) we will define two notions of distance
 - The Network Distance: The length of the shortest path between the nodes
   \(x,y\) in the network.
 
-- The Virtual Distance: The value \(d(x,y) = (y - x) % 2^{s}\). This is the
+- The Virtual Distance: The value \(d(x,y) = (y - x) \mod 2^{s}\). This is the
   distance we when we described the Chord DHT.
 
-(TODO: Add pictures for the Network distance and Virtual Distance)
-(Draw both a ring and the mesh graph on the same picture)
+<img class="wimage"
+src="${self.utils.rel_file_link("articles/exp_virtual_dht_routing/mesh_and_ring.svg")}"/>
+In the picture: On the right we can see an example for a mesh network. On the
+left, we can see the Virtual DHT. Note that there is no relation between
+distances on the mesh and distances in the Virtual DHT. The Virtual Distance
+between \(x_{10}\) and \(x_9\) is pretty short, however in the mesh they are
+very far.
+<br /><br />
 
 Note that two nodes could have very short Network Distance though very long
 Virtual Distance, and vice versa. It is crucial to understand that the Network
@@ -201,8 +217,10 @@ may also assume that \(x\) knows the DHT Identity of each of his neighbours.
 (This information could be passed in a message between every two adjacent nodes
 in the mesh).
 
-(TODO: Picture of what a node knows about the network: Only the immediate
-neighbours. The rest should be pictured as unknown).
+<img class="wimage"
+src="${self.utils.rel_file_link("articles/exp_virtual_dht_routing/local_knowledge.svg")}"/>
+In the picture: The local knowledge of the node \(x_2\). All the unknown parts
+of the network are colored gray.<br /><br />
 
 For a node \(x\), we could traverse the whole network and find the best
 successor and predecessor (With respect to the DHT), however this will be too
@@ -262,16 +280,28 @@ set of nodes, he updates his set of closest nodes accordingly.
 Assume that \(k=3\), and that a node \(x\) has the DHT Identity 349085. Also
 assume that the set \(S_x\) of \(x\) currently contains:
 
-{(ident=359123,path_len=6), (ident=372115,path_len=4), (ident=384126,path_len=2)}
+\(S_x = \) {<br /> 
+(ident=359123,path_len=6),<br />
+(ident=372115,path_len=4),<br />
+(ident=384126,path_len=2)<br />
+}
 
 Next, assume that some node \(y\) (of DHT Identity 384126) sent a message to
 \(x\) with the following set of nodes:
 
-{(ident=349085,path_len=2), (ident=372115,path_len=1), 
-(ident=383525,path_len=2), (ident=391334,path_len=3),
-(ident=401351,path_len=4), (ident=412351,path_len=1)}
+{ <br />
+(ident=349085,path_len=2),<br />
+(ident=372115,path_len=1),<br />
+(ident=383525,path_len=2),<br />
+(ident=391334,path_len=3),<br />
+(ident=401351,path_len=4),<br />
+(ident=412351,path_len=1) <br />
+}
 
-(TODO: Add a picture of the mentioned nodes on the chord ring.)
+<img class="wimage"
+src="${self.utils.rel_file_link("articles/exp_virtual_dht_routing/before_iter_example.svg")}"/>
+In the picture: Schematic picture of the Virtual DHT ordering of all the nodes
+mentioned above.<br /><br />
 
 Some explanations: In the set of nodes we mention two values: ident and
 path_len. Ident is the identity of the remote node, and path_len is the length
@@ -300,8 +330,11 @@ from \(x\) to 383525. \(x\) knows the path from \(x\) to \(y\). (It is of size
 is 2. (See the path_len argument of ident 383525). Therefore we get a total of
 path length \(2+2 = 4\). Thus the new \(S_x\) will now contain:
 
-\(S_x =\) {(ident=359123,path_len=6), (ident=372115,path_len=4),
-(ident=383525,path_len=4)}
+\(S_x =\) { <br />
+(ident=359123,path_len=6), <br />
+(ident=372115,path_len=4), <br />
+(ident=383525,path_len=4) <br />
+}
 
 We are not done yet. We still have to deal with 372115. \(x\) already has
 372115 inside his set \(S_x\), but maybe \(x\) could get a shorter path to
@@ -314,10 +347,11 @@ for 372115 inside the message sent from \(y\).) \(y\)'s network distance from
 In this case, \(x\) will just update the path description to 372115 to be the
 new shorter path. Finally we get the following \(S_x\):
 
-\(S_x = \) {(ident=359123,path_len=6), (ident=372115,path_len=3),
-(ident=383525,path_len=4)}
-
-(TODO: Add a picture of the new \(S_x\) set.)
+\(S_x = \) { <br />
+(ident=359123,path_len=6), <br />
+(ident=372115,path_len=3), <br />
+(ident=383525,path_len=4) <br />
+}
 
 Note that after the transformation on the \(S_x\) set, \(x\) no longer has
 \(y\) inside \(S_x\). That's the irony of life. \(y\) sent \(x\) so many "good"
@@ -370,7 +404,11 @@ successor finger \(t\) of \(x\). The value \(x-2^{t}\) is called the
 predecessor finger \(t\) of \(x\). (Note: recall that the addition here is done
 modulo \(2^s\)).
 
-(TODO: Add a picture here of the ring with the fingers.)
+<img class="wimage"
+src="${self.utils.rel_file_link("articles/exp_virtual_dht_routing/dht_fingers.svg")}"/>
+In the picture: The Chord DHT fingers. We can see both the successor fingers
+and predecessor fingers.
+<br /><br />
 
 So far we only dealt with the fingers \(x+1\) and \(x-1\). Those are the
 successor finger \(0\) of \(x\) and the predecessor finger \(0\) of \(x\)
@@ -385,7 +423,7 @@ set will be bounded to size \(k\). Note that \(S_x^0\) of the new notation is
 exactly \(S_x\) of the old notation (When we kept only the best successor).
 
 Two examples: \(P_x^3\) contains the best candidates to minimize
-\(dist(z,x+2^{3})\). \(S_x^5\) contains the best canditates to minimize
+\(dist(z,x+2^{3})\). \(S_x^5\) contains the best candidates to minimize
 \(dist(x+2^{5},z)\).
 
 This time, whenever a node \(x\) gets a message from some other node \(y\)
@@ -447,8 +485,6 @@ the fingers, for example. Let me address a few of my concerns here:
   messages, and it becomes harder to maintain a link to a remote node (As the
   link existence depends on many nodes in the mesh being online at the same time).
 
-(TODO: Add a picture that demonstrates high latency).
-
 One thing that we can do to get some quick verification of our ideas is to
 write simulation code. If the simulation code shows good results, it is
 encouraging (Though it doesn't prove anything mathematically). If, however, the
@@ -506,7 +542,7 @@ network, because the Erdos-Renyi Random graph model probably doesn't fit a mesh
 network deployed on some surface.
 
 \(18.15\) sounds like a long time to me at this point, but it is probably
-possible to get better results with some improvments or heuristics. (Also note
+possible to get better results with some improvements or heuristics. (Also note
 that I stopped the algorithm after it found all the best candidates for all the
 fingers. Maybe if I let it run some more, I could get shorter path lengths).
 
