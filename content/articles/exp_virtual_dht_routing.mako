@@ -15,14 +15,6 @@ mesh network and show some related experiments."}
 </%def>
 
 <%block name="article_body" filter="self.filters.math_mdown">
-<!--
-ceil and floor latex macros:
--->
-\(
-\newcommand{\ceil}[1]{\left\lceil{#1}\right\rceil}
-\newcommand{\floor}[1]{\left\lfloor{#1}\right\rfloor}
-  
-\)
 
 <h4>Abstract</h4>
 
@@ -737,5 +729,6 @@ required.
 Things we haven't discussed here: Dealing with security and reliability when
 using a Virtual DHT. For example:  Can we overcome nodes that fail? How to deal
 with Sybil attacks?
+
 
 </%block>
