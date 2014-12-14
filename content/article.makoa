@@ -1,8 +1,12 @@
 <%inherit file="/web_page.makoa"/>
 
+<%!
+    import datetime
+%>
+
 <%block name="web_page_header">
 <%
-        p_meta = self.post_metadata()
+    p_meta = self.post_metadata()
 %>
 <title>FreedomLayer | Articles | ${p_meta["title"]}</title>
 <%block name="article_header"/>
@@ -10,11 +14,16 @@
 
 <%block name="web_page_body">
 <%
-        p_meta = self.post_metadata()
+    p_meta = self.post_metadata()
+    ## The time format:
+    TIME_FORMAT = "%Y-%m-%d %H:%M"
+    tstruct = datetime.datetime.strptime(p_meta["date"],TIME_FORMAT)
+    article_date = tstruct.strftime("%Y.%m.%d")
 %>
 <h1>Articles</h1>
 ## Article's title:
-<h2>${p_meta["title"]}</h2> by ${p_meta["author"]}
+<h2>${p_meta["title"]}</h2> by ${p_meta["author"]}, ${article_date}
+
 <%block name="article_body"/>
 
 <br/><br/>
