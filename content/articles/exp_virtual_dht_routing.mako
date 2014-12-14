@@ -8,7 +8,7 @@
     "number":7,\
     "tags": [],\
     "draft":"True",\
-    "description":""}
+    "description":"We introduce the Virtual DHT idea for routing messages in a mesh network."}
 
 %>
 </%def>
@@ -26,7 +26,7 @@ ceil and floor latex macros:
 <h4>Abstract</h4>
 
 We introduce the Virtual DHT idea for routing messages in a mesh network. We
-describe a crude algorithm that builds a Chord Virtual DHT. We then run some
+describe a crude algorithm that builds a Chord Virtual DHT. Next we run some
 [experiments
 [github]](https://github.com/realcr/freedomlayer_code/tree/master/exp_virtual_dht_routing)
 to measure the algorithm's ability to create a Virtual DHT efficiently. We also
