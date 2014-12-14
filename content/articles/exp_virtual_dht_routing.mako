@@ -448,31 +448,216 @@ else.
 I wrote simulation code for the Fingers Convergence idea in Python3. [You can
 find it here
 [github]](https://github.com/realcr/freedomlayer_code/tree/master/exp_virtual_dht_routing)
+It's not the fastest code out there, but it works, and it should be pretty easy
+to understand and change.
 
-Let's begin with a summary of the results. 
+You will need the **networkx** library to run this code. It could be obtained
+by running:
+
+    :::python
+    pip install networkx
+
+Let's begin with a quick summary of the results. 
 
 <h5>Results for Random graphs</h5>
-I run the code with networks of
+I ran the code with networks of
 sizes \(n=2^i\) for  \(i \in \{ 6,7,8,9,10,11\}\). (\(i=12\) was taking too long,
-so I terminated it.)
+so I terminated it). For all of those network sizes, the algorithm terminated
+with one iteration of all nodes.
 
 The networks were built as [Erdos
 Renyi](http://en.wikipedia.org/wiki/Erd%C5%91s%E2%80%93R%C3%A9nyi_model) random
 graphs. Every edge has a probability \(p = \frac{2i}{2^i}\) to exist. I chose
 \(k = i\). Recall that \(k\) is the size of set being maintained for each
-finger. In the python3 source code, \(k\) shows up as \(fk\).
+finger. In the python source code, \(k\) shows up as \(fk\).
 
 (TODO: Add raw results here)
 
 (TODO: Add picture: Converge_all_fingers_results.svg)
 
+It's hard to say what is going to happen for \(i=40\) from those results, but
+for the smaller size of \(i=11\) this solution seems to be practical.
+
+Considering a random graph of the Erdos-Renyi model with \(n=2^{11}\) nodes
+and \(p = \frac{2i}{2^i}\), we get that the average path from a node \(x\) to
+some best finger candidate is about \(3.3\). Routing a message in a DHT of size
+\(2^11\) will usually take no more than \(11\) DHT hops. As each of those DHT
+hops will go through an average of \(3.3\) nodes in the mesh network, we get a
+total network path length of \(3.3 * 11 = 36.3\).
+
+If our network is an overlay mesh network over the internet (Like in
+[Bitcoin](https://bitcoin.org)), then we expect every every hop should take no
+longer than half a second. We get a total of \(36.3 * 0.5 = 18.15\) seconds.
+
+Note that I only consider here overlay mesh network and not a real mesh
+network, because the Erdos-Renyi Random graph model probably doesn't fit a mesh
+network deployed on some surface.
+
+\(18.15\) sounds like a long time to me at this point, but it is probably
+possible to get better results with some improvments or heuristics. (Also note
+that I stopped the algorithm after it found all the best candidates for all the
+fingers. Maybe if I let it run some more, I could get shorter path lengths).
+
+<h5>Results for Grid Graphs</h5>
+
+Real mesh networks will usually not be random graphs (As in the Erdos-Renyi
+model). They will probably be more grid like. I ran the code with 2-dimensional
+grid networks of estimated sizes \(n=2^i\) for \(i \in \{ 6,7,8,9,10,11\). (The
+sizes are estimated because a square grid has to be of size \(m\cross m\). I
+chose \(m\) to be the integral part of \(\sqrt(n)\).
+
+(TODO: Add raw results here)
+
+(TODO: Add picture: graph results for the grid graphs)
+
+(TODO: Add some more information here about the results)
+
+<h5>Modifying parameters</h5>
+
+I want you to get a feeling of how the simulation code works, and how to make
+modifications to this code, so that you can do your own experiments. You might
+have some interesting ideas that I didn't think about. If you manage to get
+some interesting results, or find bugs, please tell me about it. 
+
+Most of the things you will want to change are probably inside the go()
+function. This is where you put the parameters for the simulation. This is how
+it should look like:
+
+<%text>
+
+    :::python
+    def go():
+        i = 11
+        ident_bits = math.ceil(i*2.6)
+        fk = i
+        # Fingers we are interested in:
+        succ_fingers = list(range(ident_bits))
+        pred_fingers = list(range(ident_bits))
+        # succ_fingers = [0]
+        # pred_fingers = [0]
+
+        print("||| i =",i)
+        print("||| ident_bits =",ident_bits)
+        print("||| fk =",fk)
+        print("||| succ_fingers = ",succ_fingers)
+        print("||| pred_fingers = ",pred_fingers)
+
+        print("Generating graph...")
+        g = gen_grid_graph(i)
+        # g = gen_gnp_graph(i)
+        print("Generating Network...")
+        vd = VirtualDHT(graph=g,fk=fk,\
+                dht_fingers=(succ_fingers,pred_fingers),\
+                ident_bits=ident_bits)
+
+        print("Initiating convergence...\n")
+        vd.converge(max_iters=0x80)
+
+</%text>
+
+**i** is a parameter that represents the size of a network. For a given value
+i, we say that the size of the network is \(n=2^i\).
+
+**ident_bits** is the amount of bits used to describe the identity of a node.
+We could just pick a large number like \(160\) bits and never change it (This
+is what we are going to do in a real network), but it will make the simulation
+pretty slow, as every node will have to maintain \(160\) fingers. Therefore for
+simulation purposes we are going to pick the value of ident_bits according to
+the amount of nodes in the network. We choose it to be about \(i \cdot 2.6\).
+
+Why \(2.6\)? Because we don't want two nodes to have the same DHT Identity
+value. Choosing \(2\) should have been a good bet (See the [birthday
+paradox](http://en.wikipedia.org/wiki/Birthday_problem), but I wanted to be on
+the safe side of things, so I picked a bigger value: \(2.6\).
+
+The **fk** parameter is the same as \(k\) we mentioned in our discussions
+earlier. It determines the size of the sets \(S_x^j,P_x^j\). In other words, it
+determines the size of the candidates set for each finger. For example: if
+\(fk=1\) then every node \(x\) only remembers the best candidate he has seen
+for every finger.
+
+**succ_fingers** and **pred_fingers** are the set of fingers every node is
+going to maintain. If we pick [0] for both of those parameters (It is commented
+out in the code), then every node will only maintain his immediate successor
+and predecessor. This will give us the basic Chord ring, as we discussed in
+"Convering the ring" part.
+
+In the code above we picked the value list(range(ident_bits)),
+which is all the fingers. We need to know all the best candidates for all the
+fingers if we want to be able to route messages in the resulting DHT.
+
+**g** is network graph. Remember that at the results above we mentioned both
+Random graphs and Grid graphs? Changing g lets you change the network layout.
+There are already two graph models inside the code: gen_gnp_graph() and
+gen_grid_graph(), However you can use any other model of graph that you want to
+test. Just create some networkx graph, and assign it to g.
 
 
+<h5>Understanding the output</h5>
 
+The vd.converge() function will put some output to the console. I want to
+explain that output. Let's see an example:
 
+    ||| i = 9
+    ||| ident_bits = 24
+    ||| fk = 9
+    ||| succ_fingers =  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+    ||| pred_fingers =  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+    Generating graph...
+    Generating Network...
+    Initiating convergence...
 
+    iter number  | Fingers verified | path_len verified  | avg path_len 
+    --------------------------------------------------------------------
+               0 | False            | False              |     19.380424
+               1 | True             | False              |     15.708721
 
+The first lines (Beginning with 3 pipe characters) show some of the parameters
+used. Sometime I run experiments for days, and it is useful to know what
+parameters caused the results I see on my terminal.
 
+Next there are some notifications about Generation of the graph, network and
+initialization of convergence process. We have already seen those print
+functions in the code above.
 
+Finally there is a table that describes the results from the iterations. Every
+row in this table represents one iteration of the convergence algorithm. (Every
+node sends to all the nodes he knows a set of all the nodes he knows, and in
+turn every node updates his best known finger candidates accordingly).
+
+The row "iter number" just counts the iterations. (It begins from 0). "Fingers
+verified" tells you if every node has found the best finger candidate already.
+The algorithm is designed to stop as soon as "Fingers verified" becomes True, but
+you can change this behaviour. (Check the converge() function if you want to do
+that).
+
+"path_len verified" means that every for every node \(x\), if \(x\) knows some
+best candidate \(y\) for some finger \(f\), then \(x\) also knows the shortest path
+possible to \(y\). I added it to check if I manage to get the shortest path
+possible using some methods. Most of the time (Maybe except for some really
+small networks), this value will be False.
+
+"avg path_len" is the average path length from some node \(x\) to his best
+candidate for finger \(f\). This value is not exact. It is calculated by
+sampling some known amount of distances, and finding their average. (This means
+that you might see small changes in this value, but in fact nothing changes in
+the network).
+
+<h4>Summary</h4>
+
+We wanted to route messages in a mesh network. For this purpose, we gave every
+node some random name and created a DHT from those random names. The random
+names given to the nodes on the network are not related to the underlying
+structure of the mesh network. We end up with two distances: A network
+distance, which is the physical amount of hops between nodes in the mesh, and a
+Virtual Distance: A DHT namespace distance between names of two nodes.
+
+We introduced a pretty crude way of finding the best Chord DHT finger
+candidates for every node in the network. It seems to be working, though we are
+not sure at this point if it scales well to bigger networks. In its raw form it
+does seems to be on the edge of "practical" for networks of size \(2^{11}\).
+
+We don't have any formal justification for this method. Some more research is
+required.
 
 </%block>
