@@ -130,7 +130,7 @@ To use a DHT we need DHT Identities for all the participants. For the rest of
 this text we will use the Chord DHT, and we will choose a random Identities from
 \(B_s = \{0,1,2,\dots,2^{s} - 1\}\), where \(s\) is large enough. (In practice
 we could choose the Identities in [some other
-way](${self.utils.rel_file_link("articles/dht_basic_security")}), but let's
+way](${self.utils.rel_file_link("articles/dht_basic_security.html")}), but let's
 assume for now they are just random)
 
 Between every two nodes \(x,y\) (We use the notation \(x\) to denote both the
@@ -252,14 +252,15 @@ set of nodes, he updates his set of closest nodes accordingly.
 
 Assume that \(k=3\), and that a node \(x\) has the DHT Identity 349085. Also
 assume that the set \(S_x\) of \(x\) currently contains:
-\(\{(ident=359123,path_len=6), (ident=372115,path_len=4),
-(ident=384126,path_len=2)\}\)
+
+{(ident=359123,path_len=6), (ident=372115,path_len=4), (ident=384126,path_len=2)}
 
 Next, assume that some node \(y\) (of DHT Identity 384126) sent a message to
 \(x\) with the following set of nodes:
-\(\{(ident=349085,path_len=2), (ident=372115,path_len=1), 
-(ident=383525,path_len=2),(ident=391334,path_len=3),
-(ident=401351,path_len=4),(ident=412351,path_len=1)\}\)
+
+{(ident=349085,path_len=2), (ident=372115,path_len=1), 
+(ident=383525,path_len=2), (ident=391334,path_len=3),
+(ident=401351,path_len=4), (ident=412351,path_len=1)}
 
 (TODO: Add a picture of the mentioned nodes on the chord ring.)
 
@@ -290,8 +291,8 @@ from \(x\) to 383525. \(x\) knows the path from \(x\) to \(y\). (It is of size
 is 2. (See the path_len argument of ident 383525). Therefore we get a total of
 path length \(2+2 = 4\). Thus the new \(S_x\) will now contain:
 
-\(S_x = \{(ident=359123,path_len=6), (ident=372115,path_len=4),
-(ident=383525,path_len=4)\}\)
+\(S_x =\) {(ident=359123,path_len=6), (ident=372115,path_len=4),
+(ident=383525,path_len=4)}
 
 We are not done yet. We still have to deal with 372115. \(x\) already has
 372115 inside his set \(S_x\), but maybe \(x\) could get a shorter path to
@@ -304,8 +305,8 @@ for 372115 inside the message sent from \(y\).) \(y\)'s network distance from
 In this case, \(x\) will just update the path description to 372115 to be the
 new shorter path. Finally we get the following \(S_x\):
 
-\(S_x = \{(ident=359123,path_len=6), (ident=372115,path_len=3),
-(ident=383525,path_len=4)\}\)
+\(S_x = \) {(ident=359123,path_len=6), (ident=372115,path_len=3),
+(ident=383525,path_len=4)}
 
 (TODO: Add a picture of the new \(S_x\) set.)
 
@@ -402,7 +403,7 @@ Initialize:
 
 Do every few seconds:
 
-Denote \(close_x = \bigcup _{0 \leq i < s} \left(S_x^i \cup P_x^i\right)\)
+- Denote \(close_x = \bigcup _{0 \leq i < s} \left(S_x^i \cup P_x^i\right)\)
 
 - For every node \(z\) in \(close_x\):
     - Send \(close_x\) to \(z\) (This includes paths description).
@@ -411,10 +412,10 @@ On arrival of a set of nodes \(T\) from some node \(y\):
 
 - For every node \(t\) in \(T\):
     - Figure out the full path from \(x\) to \(t\).
-    - for every \(0 \leq i \leq s\):
-      - Add \(t\) to \(S_x^i\) or \(P_x^i\) if it is "better" than any other
-        node in one of those sets. Make sure that the sets \(S_x^i\) and \(P_x^i\)
-        do not exceed the size of \(k\).
+    - for every \(0 \leq i < s\):
+        - Add \(t\) to \(S_x^i\) or \(P_x^i\) if it is "better" than any other
+          node in one of those sets. Make sure that the sets \(S_x^i\) and \(P_x^i\)
+          do not exceed the size of \(k\).
 
 
 <h4>Experimenting</h4>
@@ -483,11 +484,11 @@ and \(p = \frac{2i}{2^i}\), we get that the average path from a node \(x\) to
 some best finger candidate is about \(3.3\). Routing a message in a DHT of size
 \(2^11\) will usually take no more than \(11\) DHT hops. As each of those DHT
 hops will go through an average of \(3.3\) nodes in the mesh network, we get a
-total network path length of \(3.3 * 11 = 36.3\).
+total network path length of \(3.3 \cdot 11 = 36.3\).
 
 If our network is an overlay mesh network over the internet (Like in
 [Bitcoin](https://bitcoin.org)), then we expect every every hop should take no
-longer than half a second. We get a total of \(36.3 * 0.5 = 18.15\) seconds.
+longer than half a second. We get a total of \(36.3 \cdot 0.5 = 18.15\) seconds.
 
 Note that I only consider here overlay mesh network and not a real mesh
 network, because the Erdos-Renyi Random graph model probably doesn't fit a mesh
@@ -502,21 +503,27 @@ fingers. Maybe if I let it run some more, I could get shorter path lengths).
 
 Real mesh networks will usually not be random graphs (As in the Erdos-Renyi
 model). They will probably be more grid like. I ran the code with 2-dimensional
-grid networks of estimated sizes \(n=2^i\) for \(i \in \{ 6,7,8,9,10,11\). (The
-sizes are estimated because a square grid has to be of size \(m\cross m\). I
-chose \(m\) to be the integral part of \(\sqrt(n)\).
+grid networks of estimated sizes \(n=2^i\) for \(i \in \{ 6,7,8,9,10\}\). (The
+sizes are estimated because a square grid has to be of size \(m\times m\). I
+chose \(m\) to be the integral part of \(\sqrt{n}\).
 
-(TODO: Add raw results here)
+<img class="wimage"
+src="${self.utils.rel_file_link("articles/exp_virtual_dht_routing/conv_grid_all_fingers_results.svg")}"/>
+Results for grid networks. Horizontal axis is \(i\). Vertical axis is the
+average network path length to the best finger candidate.
+<br /><br />
 
-(TODO: Add picture: graph results for the grid graphs)
-
-(TODO: Add some more information here about the results)
+Note that in the grid networks we get much larger values for the average path
+length. Generally, in grid networks the shortest path between two arbitrary
+nodes could be pretty long. On the other hand, on a real mesh network we expect
+that every network hop is much faster. (compared to the case of an overlay mesh
+network that works above the Internet).
 
 <h5>Modifying parameters</h5>
 
 I want you to get a feeling of how the simulation code works, and how to make
 modifications to this code, so that you can do your own experiments. You might
-have some interesting ideas that I didn't think about. If you manage to get
+have some ideas that I didn't think about. If you manage to get
 some interesting results, or find bugs, please tell me about it. 
 
 Most of the things you will want to change are probably inside the go()
@@ -643,6 +650,23 @@ sampling some known amount of distances, and finding their average. (This means
 that you might see small changes in this value, but in fact nothing changes in
 the network).
 
+<h5>Some modification attempts</h5>
+
+I introduce here some modifications I tried. It might be of interest.
+
+- If \(fk=1\). (\(fk\) is the size of the set of candidates for
+  some finger), the algorithm doesn't find a solution for large enough networks.
+
+- If \(fk=\frac{i}{2}\) the simulations runs a bit faster, but we get longer
+  average path lengths. (We might not get a solution for large enough networks,
+  but I haven't seen any evidence for that).
+
+- Choosing succ_fingers = [0], pred_fingers = [] doesn't converge, however
+  choosing succ_fingers = [0] and pred_fingers = [0] does converge. (This is
+  true both for gnp and grid graphs). In the first case: Every node searches
+  for his best successor. In the second case: Every node searches for his best
+  successor and best predecessor at the same time.
+
 <h4>Summary</h4>
 
 We wanted to route messages in a mesh network. For this purpose, we gave every
@@ -659,5 +683,9 @@ does seems to be on the edge of "practical" for networks of size \(2^{11}\).
 
 We don't have any formal justification for this method. Some more research is
 required.
+
+Things we haven't discussed here: Dealing with security and reliability when
+using a Virtual DHT. For example:  Can we overcome nodes that fail? How to deal
+with Sybil attacks?
 
 </%block>
