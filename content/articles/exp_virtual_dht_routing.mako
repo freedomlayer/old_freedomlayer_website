@@ -93,6 +93,12 @@ part of the DHT. \(y\) then finds the node closest to \(x\) (By DHT Identity
 distance) inside the DHT. Let's call that node \(z\). \(y\) then sends to \(x\)
 the address of \(z\). Finally, \(x\) can connect to \(z\) and join the DHT.
 
+<img class="wimage"
+src="${self.utils.rel_file_link("articles/exp_virtual_dht_routing/dht_join.svg")}"/>
+In the picture: \(x\) wants to join the network. Marked in gray is the place in
+the ring where \(x\) is supposed to be, right after \(z\).
+<br /><br />
+
 This would work if we have a structure like the internet to support the idea of
 address. However, if we are working in a simple mesh, how could \(y\) connect
 \(x\) to \(z\)? We don't yet have any notion of address, so it is a hard task
@@ -102,7 +108,6 @@ The act of "introducing nodes to other nodes" is something that happens a lot
 in a DHT. In particular, it happens whenever a node wants to join the network,
 and also every time that a node performs the stabilize operation. 
 
-(TODO: Add a picture that describes the initial setup of a DHT)
 
 One naive method to introduce nodes in a mesh is using paths. Assume that \(y\)
 wants to introduce \(z\) to the node \(x\). \(y\) knows a path \(path(y,z)\)
@@ -112,7 +117,11 @@ can use those two paths to construct a path \(path(x,y) + path(y,z)\) from \(x\)
 \(y\) can send \(path(x,y) + path(y,z)\) to \(x\). Then whenever \(x\) wants to send a
 message to \(z\), \(x\) will use the path \(path(x,y) + path(y,z)\).
 
-(TODO: Picture of the concatenated path)
+<img class="wimage"
+src="${self.utils.rel_file_link("articles/exp_virtual_dht_routing/concat_path.svg")}"/>
+In the picture: The path between \(x\) and \(z\) is the concatenation of paths
+between \(x\) and \(y\), \(y\) and \(z\).
+<br /><br />
 
 This method sounds like a solution, but it has a major flaw: The path
 \(path(x,y) + path(y,z)\) that we get from \(x\) to \(z\) is not optimal. It is
@@ -472,9 +481,11 @@ graphs. Every edge has a probability \(p = \frac{2i}{2^i}\) to exist. I chose
 \(k = i\). Recall that \(k\) is the size of set being maintained for each
 finger. In the python source code, \(k\) shows up as \(fk\).
 
-(TODO: Add raw results here)
-
-(TODO: Add picture: Converge_all_fingers_results.svg)
+<img class="wimage"
+src="${self.utils.rel_file_link("articles/exp_virtual_dht_routing/conv_gnp_all_fingers_results.svg")}"/>
+Results for Random Erdos-Renyi networks. Horizontal axis is \(i\). Vertical
+axis is the average network path length to the best finger candidate.
+<br /><br />
 
 It's hard to say what is going to happen for \(i=40\) from those results, but
 for the smaller size of \(i=11\) this solution seems to be practical.
