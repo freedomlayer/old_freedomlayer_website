@@ -60,6 +60,7 @@ A few initial thoughts:
   valid?
 
 <h4>Basic Distributed Post office</h4>
+
 <h5>Finding the highest person</h5>
 
 One way to solve this is finding some special person. This person will be used
@@ -110,15 +111,20 @@ there is also a shorter path between \(x\) and \(t\):
 \((x,x_1,x_2,\dots,x_{k-1},t)\). But this will contradict our assumption that
 \(x,x_1,x_2,\dots,x_{k-1},x_k\) is a shortest path between \(x\) and \(t\).
 
-We can continue this argument until we get to \(x\). Then we conclude that
-after \(k+1\) iterations, \(x\) will have \(t\) as the highest person in the
-world, and \(x\) will also have a shortest path from \(x\) to \(t\).
+We can continue this argument until we get to \(x\). (The formal way to do it
+is using mathematical induction). Then we conclude that after \(k+1\)
+iterations, \(x\) will have \(t\) as the highest person in the world, and \(x\)
+will also have a shortest path from \(x\) to \(t\).
 
 Another way to think about it is that the amount of iterations needed until
 every person finds the highest person in the world is not more than the
 diameter of the neighbours graph.
 
-<h5>Addressing and drift</h5>
+We don't really deal with security here, but I want to mention this question:
+Whenever a person sends to all his neighbours the highest person he knows, how
+can we know he doesn't lie? We will deal with this later.
+
+<h5>Addressing and Drift</h5>
 
 So far we got some special person \(t\) that every person can reach: Every
 person \(x\) knows a path to \(t\), and thus \(x\) can send a package to \(t\).
@@ -127,6 +133,7 @@ How could \(x\) send a message to some arbitrary person \(y\)? \(x\) already
 knows the path from \(x\) to \(t\). If \(x\) knew a path from \(t\) to \(y\),
 he could first deliver his package to \(t\), and then ask \(t\) to send his
 package to \(y\).
+
 
 This idea leads us to choose the address of an arbitrary node \(y\) as a
 shortest path between \(t\) and \(y\). (This is the reversed path between \(y\)
@@ -148,6 +155,120 @@ One way to deal with this issue is to **refresh** the addresses from time to
 time: If \(x\) is in contact with \(y\), then \(y\) will send his current
 address to \(x\) every few seconds. \(x\) will also send his current address to
 \(y\) every few seconds. This might not be very reliable, but it's an idea.
+
+
+<h4>Changing people into nodes</h4>
+
+Formally we solved the problem of delivering packages, however the solution is
+not very satisfying. All the packages has to go through some special person.
+This is not good for us because of security reasons (Could we trust the special
+person), and also because of load balancing issues (Just because he is the
+tallest person in the world, he has to deal with all the packages?)
+
+Before we start proposing more ideas, it is probably a good time to change our
+terminology to networks and nodes. We get the following question: Assume that
+we are given a mesh network, where every node has a few neighbours. How can we
+deliver messages between every two arbitrary nodes?
+
+Instead of checking the height of people, we can use some other properties of
+nodes. We will use some [public key
+cryptography](http://en.wikipedia.org/wiki/Public-key_cryptography). 
+Every node \(y\) will create a key pair \(prv_x,pub_x\) (Private and Public).
+We assume that every node \(x\) knows the public keys of all his neighbours.
+
+Next, we choose some [cryptographic hash
+function](http://en.wikipedia.org/wiki/Cryptographic_hash_function) \(h\).
+Instead of person \(x\)'s height, we will take a look at \(h(pub_x)\). 
+The highest person in the world will turn into the node \(t\) that maximizes
+the value \(h(pub_t)\). In that case we will also say that \(t\) is the
+"highest" node in the network with respect to the cryptographic hash function
+\(h\).
+
+While it was difficult to verify the height of a person from a
+distance, we could verify the public key of a node from a distance.
+If node \(x\) is informed by node \(y\) about some remote node \(t\) that has a
+certain \(h(pub_t)\) value, \(x\) can verify it himself. \(x\) can send some
+challenge all the way to \(t\), and \(t\) will send back a response that proves
+he owns the public key \(pub_t\). 
+
+(TODO: Add a picture about remote verification).
+
+Note however that this challenge response idea is not a magic cure to all the
+security problems in this model. It just helps a bit.
+
+
+<h4>Adding hierarchy</h4>
+
+<h5>Highest node in some radius</h5>
+One approach to make things better is to create some kind of hierarchy. Earlier,
+every node \(x\) maintained contact to the "highest" node in the network (with
+respect to some cryptographic hash function \(h\)) through some path of nodes. 
+
+This time, instead of remembering just the "highest" node in the network, every
+node \(x\) will remember a few special nodes. Every node will be the "highest"
+in some certain area around \(x\):
+
+- \(t_x^1\): The "highest" node of maximum distance \(1\).
+- \(t_x^2\): The "highest" node of maximum distance \(2\).
+- \(t_x^3\): The "highest" node of maximum distance \(3\).
+
+...
+
+- \(t_x^d\) The "highest" node in the network.
+
+(TODO: Add a picture of the circles around \(x\) and highest nodes in those
+circles).
+
+Side question: How can we know \(d\)? One suggestion is to keep increasing the
+distance until we stop getting new highest nodes. Another suggestion would be
+to just assume that the graph diameter won't be more than some constant number.
+
+
+First let's assume that somehow we managed to have the above information for
+every node in the networ, and see what we can do with it. (Note that we didn't
+yet describe how to get this information. It will be described soon later). 
+
+We define \(x\)'s address to be \(A(x) = (p_x^1,p_x^2,...,p_x^d)\), where
+\(p_x^j\) is the path from \(t_x^j\) to \(x\). This definition of \(A(x)\) is
+an extension of our previous definition of \(A(x)\), where we only had the
+\(t_x^d = t\). Also note that looking at some \(p_x^j\), one can conclude
+\(t_x^j\) (It is just the first node on the path).
+
+Looking at two different nodes: \(x,y\), the first thing to note is that
+\(t_x^d\) and \(t_y^d\) are the same, assuming that \(d\) is large enough. Why?
+Because \(t_x^d = t_y^d = t\), the highest node in the network. For other
+distances, the nodes \(x\) and \(y\) have chosen might differ. For example,
+\(t_x^1\) and \(t_y^1\) are likely to be different.
+
+How to deliver messages using the address information? Assume that \(x\) has
+the address of \(y\): \(A(y)\), as described above. \(x\) will compare his own
+address: \(A(x)\) with \(A(y)\). \(x\) will try to find the smallest \(j\) such
+that \(t_x^j = t_y^j\). \(x\) knows a shortest path from \(x\) to \(t_x^j\).
+\(x\) also knows \(A(y)\), So \(x\) knows \(p_y^j\), which is a shortest
+path from \(t_y^j = t_x^j\) to \(y\). Finally, \(x\) can create a full path
+from \(x\) to \(y\) that goes through \(t_y^j = t_x^j\). This path could be
+used to send messages.
+
+(TODO: Add picture of sending a message from \(x\) to \(y\) using the
+intermediate \(t_y^j = t_x^j\)).
+
+<h5>Obtaining highest nodes</h5>
+
+We now explain how a node \(x\) can obtain contact to the nodes
+\(t_x^1,\dots,t_x^d\). (And also a shortest path to each of those nodes).
+
+In every iteration, the node \(x\) will ask every neighbour \(y\) for the value
+\(t_y^j\) for every \(1 \leq j \leq d\). Then \(x\) will update his values of
+\(t_x^j\) accordingly: 
+The value \(t_y^j\) from \(y\) is a candidate for \(t_x^{j+1}\). If \(t_y^j\)
+is "higher" than \(t_x^{j+1}\), then \(x\) will replace it with \(t_y^j\).
+
+Using mathematical induction (Over the amount of iterations) it can be shown
+that after \(k\) network iterations, Every node \(x\) knows the correct value
+for \(t_x^j\) for every \(1 \leq j \leq k\), and also a shortest path to
+\(t_x^j\).
+
+
 
 
 
