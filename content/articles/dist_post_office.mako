@@ -118,7 +118,8 @@ will also have a shortest path from \(x\) to \(t\).
 
 Another way to think about it is that the amount of iterations needed until
 every person finds the highest person in the world is not more than the
-diameter of the neighbours graph.
+[diameter](http://en.wikipedia.org/wiki/Distance_%28graph_theory%29) of the
+neighbours graph.
 
 We don't really deal with security here, but I want to mention this question:
 Whenever a person sends to all his neighbours the highest person he knows, how
@@ -178,11 +179,11 @@ We assume that every node \(x\) knows the public keys of all his neighbours.
 
 Next, we choose some [cryptographic hash
 function](http://en.wikipedia.org/wiki/Cryptographic_hash_function) \(h\).
-Instead of person \(x\)'s height, we will take a look at \(h(pub_x)\). 
-The highest person in the world will turn into the node \(t\) that maximizes
-the value \(h(pub_t)\). In that case we will also say that \(t\) is the
-"highest" node in the network with respect to the cryptographic hash function
-\(h\).
+Instead of person \(x\)'s height, we will take a look at \(h(pub_x)\). We will
+call this value \(x\)'s height.  The highest person in the world will turn into
+the node \(t\) that maximizes the value \(h(pub_t)\). In that case we will also
+say that \(t\) is the "highest" node in the network with respect to the
+cryptographic hash function \(h\).
 
 While it was difficult to verify the height of a person from a
 distance, we could verify the public key of a node from a distance.
@@ -225,10 +226,10 @@ to just assume that the graph diameter won't be more than some constant number.
 
 
 First let's assume that somehow we managed to have the above information for
-every node in the networ, and see what we can do with it. (Note that we didn't
+every node in the network, and see what we can do with it. (Note that we didn't
 yet describe how to get this information. It will be described soon later). 
 
-We define \(x\)'s address to be \(A(x) = (p_x^1,p_x^2,...,p_x^d)\), where
+We define \(x\)'s address to be \(A(x) = (p_x^1,p_x^2,\dots,p_x^d)\), where
 \(p_x^j\) is the path from \(t_x^j\) to \(x\). This definition of \(A(x)\) is
 an extension of our previous definition of \(A(x)\), where we only had the
 \(t_x^d = t\). Also note that looking at some \(p_x^j\), one can conclude
@@ -252,7 +253,17 @@ used to send messages.
 (TODO: Add picture of sending a message from \(x\) to \(y\) using the
 intermediate \(t_y^j = t_x^j\)).
 
-<h5>Obtaining highest nodes</h5>
+Addresses should not be too large if we want them to be practical to use. Let's
+estimate the size of a typical address, as defined above. For some node \(x\),
+\(x\)'s address is \((p_x^1,p_x^2,\dots,p_x^d)\). Every such \(p_x^j\) is a
+path. Assuming that the diameter of the network graph is \(d\), we get that
+each path is of length no more than \(d\). Therefore we get at most \(d^{2}
+q\), where \(q\) is the size of a typical public key. This could become more
+than a few kilobytes if the public key size and the network diameter are big.
+(Much more than an IP address, unfortunately).
+
+
+<h5>Obtaining "highest" nodes</h5>
 
 We now explain how a node \(x\) can obtain contact to the nodes
 \(t_x^1,\dots,t_x^d\). (And also a shortest path to each of those nodes).
@@ -263,10 +274,59 @@ In every iteration, the node \(x\) will ask every neighbour \(y\) for the value
 The value \(t_y^j\) from \(y\) is a candidate for \(t_x^{j+1}\). If \(t_y^j\)
 is "higher" than \(t_x^{j+1}\), then \(x\) will replace it with \(t_y^j\).
 
-Using mathematical induction (Over the amount of iterations) it can be shown
-that after \(k\) network iterations, Every node \(x\) knows the correct value
-for \(t_x^j\) for every \(1 \leq j \leq k\), and also a shortest path to
-\(t_x^j\).
+Simply speaking: In iteration number \(k\), a node \(x\) is aware of all the
+"highest" nodes in the network until distance \(k\).
+
+Formally, Using mathematical induction (Over the amount of iterations) it can
+be shown that after \(k\) network iterations, Every node \(x\) knows the
+correct value for \(t_x^j\) for every \(1 \leq j \leq k\), and also a shortest
+path to \(t_x^j\).
+
+<h5>Hierarchy benefits</h5>
+
+Why would we want to have hierarchy from the first place? Earlier we complained
+that all the messages will go through one special node \(t\), and \(t\) won't
+be able to deal with the load. Maybe the hierarchy we have added can help a
+bit.
+
+How often will a message go through the "highest" node \(t\)? 
+
+Assume that \(x\) wants to send a message to some node \(y\). \(x\) checks
+\(y\)'s address, and tries to find the first \(j\) such that \(t_x^j =
+t_y^j\). (As described above). If any small enough such \(j\) is found, the
+message will be routed through \(t_x^j = t_y^j\), and not through the "highest"
+node \(t\). We can think of \(t\), the "highest" node, as some kind of backup.
+If nothing better was found, we can always route through \(t\).
+
+But how do we know if \(x\) will route his message to \(y\) through \(t\), or
+through some lower level node \(t_x^j = t_y^j\)? Generally speaking, we expect
+that the more \(x\) and \(y\) are close, the more their addresses \(A(x),A(y)\)
+are similar, and the more likely it is to route the message using a "high" node
+that is not the highest node.
+
+(TODO: Explain more about failure here:)
+
+**Idealy**, we get that messages between close nodes are routed using a local
+"high" node, while messages between very far nodes are routed using a globally
+"high" node. This somehow resembles the way real post offices work. You have
+the global post office which handles messages between countries, and smaller
+post offices that handle messages between cities, and so on.
+
+I wrote idealy for a reason. It turns out that for certain graphs for almost
+any two nodes \(x\), \(y\), the only common known "high" node is going to be
+the highest node. This is true for random
+[Erdos-Renyi](http://en.wikipedia.org/wiki/Erd%C5%91s%E2%80%93R%C3%A9nyi_model)
+graphs, for example.
+
+For grid like graphs (Mostly two dimensional [planar
+graphs](http://en.wikipedia.org/wiki/Planar_graph)) we will tend to get more
+common "high" nodes between two arbitrary nodes \(x\),\(y\), but still not so
+many.
+
+In any case, it turns out that most of the messages traffic in the network will
+pass through the "highest" node \(t\), which is pretty unfortunate.
+
+(TODO: Add a piece of code that proves the failure).
 
 
 
