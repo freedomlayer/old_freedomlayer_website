@@ -282,7 +282,7 @@ be shown that after \(k\) network iterations, Every node \(x\) knows the
 correct value for \(t_x^j\) for every \(1 \leq j \leq k\), and also a shortest
 path to \(t_x^j\).
 
-<h5>Hierarchy benefits</h5>
+<h5>Hierarchy benefits?</h5>
 
 Why would we want to have hierarchy from the first place? Earlier we complained
 that all the messages will go through one special node \(t\), and \(t\) won't
