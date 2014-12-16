@@ -302,29 +302,69 @@ But how do we know if \(x\) will route his message to \(y\) through \(t\), or
 through some lower level node \(t_x^j = t_y^j\)? Generally speaking, we expect
 that the more \(x\) and \(y\) are close, the more their addresses \(A(x),A(y)\)
 are similar, and the more likely it is to route the message using a "high" node
-that is not the highest node.
+that is not the "highest" node in the network.
 
 (TODO: Explain more about failure here:)
 
-**Idealy**, we get that messages between close nodes are routed using a local
-"high" node, while messages between very far nodes are routed using a globally
-"high" node. This somehow resembles the way real post offices work. You have
+We expect that messages between close nodes are routed using a local "high"
+node, while messages between very far nodes are routed using a globally "high"
+node. Therefore **idealy** we expect that the "highest" node in the network
+will not be so loaded, because the lower level "high" nodes will take part of
+the load.
+This somehow resembles the way physical post offices work. You have
 the global post office which handles messages between countries, and smaller
 post offices that handle messages between cities, and so on.
 
-I wrote idealy for a reason. It turns out that for certain graphs for almost
-any two nodes \(x\), \(y\), the only common known "high" node is going to be
-the highest node. This is true for random
-[Erdos-Renyi](http://en.wikipedia.org/wiki/Erd%C5%91s%E2%80%93R%C3%A9nyi_model)
-graphs, for example.
+However, this is just the ideal. It is true that the local "high" nodes in the
+network take part of the load from the "highest" node in the network, but
+usually they only take a small part of it. Intuitively, this happens for a few
+reasons:
 
-For grid like graphs (Mostly two dimensional [planar
-graphs](http://en.wikipedia.org/wiki/Planar_graph)) we will tend to get more
-common "high" nodes between two arbitrary nodes \(x\),\(y\), but still not so
-many.
+- In physical mail system people tend to send packages and letters to people
+  close to them geographically, so the structure of global post offices and local
+  post offices makes sense. However, this is not the case with mesh networks: In
+  a mesh network, any two arbirary nodes \(x\) and \(y\) might want to
+  communicate. With high probability \(x\) and \(y\) are far away from each
+  other (With respect to the network graph), and so their messages will be routed
+  through the "highest" node in the network.
 
-In any case, it turns out that most of the messages traffic in the network will
-pass through the "highest" node \(t\), which is pretty unfortunate.
+- In a grid style graph (Or any [planar
+  graphs](http://en.wikipedia.org/wiki/Planar_graph)), close nodes are expected
+  to have many "high" nodes in common. However, for other types of graphs, close
+  nodes might only have the "highest" node in common.
+
+
+I want to discuss the second reason with a bit more detail. For some node \(x\)
+in the network, we denote by \(R_j(x)\) the set of nodes of distance no more
+than \(j\) from \(x\). You can think about it as a ball around \(x\) of radius
+\(j\).
+
+(TODO: Add a picture of \(R_j(x)\).
+
+Consider two nodes \(x\) and \(y\) in the network. We observe the sets \(R_i(x)
+\cap R_j(y)\) and \(R_i(x) \cup R_j(y)\).
+
+(TODO: Add a picture of the two sets\)
+
+Let \(w\) be the "highest node in \(R_i(x) \cup R_j(y)\). If \(w\) is inside
+\(R_i(x) \cap R_j(y)\) then \(t_x^i = w = t_y^j\). (In other words: \(w\) is
+the "highest" node in distance \(i\) from \(x\), and the "highest" node in
+distance \(j\) from \(y\)). In that case, \(x\) and \(y\) could route messages
+through \(w\).
+
+What are the odds for that event to happen? As the "highest" node in \(R_i(x)
+\cup R_j(y)\) could be any node in that set, the odds are: 
+\[\frac{\left|R_i(x) \cap R_j(y)\right|}{\left|R_i(x) \cup R_j(y)\right|}\]
+
+
+For some graphs, like a grid for example, this probability is not so small. \(|R_i(x)|\)
+
+
+
+
+
+
+
 
 (TODO: Add a piece of code that proves the failure).
 
