@@ -17,7 +17,20 @@
 
 <h4>Abstract</h4>
 
-(TODO: Add abstract)
+We introduce the Distributed Post Office, an idea for routing messages in a
+decentralized mesh network. The Distributed Post Office is a method for
+creating an instant hierarchical structure from a mesh network.
+
+We describe the basic form of the Distributed Post Office, and mention two
+improvements to its structure.
+
+Next, we run some [experiments
+[github]](https://github.com/realcr/freedomlayer_code/tree/master/dist_post_office).
+Our results show that the Distributed Post Office in its current form does not
+scale well as a solution for routing messages in large networks.
+
+In this text we do not discuss security or reliability topics related to the
+Distributed Post office.
 
 <h4>The distributed post office question</h4>
 
@@ -163,13 +176,20 @@ address to \(x\) every few seconds. \(x\) will also send his current address to
 Formally we solved the problem of delivering packages, however the solution is
 not very satisfying. All the packages has to go through some special person.
 This is not good for us because of security reasons (Could we trust the special
-person), and also because of load balancing issues (Just because he is the
+person), and also because of load issues (Just because he is the
 tallest person in the world, he has to deal with all the packages?)
 
 Before we start proposing more ideas, it is probably a good time to change our
 terminology to networks and nodes. We get the following question: Assume that
 we are given a mesh network, where every node has a few neighbours. How can we
 deliver messages between every two arbitrary nodes?
+
+Note that we already tried to solve this question using
+[flooding](http://en.wikipedia.org/wiki/Flooding_%28computer_networking%29),
+[\(sqrt{n}\)
+routing](${self.utils.rel_file_link("articles/sqrt_n_routing.html")}) and
+[Virtual DHT
+routing](${self.utils.rel_file_link("articles/exp_virtual_dht_routing.html")}).
 
 Instead of checking the height of people, we can use some other properties of
 nodes. We will use some [public key
@@ -304,7 +324,8 @@ that the more \(x\) and \(y\) are close, the more their addresses \(A(x),A(y)\)
 are similar, and the more likely it is to route the message using a "high" node
 that is not the "highest" node in the network.
 
-(TODO: Explain more about failure here:)
+
+<h6>The "highest" node is still overloaded</h6>
 
 We expect that messages between close nodes are routed using a local "high"
 node, while messages between very far nodes are routed using a globally "high"
@@ -334,10 +355,12 @@ reasons:
   nodes might only have the "highest" node in common.
 
 
-I want to discuss the second reason with a bit more detail. For some node \(x\)
-in the network, we denote by \(R_j(x)\) the set of nodes of distance no more
-than \(j\) from \(x\). You can think about it as a ball around \(x\) of radius
-\(j\).
+I want to discuss the second reason with a bit more detail. (Though with a bit
+of hand waving). You can skip directly to the code experiments results below.
+
+For some node \(x\) in the network, we denote by \(R_j(x)\) the set of nodes of
+distance no more than \(j\) from \(x\). You can think about it as a ball around
+\(x\) of radius \(j\).
 
 (TODO: Add a picture of \(R_j(x)\).
 
@@ -352,25 +375,272 @@ the "highest" node in distance \(i\) from \(x\), and the "highest" node in
 distance \(j\) from \(y\)). In that case, \(x\) and \(y\) could route messages
 through \(w\).
 
-What are the odds for that event to happen? As the "highest" node in \(R_i(x)
+What are the odds that such \(w\) exists? As the "highest" node in \(R_i(x)
 \cup R_j(y)\) could be any node in that set, the odds are: 
 \[\frac{\left|R_i(x) \cap R_j(y)\right|}{\left|R_i(x) \cup R_j(y)\right|}\]
 
+I don't know to calculate those odds for every type of graph, but let me leave
+you with my intuition about it. For every type of graphs, the odds for the
+existence of \(w\) decrease as the distance between \(x\) and \(y\)
+increases. However, for some graphs the odds decrease slowly, and for other
+graphs, the odds decrease quickly.
 
-For some graphs, like a grid for example, this probability is not so small. \(|R_i(x)|\)
+The odds decrease slowly (Quadratically) when we consider a planar graph, like
+a grid. However, for random graphs (Like the [Erdos-Renyi
+model](http://en.wikipedia.org/wiki/Erd%C5%91s%E2%80%93R%C3%A9nyi_model)) the
+odds decrease quickly (exponentially).
+
+This might be related to the fact that intersection between higher dimensional
+spheres becomes smaller with respect to their union, as we increase the
+dimension.
+
+<h6>Experiments results</h6>
+
+I wrote some Python3 code to check the load over the "high" nodes in the
+network. It can be found [here
+[github]](https://github.com/realcr/freedomlayer_code/tree/master/dist_post_office)
+
+To run this code, you will need the python package **networkx**. I could be
+installed as follows:
+
+    :::
+    pip install networkx
+
+If you want to change any parameter in the code, check out the go() function.
+All the parameters are there.
+
+The code creates a network \(G\) of nodes with random identity numbers. Using
+iterations as described above (In "Obtaining highest nodes"), every node \(x\)
+finds the highest node in distance \(j\), for every distance \(0 < j \leq
+diameter(G)\).
+
+After creating the network and finding the "high" nodes, some large amount of
+pairs of nodes are chosen randomly. Between every pair of nodes \(x,y\) the best
+mediator node is found. A mediator node is some "high" node that both \(x\) and
+\(y\) know. A best mediator is a mediator that minimizes the sum of distances
+from \(x\) and \(y\).
+
+For every mediator ever chosen, we count the amount of messages that were
+routed through that mediator. We sort the mediators list by the amount of
+messages they have routed, and show as output the mediators that routed the
+largest amount of messages. Those are the mediators that had the highest load.
+
+These are the results for a two dimensional grid graph of about \(2^{12}\)
+nodes, and simulation of \(2^{16}\) messages.
+
+    :::
+    ||| i = 12
+    ||| num_hashes = 1
+    ||| ident_bits = 32
+    Generating graph...
+    Generating Network...
+    Calculating specials...
+    Simulating 65536 messages delivery...
+
+    most common mediators:
+
+     mediator index  | ratio      | messages routed 
+    ------------------------------------------------
+                 565 |   0.507568 |           33264 
+                3251 |   0.210510 |           13796 
+                3661 |   0.078995 |            5177 
+                1573 |   0.058914 |            3861 
+                3724 |   0.031265 |            2049 
+                1806 |   0.022171 |            1453 
+                3333 |   0.018906 |            1239 
+                1341 |   0.006180 |             405 
+                 159 |   0.006027 |             395 
+                1884 |   0.005585 |             366 
+                2047 |   0.005035 |             330 
+                 978 |   0.003891 |             255 
+                3109 |   0.003662 |             240 
+                 377 |   0.002518 |             165 
+                  26 |   0.002228 |             146 
+                2269 |   0.001862 |             122 
+
+How to read this table? Mediator index is a unique number that identifies the
+node used as a mediator. In our code, every node has a unique number. This
+number doesn't really matter to you. (If you really care, it is the index
+number inside a python list)
+
+The ratio is the amount of messages routed through a given node, divided by the
+total amount of messages delivered. In our results the first ratio is
+/(0.507/). This ratio could be calculated as \(33264/65536\). The last column
+shows the amount of messages routed through a specific node.
+
+It can be seen from the table that the first node (565) routes most of the
+messages (about half of the messages). It is probably the "highest" node in the
+network.
+
+Next, let's look at the results for an Erdos-Renyi Random graph with \(2^{12}\)
+nodes, and \(p = (2\cdot 12)/{2^{12}}\) (This is the probability for every
+edge in the graph to exist). Again we simulate the delivery of \(2^{16}\)
+messages.
+
+    :::
+    ||| i = 12
+    ||| num_hashes = 1
+    ||| ident_bits = 32
+    Generating graph...
+    Generating Network...
+    Calculating specials...
+    Simulating 65536 messages delivery...
+
+    most common mediators:
+
+     mediator index  | ratio      | messages routed 
+    ------------------------------------------------
+                3425 |   0.918594 |           60201 
+                2300 |   0.029877 |            1958 
+                3935 |   0.012985 |             851 
+                3232 |   0.006516 |             427 
+                2453 |   0.005585 |             366 
+                 767 |   0.004410 |             289 
+                2281 |   0.003174 |             208 
+                 943 |   0.002869 |             188 
+                 457 |   0.002625 |             172 
+                2189 |   0.002319 |             152 
+                3682 |   0.001694 |             111 
+                3215 |   0.001648 |             108 
+                 641 |   0.001144 |              75 
+                1049 |   0.000565 |              37 
+                3469 |   0.000534 |              35 
+                 782 |   0.000519 |              34 
 
 
+It can be seen that there is a main difference between the results of the
+Erdos-Renyi model and the two dimensional grid. In the Erdos-Renyi model the
+ratios are more condensed to the upper part of the table. The most common
+mediator routes 0.91 of the messages. (Compared to about half in the grid
+case). Also note that the rest of the ratios decrease much faster in the
+Erdos-Renyi model, compared to the two dimensional grid.
+
+<h4>Adding hash functions</h4>
+
+Another idea to take off the load from the "highest" node in the network would
+be to add more cryptographic hash functions.
+
+Recall that the "highest" node in the network, \(t\), is a node that maximizes
+the value \(h(pub_t)\), for some cryptographic hash function \(h\). We could
+add a few more cryptographic hash functions, to end up with a few "highest"
+nodes, one for each hash function. The process of obtaining "highest" nodes
+for different distances will be invoked independently for each of the hash
+functions.
+
+With more hash functions, every two nodes \(x,y\) are likely to have more
+"high" nodes in common with respect to a few different hash functions. On the
+other hand, having \(k\) hash functions means having an address that is \(k\)
+times bigger. (Because it contains paths to highest nodes for \(k\) different
+hashes). It also means that every node has to maintain contact with \(k\) times
+more nodes.
 
 
+You might be wondering where will we get all those cryptographic hash functions
+from. If you have one cryptographic hash function \(h\), you can get more for
+free by appending something to the input. For example, given a function \(h\)
+we can define \(h_i(x) = h(i . x)\), where \(.\) is string concatenation. 
+
+This is a pretty simple example of how to do it, and it could be [not very
+secure in some cases](http://en.wikipedia.org/wiki/Length_extension_attack), so
+be careful. We are just experimenting here, so we don't really care.
 
 
+Let's look at some run results with more than one hash function.
+We show here the results for an Erdos-Renyi network with \(2^{12}\) nodes, and
+\(p = (2\cdot 12)/2^{12}\). We use \(4\) hash functions:
+
+    :::
+    ||| i = 12
+    ||| num_hashes = 4
+    ||| ident_bits = 32
+    Generating graph...
+    Generating Network...
+    Calculating specials...
+    Simulating 65536 messages delivery...
+
+    most common mediators:
+
+     mediator index  | ratio      | messages routed 
+    ------------------------------------------------
+                3685 |   0.189270 |           12404 
+                2935 |   0.189026 |           12388 
+                2010 |   0.187103 |           12262 
+                3136 |   0.186569 |           12227 
+                2466 |   0.025085 |            1644 
+                3546 |   0.021988 |            1441 
+                3886 |   0.021057 |            1380 
+                1330 |   0.015961 |            1046 
+                2039 |   0.010941 |             717 
+                 400 |   0.010269 |             673 
+                 761 |   0.009781 |             641 
+                1057 |   0.008957 |             587 
+                 502 |   0.006882 |             451 
+                2890 |   0.006760 |             443 
+                2487 |   0.005554 |             364 
+                3204 |   0.005341 |             350 
 
 
-(TODO: Add a piece of code that proves the failure).
+We can see from the results that the first \(4\) most common mediator nodes
+route about the same amount of messages: About 0.18 of all the messages sent.
+The rest of the nodes route much less messages. (The next one routes 0.02
+messages out of the total amount).
 
+It seems that having \(k\) cryptographic hash functions approximately
+divides the amount of work the "highest" node has to do by \(k\). It's an
+improvment, but it seems like each of the "highest" nodes still has to route a
+constant fraction of all the message sent in the network, which is unacceptable
+for a symmetric mesh network. (In other words: The average computer out there
+can not deal with this amount of traffic).
 
+<h4>Final simplification</h4>
 
+We began with a simple idea of the "highest" node in the network, and later
+added two improvments: First, every node \(x\) had to remember the "highest"
+node of distance \(j\) for every \(0 < j \leq diameter(G)\). Next, we added
+some more "height" properties. In other words: We added more hash functions.
 
+We noticed that remembering local "high" nodes didn't help much. It took some
+of the traffic from the "highest" node in the network to some other local
+"high" nodes, but still most of the traffic was routed by the "highest" node in
+the network.
 
+Changing to \(k\) hash functions instead of one made a bigger difference.
+Instead of having just one "highest" node in the network, now there are \(k\)
+of them, and the task of routing the network messages is divided somewhat
+equally between those \(k\) "highest" node. 
+
+We could ignore the first improvment (Remembering local "high" nodes), and stay
+only with the second improvment (Adding more hash functions).
+That means: Every node will have to remember one "highest" node for every one
+of \(k\) hash function. All the traffic will be routed by the \(k\) "highest"
+nodes (One for each hash function).
+
+Using this simpler method (\(k\) hash functions, remember only "highest" nodes)
+we are going to have results comparable to the more complex method
+described above, and at the same time have much shorter addresses for nodes.
+We will call the \(k\) "highest" nodes in the graph **the \(k\) landmarks**
+
+(TODO: Add a picture of the \(k\) landmarks, and navigating using them).
+
+We end up with a routing method that is not very practical for large networks,
+but it gives us some new ideas about routing. This method will serve as a
+starting point for some of our next ideas.
+
+<h4>Summary</h4>
+The Distributed Post Office is an algorithm for creating a hierarchical
+structure in a decentralized mesh network.
+
+Our results show that the Distributed Post Office works, but not very
+efficiently: A few nodes (The "highest" node with respect to every hash
+function) have the responsibility of routing messages for the whole network.
+
+In our last simplified solution, every node has to remember exactly \(k\)
+landmarks: The "highest" nodes with respect to \(k\) different cryptographic hash
+functions. In this solution we get that every landmark has to route \(1/k\) of
+the messages sent in the network.
+
+A question to think about: Is there a way to route the messages in the network
+using the knowledge about the \(k\) landmarks, without actually routing the
+messages through the landmarks themselves?
 
 </%block>
