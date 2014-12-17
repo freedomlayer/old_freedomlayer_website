@@ -3,12 +3,14 @@
 <%
     return {\
     "title": "The Distributed Post Office: Instant hierarchy for mesh networks",\
-    "date": "2014-12-14 15:51",\
+    "date": "2014-12-17 13:47",\
     "author": "real",\
     "number":8,\
     "tags": [],\
-    "draft":"True",\
-    "description":""}
+    "draft":"False",\
+    "description":"We introduce the Distributed Post Office, an idea for\
+routing messages in a decentralized mesh network. The Distributed Post Office\
+is a method for creating an instant hierarchical structure from a mesh network."}
 
 %>
 </%def>
@@ -52,8 +54,8 @@ and his neighbours, then we get a connected graph.
 
 <img class="wimage"
 src="${self.utils.rel_file_link("articles/dist_post_office/connected_graph_path.svg")}"/>
-In the picture: A connected network of people. There is a path of neighbours
-that connects \(x\) and \(y\).
+<div class="pict_desc">In the picture: A connected network of people. There is a path of neighbours
+that connects \(x\) and \(y\).</div>
 <br /><br />
 
 Would these assumptions be enough to let us send a message to anyone in the
@@ -116,7 +118,12 @@ There is some shortest path of neighbours between \(x\) and \(t\) (However
 \(x\) doesn't know that path yet). Let's assume that this path of neighbours
 have the people: \((x,x_1,x_2,\dots,x_{k-1},x_k,t)\) in this order. 
 
-(TODO: Add a picture of the shortest path between \(x\) and \(t\))
+<img class="wimage"
+src="${self.utils.rel_file_link("articles/dist_post_office/shortest_path_x_t.svg")}"/>
+<div class="pict_desc">
+In the picture: A shortest path between \(x\) and \(t\). Note that this is not
+the only shortest path between \(x\) and \(t\).</div>
+<br /><br />
 
 After the first iteration, \(x_k\) will have \(t\) as the highest person in the
 world. \(x_k\) will also have a shortest path to \(t\). In the next iteration,
@@ -216,13 +223,12 @@ certain \(h(pub_t)\) value, \(x\) can verify it himself. \(x\) can send some
 challenge all the way to \(t\), and \(t\) will send back a response that proves
 he owns the public key \(pub_t\). 
 
-(TODO: Add a picture about remote verification).
-
 <img class="wimage"
 src="${self.utils.rel_file_link("articles/dist_post_office/remote_verification.svg")}"/>
+<div class="pict_desc">
 In the picture: \(x\) wants to verify that \(t\) owns the public key \(pub_t\).
 Therefore \(x\) sends a challenge to \(t\). If \(t\) returns a correct
-response, \(x\) will believe that \(t\) owns the public key \(pub_t\).
+response, \(x\) will believe that \(t\) owns the public key \(pub_t\).</div>
 <br /><br />
 
 Note however that this challenge response idea is not a magic cure to all the
@@ -248,8 +254,19 @@ in some certain area around \(x\):
 
 - \(t_x^d\) The "highest" node in the network.
 
-(TODO: Add a picture of the circles around \(x\) and highest nodes in those
-circles).
+<img class="wimage"
+src="${self.utils.rel_file_link("articles/dist_post_office/circles_highest.svg")}"/>
+<div class="pict_desc">
+In the picture: Distance rings around \(x\). The first ring is distance \(0\)
+from \(x\). It contains only \(x\) itself. The next ring contains all nodes of
+distance exactly \(1\) from \(x\). The next ring contains all nodes of distance
+exactly \(2\), and so on. Note that by definition, A node from a certain ring
+can only be connected to nodes of adjacent rings, or nodes from the same ring.
+
+We mark by \(t_x^j\) The "highest" node of maximum distance \(j\) from \(x\).
+In our example, \(t_x^3 = t_x^4\).</div>
+<br /><br />
+
 
 Side question: How can we choose a good value for \(d\)? One suggestion is to
 keep increasing the distance until we stop getting new highest nodes. Another
@@ -282,8 +299,12 @@ path from \(t_y^j = t_x^j\) to \(y\). Finally, \(x\) can create a full path
 from \(x\) to \(y\) that goes through \(t_y^j = t_x^j\). This path could be
 used to send messages.
 
-(TODO: Add picture of sending a message from \(x\) to \(y\) using the
-intermediate \(t_y^j = t_x^j\)).
+<img class="wimage"
+src="${self.utils.rel_file_link("articles/dist_post_office/msg_through_mediator.svg")}"/>
+<div class="pict_desc">
+In the picture: The node \(t_x^4 = t_y^4\) is a mediator between \(x\) and
+\(y\). \(x\) and \(y\) can route messages through \(t_x^4 = t_y^4\).</div>
+<br /><br />
 
 Addresses should not be too large if we want them to be practical to use. Let's
 estimate the size of a typical address, as defined above. For some node \(x\),
@@ -374,12 +395,16 @@ For some node \(x\) in the network, we denote by \(R_j(x)\) the set of nodes of
 distance no more than \(j\) from \(x\). You can think about it as a ball around
 \(x\) of radius \(j\).
 
-(TODO: Add a picture of \(R_j(x)\).
-
 Consider two nodes \(x\) and \(y\) in the network. We observe the sets \(R_i(x)
 \cap R_j(y)\) and \(R_i(x) \cup R_j(y)\).
 
-(TODO: Add a picture of the two sets\)
+<img class="wimage"
+src="${self.utils.rel_file_link("articles/dist_post_office/two_balls_intersect.svg")}"/>
+<div class="pict_desc">
+A schematic picture of the sets \(R_i(x)\) and \(R_j(y)\) intersecting.
+\(R_i(x)\) contains all the nodes of distance at most \(i\) from \(x\).
+\(R_j(y)\) contains all the nodes of distance at most \(j\) from \(y\).</div>
+<br /><br />
 
 Let \(w\) be the "highest node in \(R_i(x) \cup R_j(y)\). If \(w\) is inside
 \(R_i(x) \cap R_j(y)\) then \(t_x^i = w = t_y^j\). (In other words: \(w\) is
@@ -608,31 +633,49 @@ can not deal with this amount of traffic).
 
 We began with a simple idea of the "highest" node in the network, and later
 added two improvements: First, every node \(x\) had to remember the "highest"
-node of distance \(j\) for every \(0 < j \leq diameter(G)\). Next, we added
-some more "height" properties. In other words: We added more hash functions.
+node of distance \(j\): \(t_x^j\), for every \(0 < j \leq diameter(G)\). Next,
+we added some more "height" properties. In other words: We added more hash
+functions.
 
-We noticed that remembering local "high" nodes didn't help much. It took some
-of the traffic from the "highest" node in the network to some other local
-"high" nodes, but still most of the traffic was routed by the "highest" node in
-the network.
+We noticed that the first improvement: remembering local "high" nodes didn't
+help much. It took some of the traffic from the "highest" node in the network
+to some other local "high" nodes, but still most of the traffic was routed by
+the "highest" node in the network.
 
-Changing to \(k\) hash functions instead of one made a bigger difference.
-Instead of having just one "highest" node in the network, now there are \(k\)
-of them, and the task of routing the network messages is divided somewhat
-equally between those \(k\) "highest" node. 
+The second improvement: Changing to \(k\) hash functions instead of one made a
+bigger difference. Instead of having just one "highest" node in the network,
+now there are \(k\) of them, and the task of routing the network messages is
+divided somewhat equally between those \(k\) "highest" node. 
 
-We could ignore the first improvement (Remembering local "high" nodes), and stay
-only with the second improvement (Adding more hash functions).
-That means: Every node will have to remember one "highest" node for every one
-of \(k\) hash function. All the traffic will be routed by the \(k\) "highest"
-nodes (One for each hash function).
+We could discard the first improvement (Remembering local "high" nodes), and
+stay only with the second improvement (Adding more hash functions).  That
+means: Every node will have to remember one "highest" node \(l_j\) for every
+one of \(k\) hash function. Note that \(l_j\) is the "highest" node in the
+network with respect to hash function number \(j\). All the messges sent in the
+network will then be routed by the \(k\) "highest" nodes \(l_1,\dots,l_k\).
+(One "highest" node for every cryptographic hash function).
 
-Using this simpler method (\(k\) hash functions, remember only "highest" nodes)
-we are going to have results comparable to the more complex method
-described above, and at the same time have much shorter addresses for nodes.
-We will call the \(k\) "highest" nodes in the graph **the \(k\) landmarks**
+Using this simpler method we are going to have results comparable to the more
+complex method described above, and at the same time have much shorter
+addresses for nodes. We call the \(k\) "highest" nodes in the graph **the
+\(k\) landmarks**.
 
-(TODO: Add a picture of the \(k\) landmarks, and navigating using them).
+<img class="wimage"
+src="${self.utils.rel_file_link("articles/dist_post_office/k_landmarks_routing.svg")}"/>
+<div class="pict_desc">
+In the picture: The nodes \(l_j\) for \(1 \leq j \leq 5\) are the landmarks
+used for routing messages. \(l_j\) is the "highest" node in the network with
+respect to cryptographic hash function number \(j\).Each node in the network
+maintains a shortest path to each of the landmarks.
+
+Note that each message sent in the network will be routed through one of the
+landmarks, therefore each landmarks is going to route about \(1/5\) of all the
+messages in the network.
+
+In the example: Both \(x\) and \(y\) keep contact with each of the \(5\)
+landmarks, so messages between \(x\) and \(y\) could be routed using any of
+those \(5\) landmarks.</div>
+<br /><br />
 
 We end up with a routing method that is not very practical for large networks,
 but it gives us some new ideas about routing. This method will serve as a
