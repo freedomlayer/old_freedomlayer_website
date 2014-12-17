@@ -2,7 +2,7 @@
 <%def name="post_metadata()">
 <%
     return {\
-    "title": "The Distributed Post Office",\
+    "title": "The Distributed Post Office: Instant hierarchy for mesh networks",\
     "date": "2014-12-14 15:51",\
     "author": "real",\
     "number":8,\
@@ -82,7 +82,7 @@ this person. This centralized point of view is a bit different from our usual
 decentralized point of view, but it will present some idea that we
 might later be able to utilize in a decentralized way, so bear with me here.
 
-Finding a special person could be acheived as follows: Every person \(x\) will
+Finding a special person could be achieved as follows: Every person \(x\) will
 maintain a link (Maybe through a few neighbours) to the highest person he knows
 of (We assume that there are no two people of the exact same height). By
 maintaining a link we mean that \(x\) will remember some person \(y\), his
@@ -177,7 +177,7 @@ Formally we solved the problem of delivering packages, however the solution is
 not very satisfying. All the packages has to go through some special person.
 This is not good for us because of security reasons (Could we trust the special
 person), and also because of load issues (Just because he is the
-tallest person in the world, he has to deal with all the packages?)
+highest person in the world, he has to deal with all the packages?)
 
 Before we start proposing more ideas, it is probably a good time to change our
 terminology to networks and nodes. We get the following question: Assume that
@@ -240,9 +240,10 @@ in some certain area around \(x\):
 (TODO: Add a picture of the circles around \(x\) and highest nodes in those
 circles).
 
-Side question: How can we know \(d\)? One suggestion is to keep increasing the
-distance until we stop getting new highest nodes. Another suggestion would be
-to just assume that the graph diameter won't be more than some constant number.
+Side question: How can we choose a good value for \(d\)? One suggestion is to
+keep increasing the distance until we stop getting new highest nodes. Another
+suggestion would be to just assume that the graph diameter won't be more than
+some constant number.
 
 
 First let's assume that somehow we managed to have the above information for
@@ -344,7 +345,7 @@ reasons:
 - In physical mail system people tend to send packages and letters to people
   close to them geographically, so the structure of global post offices and local
   post offices makes sense. However, this is not the case with mesh networks: In
-  a mesh network, any two arbirary nodes \(x\) and \(y\) might want to
+  a mesh network, any two arbitrary nodes \(x\) and \(y\) might want to
   communicate. With high probability \(x\) and \(y\) are far away from each
   other (With respect to the network graph), and so their messages will be routed
   through the "highest" node in the network.
@@ -587,7 +588,7 @@ messages out of the total amount).
 
 It seems that having \(k\) cryptographic hash functions approximately
 divides the amount of work the "highest" node has to do by \(k\). It's an
-improvment, but it seems like each of the "highest" nodes still has to route a
+improvement, but it seems like each of the "highest" nodes still has to route a
 constant fraction of all the message sent in the network, which is unacceptable
 for a symmetric mesh network. (In other words: The average computer out there
 can not deal with this amount of traffic).
@@ -595,7 +596,7 @@ can not deal with this amount of traffic).
 <h4>Final simplification</h4>
 
 We began with a simple idea of the "highest" node in the network, and later
-added two improvments: First, every node \(x\) had to remember the "highest"
+added two improvements: First, every node \(x\) had to remember the "highest"
 node of distance \(j\) for every \(0 < j \leq diameter(G)\). Next, we added
 some more "height" properties. In other words: We added more hash functions.
 
@@ -609,8 +610,8 @@ Instead of having just one "highest" node in the network, now there are \(k\)
 of them, and the task of routing the network messages is divided somewhat
 equally between those \(k\) "highest" node. 
 
-We could ignore the first improvment (Remembering local "high" nodes), and stay
-only with the second improvment (Adding more hash functions).
+We could ignore the first improvement (Remembering local "high" nodes), and stay
+only with the second improvement (Adding more hash functions).
 That means: Every node will have to remember one "highest" node for every one
 of \(k\) hash function. All the traffic will be routed by the \(k\) "highest"
 nodes (One for each hash function).
