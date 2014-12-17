@@ -365,9 +365,12 @@ node, while messages between very far nodes are routed using a globally "high"
 node. Therefore **idealy** we expect that the "highest" node in the network
 will not be so loaded, because the lower level "high" nodes will take part of
 the load.
-This somehow resembles the way physical post offices work. You have
+
+<del>This somehow resembles the way physical post offices work. You have
 the global post office which handles messages between countries, and smaller
-post offices that handle messages between cities, and so on.
+post offices that handle messages between cities, and so on.</del>
+EDIT: Thanks to rubygeek I now know that post offices work differently in some
+countries :)
 
 However, this is just the ideal. It is true that the local "high" nodes in the
 network take part of the load from the "highest" node in the network, but
