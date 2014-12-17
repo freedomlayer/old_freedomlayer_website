@@ -50,7 +50,11 @@ person using a sequence of neighbours. Or, in other words: If we draw a graph
 of all the people in the world (As nodes), and put edges between every person
 and his neighbours, then we get a connected graph.
 
-(TODO: Add a picture of a connected graph)
+<img class="wimage"
+src="${self.utils.rel_file_link("articles/dist_post_office/connected_graph_path.svg")}"/>
+In the picture: A connected network of people. There is a path of neighbours
+that connects \(x\) and \(y\).
+<br /><br />
 
 Would these assumptions be enough to let us send a message to anyone in the
 world?
@@ -213,6 +217,13 @@ challenge all the way to \(t\), and \(t\) will send back a response that proves
 he owns the public key \(pub_t\). 
 
 (TODO: Add a picture about remote verification).
+
+<img class="wimage"
+src="${self.utils.rel_file_link("articles/dist_post_office/remote_verification.svg")}"/>
+In the picture: \(x\) wants to verify that \(t\) owns the public key \(pub_t\).
+Therefore \(x\) sends a challenge to \(t\). If \(t\) returns a correct
+response, \(x\) will believe that \(t\) owns the public key \(pub_t\).
+<br /><br />
 
 Note however that this challenge response idea is not a magic cure to all the
 security problems in this model. It just helps a bit.
@@ -466,7 +477,7 @@ number inside a python list)
 
 The ratio is the amount of messages routed through a given node, divided by the
 total amount of messages delivered. In our results the first ratio is
-/(0.507/). This ratio could be calculated as \(33264/65536\). The last column
+\(0.507\). This ratio could be calculated as \(33264/65536\). The last column
 shows the amount of messages routed through a specific node.
 
 It can be seen from the table that the first node (565) routes most of the
