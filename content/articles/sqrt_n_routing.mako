@@ -71,9 +71,10 @@ cooperate.
 
 <img class="wimage"
 src="${self.utils.rel_file_link("articles/sqrt_n_routing/path_x_to_y.svg")}"/>
+<div class="pict_desc">
 In the picture: Nodes are are blue points. Immediate links between nodes are
 drawn as black lines. The green lines mark a chosen path of links between the
-nodes \(x\) and \(y\).
+nodes \(x\) and \(y\).</div>
 <br/><br/>
 
 It might be very likely that \(y\) will want to send a message back to \(x\).
@@ -108,10 +109,11 @@ a message to \(z\), and \(z\) will forward that message to \(b\).
 
 <img class="wimage"
 src="${self.utils.rel_file_link("articles/sqrt_n_routing/z_common_virtual_neighbour.svg")}"/>
+<div class="pict_desc">
 In the picture: \(a\) and \(b\) are two nodes in the network. The lines from
 \(a\) and \(b\) are paths to virtual neighbours of \(a\) and \(b\). \(z\) is
 both a virtual neighbour of \(a\) and a virtual neighbour of \(b\). With the
-help of \(z\), \(a\) and \(b\) can communicate.
+help of \(z\), \(a\) and \(b\) can communicate.</div>
 <br/><br/>
 
 To make this solution valid, we have to make sure somehow that every two nodes
@@ -173,10 +175,11 @@ every iteration we pick a neighbour randomly, and move to that neighbour.
 
 <img class="wimage"
 src="${self.utils.rel_file_link("articles/sqrt_n_routing/random_walk_graph.svg")}"/>
+<div class="pict_desc">
 In the picture: An example for a random walk on a graph. Follow the numbers to
 get a feeling of the random walk. (Begin from 1). Note that some vertices have
 more than one number next to them. That is because the random walk has visited
-those vertices more than once.
+those vertices more than once.</div>
 <br/><br/>
 
 Can we really get to random nodes in the graph using this method? 
@@ -271,17 +274,19 @@ wireless), it is probably not very fast mixing.
 
 <img class="wimage"
 src="${self.utils.rel_file_link("articles/sqrt_n_routing/random_graph.svg")}"/>
+<div class="pict_desc">
 In the picture: An
 [Erdos-Renyi](http://en.wikipedia.org/wiki/Erd%C5%91s%E2%80%93R%C3%A9nyi_model)
 random graph with \(n=2^6\) and
 \(p=\frac{2\cdot 6}{2^6}\). This is an example of a fast mixing graph. You can
 browse for the code [here
-[github]](https://github.com/realcr/freedomlayer_code).
+[github]](https://github.com/realcr/freedomlayer_code).</div>
 <br/><br/>
 
 <img class="wimage"
 src="${self.utils.rel_file_link("articles/sqrt_n_routing/grid.svg")}"/>
-A grid is an example of a non fast mixing graph.
+<div class="pict_desc">
+A grid is an example of a non fast mixing graph.</div>
 <br/><br/>
 
 Going backwards a bit, why do we care at all about the network being fast

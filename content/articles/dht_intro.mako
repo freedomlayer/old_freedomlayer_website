@@ -75,8 +75,9 @@ the list.
 
 <img class="wimage"
 src="${self.utils.rel_file_link("articles/dht_intro/linear_dht_circle.svg")}"/>
-(The phone list drawn as a ring, with lines representing the connection between
-people on the list.)<br/><br/>
+<div class="pict_desc">
+The phone list drawn as a ring, with lines representing the connection between
+people on the list.</div><br/><br/>
 
 Now assume that Benito wants to call Edwin. How can he do that? He will first
 call Britney, because he knows her phone number. He will ask Britney for the
@@ -125,7 +126,8 @@ it is not needed anymore.
 
 <img class="wimage"
 src="${self.utils.rel_file_link("articles/dht_intro/join_linear_dht_circle.svg")}"/>
-(The new state of the list, after Gary has joined.)<br/><br/>
+<div class="pict_desc">
+The new state of the list, after Gary has joined.</div><br/><br/>
 
 <h5>Analysis</h5>
 Whenever person \(A\) wants to find person \(B\) on the list, he will have to
@@ -193,7 +195,8 @@ way, we could get better results.
 
 <img class="wimage"
 src="${self.utils.rel_file_link("articles/dht_intro/double_linear_dht_circle.svg")}"/>
-(The list with \(k=2\). Search operation is twice as fast.)<br/><br/>
+<div class="pict_desc">
+The list with \(k=2\). Search operation is twice as fast.</div><br/><br/>
 
 <h3>Chord</h3>
 So far we have discussed a very nice phone list game, and you might not
@@ -348,13 +351,14 @@ that his name is bigger than \(y\).
 
 <img class="wimage"
 src="${self.utils.rel_file_link("articles/dht_intro/log_wiring.svg")}"/>
+<div class="pict_desc">
 In the picture: The ring represents the set \(B_s\) of possible names for
 nodes. (With \(s = 6\)). Blue points are existing nodes. Their location on the ring represents
 their name. Cuts on the ring represent the exact locations of \(x+1,
 x+2,\dots,x+2^{s-1}\). The nodes of the form \(\left\lceil{x +
 2^{q}}\right\rceil\) are marked on the ring.
 The green lines represents links from the node \(x\) to other
-nodes.<br/><br/>
+nodes.</div><br/><br/>
 
 Follow the picture and make sure you understand what \(\ceil{x +
 2^{q}}\) means - It is the "first" (clockwise) node with a name
@@ -386,7 +390,8 @@ many iterations it takes to find \(y\).
 
 <img class="wimage"
 src="${self.utils.rel_file_link("articles/dht_intro/x_search_y.svg")}"/>
-(Illustrated search process)<br/><br/>
+<div class="pict_desc">
+Illustrated search process</div><br/><br/>
 
 <h5>Analysis</h5>
 Let us start with the simple things. How many links every node has to maintain?
@@ -495,11 +500,12 @@ a name not bigger than the number \(k\).
 
 <img class="wimage"
 src="${self.utils.rel_file_link("articles/dht_intro/responsible_keys.svg")}"/>
+<div class="pict_desc">
 In the picture: The node \(z\) (A blue dot), and some keys that \(z\) is
 responsible to keep (Small orange dots). The keys and node names are of the
 same kind (Both are from \(B_s\), so we can also draw them on the ring
 according to their value. The next node (clockwise) after \(z\) marks the end
-of the domain \(z\) has responsibility over.<br/><br/>
+of the domain \(z\) has responsibility over.</div><br/><br/>
 
 To invoke set_value(key=k,value=v), we first search (Using our search
 algorithm) for the node that is responsible for keeping the key \(k\). This is

@@ -138,8 +138,9 @@ question that we are going to deal with later, don't worry about it now).
 
 <img class="wimage"
 src="${self.utils.rel_file_link("articles/mesh_question/a_to_b.svg")}"/>
-(A generic schema of a mesh network. We want to send a message from \(A\) to
-\(B\).)<br/><br/>
+<div class="pict_desc">
+A generic schema of a mesh network. We want to send a message from \(A\) to
+\(B\).</div><br/><br/>
 
 <h4>Flooding</h4>
 We program every node (Computer) in the network to forward every message it

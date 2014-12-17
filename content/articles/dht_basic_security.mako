@@ -382,8 +382,9 @@ between the node that is currently responsible over the key \(k\), and the key
 
 <img class="wimage"
 src="${self.utils.rel_file_link("articles/dht_basic_security/wanted_interval_floor_k.svg")}"/>
+<div class="pict_desc">
 In the picture: The interval that the Adversary wants to land on to take over
-the key \(k\) is marked with the green color.
+the key \(k\) is marked with the green color.</div>
 <br/><br/>
 
 Now we want to know how many different values \(N=pq\) we have to generate
@@ -516,9 +517,10 @@ disconnect \(x\).
 
 <img class="wimage"
 src="${self.utils.rel_file_link("articles/dht_basic_security/riddle_exchange.svg")}"/>
+<div class="pict_desc">
 In the picture: Illustration of the riddles exchange between two linked nodes.
 Each node sends periodically a riddle to the other, and waits for a correct
-solution. <br/><br/>
+solution.</div><br/><br/>
 
 This is somehow like the alarm clock applications that make you solve a hard
 problem, to prove that you are awake and present. Here we use a riddle to make a
@@ -571,8 +573,9 @@ solve any riddles that \(x\) sends.
 
 <img class="wimage"
 src="${self.utils.rel_file_link("articles/dht_basic_security/riddle_redirection.svg")}"/>
+<div class="pict_desc">
 In the picture: The riddle redirection attack illustrated. How can you solve
-it?
+it?</div>
 <br/><br/>
 
 

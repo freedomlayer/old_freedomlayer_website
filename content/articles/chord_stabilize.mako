@@ -141,8 +141,9 @@ that for \(x,y \in B_s\),  \(d(x,y) = y - x\) if \(y > x\), and \(d(x,y) = 2^s
 
 <img class="wimage"
 src="${self.utils.rel_file_link("articles/chord_stabilize/single_vs_double_link.svg")}"/>
+<div class="pict_desc">
 (On the left: A one way link ring network. Every node is connected to the next
-one. On the right: A two way link ring network. It is a bit more robust.)<br/><br/>
+one. On the right: A two way link ring network. It is a bit more robust.)</div><br/><br/>
 
 This time, if one node dies, the network is still fixable. Take a few moments
 to think about how to fix it.
@@ -191,8 +192,9 @@ information to do that. They just don't see far enough.
 
 <img class="wimage"
 src="${self.utils.rel_file_link("articles/chord_stabilize/y_disconnected.svg")}"/>
+<div class="pict_desc">
 (On the left: The original state of the network. On the right: The state of the
-network after \(y\) has failed.<br/><br/>
+network after \(y\) has failed.</div><br/><br/>
 
 
 Now let's investigate what happens to \(x\) and \(z\) after a while. For
@@ -208,9 +210,10 @@ Stabilize algorithm and make sure that you understand why).
 
 <img class="wimage"
 src="${self.utils.rel_file_link("articles/chord_stabilize/y_disconnected_stb1.svg")}"/>
+<div class="pict_desc">
 In this picture: The state of the network after one Stabilize iteration. We
 mark by purple arrows the links that are not yet optimal. (They are going to
-change in the next iteration of Stabilize)<br/><br/>
+change in the next iteration of Stabilize)</div><br/><br/>
 
 Note that all other nodes will in the ring will perform Stabilize too, however
 for every node that is not \(x\) or \(z\) the links are already optimized, so
@@ -234,8 +237,9 @@ and there is no hope to fix it.
 
 <img class="wimage"
 src="${self.utils.rel_file_link("articles/chord_stabilize/y_disconnected_stb_all.svg")}"/>
+<div class="pict_desc">
 In the picture: The self fixing process of the network using iterations of
-Stabilize (After a node \(y\) failed). It is very slow.
+Stabilize (After a node \(y\) failed). It is very slow.</div>
 <br/><br/>
 
 Generally, if the network becomes not connected (There are two nodes \(a,b\)
@@ -254,8 +258,9 @@ ring.
 
 <img class="wimage"
 src="${self.utils.rel_file_link("articles/chord_stabilize/ring_2.svg")}"/>
+<div class="pict_desc">
 In the picture: An example ring with \(k = 2\). In this network one failed node
-will be fixed quickly.
+will be fixed quickly.</div>
 <br/><br/>
 
 We have already discussed this structure in [Intro to
@@ -320,7 +325,8 @@ name bigger or equal to \(y\). By \(\floor{y}\) we mean the first node
 
 <img class="wimage"
 src="${self.utils.rel_file_link("articles/chord_stabilize/floor_ceil.svg")}"/>
-In the picture: Some value \(v\), and the nodes \(\floor{v}, \ceil{v}\)
+<div class="pict_desc">
+In the picture: Some value \(v\), and the nodes \(\floor{v}, \ceil{v}\)</div>
 <br/><br/>
 
 

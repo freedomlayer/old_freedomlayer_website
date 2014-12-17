@@ -69,6 +69,10 @@ h6 {
     max-height:100%;
 }
 
+.pict_desc {
+    font-size: 0.8em;
+}
+
 .famous_quote {
 	font-style:italic;
 	font-size:1.25em;

@@ -63,7 +63,8 @@ providers.
 
 
 <img class="wimage" src="${self.utils.rel_file_link("articles/intro_internet/internet_scheme.svg")}"/>
-(A Very Simplistic view of the internet)<br/><br/>
+<div class="pict_desc">
+A Very Simplistic view of the internet</div><br/><br/>
 
 Every computer on the network gets an address. In the Internet terms we call it
 IP (Internet Protocol) address. This address somehow describes the location of
@@ -170,7 +171,9 @@ your computers to the NAT, and then you connect your NAT to the ISP. We say
 that the computers in the internal part of the NAT are "behind the NAT".
 
 <img class="wimage" src="${self.utils.rel_file_link("articles/intro_internet/cisco_router.png")}"/>
-(A picture of a Cisco router. It probably has the NAT abilities. (http://en.wikipedia.org/wiki/File:EPC3925.jpg))
+<div class="pict_desc">
+A picture of a Cisco router. It probably has the NAT abilities.
+(http://en.wikipedia.org/wiki/File:EPC3925.jpg)</div>
 <br/><br/>
 
 
@@ -191,7 +194,8 @@ computer.
 
 <img class="wimage"
 src="${self.utils.rel_file_link("articles/intro_internet/nat_scheme.svg")}"/>
-(A general sketch of the network behind a NAT, and the external Internet)
+<div class="pict_desc">
+(A general sketch of the network behind a NAT, and the external Internet)</div>
 <br/><br/>
 
 NATs have become very common these days, mostly because they quick solve the

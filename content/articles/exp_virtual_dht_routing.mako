@@ -100,8 +100,9 @@ the address of \(z\). Finally, \(x\) can connect to \(z\) and join the DHT.
 
 <img class="wimage"
 src="${self.utils.rel_file_link("articles/exp_virtual_dht_routing/dht_join.svg")}"/>
+<div class="pict_desc">
 In the picture: \(x\) wants to join the network. Marked in gray is the place in
-the ring where \(x\) is supposed to be, right after \(z\).
+the ring where \(x\) is supposed to be, right after \(z\).</div>
 <br /><br />
 
 This would work if we have a structure like the internet to support the idea of
@@ -124,8 +125,9 @@ message to \(z\), \(x\) will use the path \(path(x,y) + path(y,z)\).
 
 <img class="wimage"
 src="${self.utils.rel_file_link("articles/exp_virtual_dht_routing/concat_path.svg")}"/>
+<div class="pict_desc">
 In the picture: The path between \(x\) and \(z\) is the concatenation of paths
-between \(x\) and \(y\), \(y\) and \(z\).
+between \(x\) and \(y\), \(y\) and \(z\).</div>
 <br /><br />
 
 This method sounds like a solution, but it has a major flaw: The path
@@ -159,11 +161,12 @@ Identity value and the node itself) we will define two notions of distance
 
 <img class="wimage"
 src="${self.utils.rel_file_link("articles/exp_virtual_dht_routing/mesh_and_ring.svg")}"/>
+<div class="pict_desc">
 In the picture: On the right we can see an example for a mesh network. On the
 left, we can see the Virtual DHT. Note that there is no relation between
 distances on the mesh and distances in the Virtual DHT. The Virtual Distance
 between \(x_{10}\) and \(x_9\) is pretty short, however in the mesh they are
-very far.
+very far.</div>
 <br /><br />
 
 Note that two nodes could have very short Network Distance though very long
@@ -214,8 +217,9 @@ in the mesh).
 
 <img class="wimage"
 src="${self.utils.rel_file_link("articles/exp_virtual_dht_routing/local_knowledge.svg")}"/>
+<div class="pict_desc">
 In the picture: The local knowledge of the node \(x_2\). All the unknown parts
-of the network are colored gray.<br /><br />
+of the network are colored gray.</div><br /><br />
 
 For a node \(x\), we could traverse the whole network and find the best
 successor and predecessor (With respect to the DHT), however this will be too
@@ -295,8 +299,9 @@ Next, assume that some node \(y\) (of DHT Identity 384126) sent a message to
 
 <img class="wimage"
 src="${self.utils.rel_file_link("articles/exp_virtual_dht_routing/before_iter_example.svg")}"/>
+<div class="pict_desc">
 In the picture: Schematic picture of the Virtual DHT ordering of all the nodes
-mentioned above.<br /><br />
+mentioned above.</div><br /><br />
 
 Some explanations: In the set of nodes we mention two values: ident and
 path_len. Ident is the identity of the remote node, and path_len is the length
@@ -401,8 +406,9 @@ modulo \(2^s\)).
 
 <img class="wimage"
 src="${self.utils.rel_file_link("articles/exp_virtual_dht_routing/dht_fingers.svg")}"/>
+<div class="pict_desc">
 In the picture: The Chord DHT fingers. We can see both the successor fingers
-and predecessor fingers.
+and predecessor fingers.</div>
 <br /><br />
 
 So far we only dealt with the fingers \(x+1\) and \(x-1\). Those are the
@@ -514,8 +520,9 @@ finger. In the python source code, \(k\) shows up as \(fk\).
 
 <img class="wimage"
 src="${self.utils.rel_file_link("articles/exp_virtual_dht_routing/conv_gnp_all_fingers_results.svg")}"/>
+<div class="pict_desc">
 Results for Random Erdos-Renyi networks. Horizontal axis is \(i\). Vertical
-axis is the average network path length to the best finger candidate.
+axis is the average network path length to the best finger candidate.</div>
 <br /><br />
 
 It's hard to say what is going to happen for \(i=40\) from those results, but
@@ -551,8 +558,9 @@ chose \(m\) to be the integral part of \(\sqrt{n}\).
 
 <img class="wimage"
 src="${self.utils.rel_file_link("articles/exp_virtual_dht_routing/conv_grid_all_fingers_results.svg")}"/>
+<div class="pict_desc">
 Results for grid networks. Horizontal axis is \(i\). Vertical axis is the
-average network path length to the best finger candidate.
+average network path length to the best finger candidate.</div>
 <br /><br />
 
 Note that in the grid networks we get much larger values for the average path
