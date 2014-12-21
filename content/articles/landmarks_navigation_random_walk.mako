@@ -249,38 +249,37 @@ The function \(dist(x,y)\) calculates the length of a shortest path between two
 nodes \(x,y\) in the network. It satisfies a few properties for every \(x,y,z\)
 nodes in the network:
 
-- \(d(x,y) \geq 0\) (Non negativity)
-- \(d(x,y) = 0\) if and only if \(x=y\).
-- \(d(x,y) = d(y,x)\). (Symmetry)
-- \(d(x,z) \leq d(x,y) + d(y,z)\) (The Triangle inequality).
+- \(dist(x,y) \geq 0\) (Non negativity)
+- \(dist(x,y) = 0\) if and only if \(x=y\).
+- \(dist(x,y) = dist(y,x)\). (Symmetry)
+- \(dist(x,z) \leq dist(x,y) + dist(y,z)\) (The Triangle inequality).
 
 Make sure that you understand why the first three are correct.
 
+We now show why the fourth one: The Triangle inequality, is correct.
+The length of the shortest path between \(x\) and \(y\) is \(d(x,y)\). The
+length of the shortest path between \(y\) and \(z\) is \(d(y,z)\). We can always
+concatenate those two paths to obtain a path between \(x\) and \(z\) that is of
+length \(d(x,y) + d(y,z)\). Therefore the shortest path between \(x\) and \(z\)
+is at most of length \(d(x,y) + d(y,z)\).
 
-
-
-
-TODO: Continue writing here.
-
-
-
-
-
-
-
-
-We will prove here the fourth property - The Triangle inequality.
-
-
-We will prove it by contradiction. Assume otherwise, that \(d(x,z) > d(x,y) +
-d(y,z)\) for some three nodes \(x,y,z\). This means that the shortest path from
-\(x\) to \(z\) is longer than the sum of shortest paths between \(x\) and \(y\)
-and between \(y\) and \(z\). In that case, we could just combine 
-
-
-
-\(dist\) is a
+The four properties of \(dist\) mentioned above could be summarized by saying
+that \(dist\) is a
 [metric](http://en.wikipedia.org/wiki/Metric_%28mathematics%29).
+
+
+We use \(dist\)'s properties to conclude some inequalities about the network
+coordinates.
+
+
+
+TODO: Continue writing here:
+
+
+
+
+\[\left|c_x^i - c_x^j\right| \leq dist(l_i,l_j) \leq c_x^i + c_x^j\]
+
 
 
 
