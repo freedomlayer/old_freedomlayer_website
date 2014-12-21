@@ -240,10 +240,48 @@ from \(x\) to \(l_j\). This is a contradiction.
 the contradiction in the picture).
 
 Therefore we conclude that for every two immediate neighbours \(x,y\) in the
-network, \(\left|c_x^j - c_y^j\right| \leq 1\). We call this property the
-continuity of network coordinates.
+network, \(\left|c_x^j - c_y^j\right| \leq 1\). We call this property **the
+continuity of network coordinates.**
 
 <h6>The triangle inequalities</h6>
+
+The function \(dist(x,y)\) calculates the length of a shortest path between two
+nodes \(x,y\) in the network. It satisfies a few properties for every \(x,y,z\)
+nodes in the network:
+
+- \(d(x,y) \geq 0\) (Non negativity)
+- \(d(x,y) = 0\) if and only if \(x=y\).
+- \(d(x,y) = d(y,x)\). (Symmetry)
+- \(d(x,z) \leq d(x,y) + d(y,z)\) (The Triangle inequality).
+
+Make sure that you understand why the first three are correct.
+
+
+
+
+
+TODO: Continue writing here.
+
+
+
+
+
+
+
+
+We will prove here the fourth property - The Triangle inequality.
+
+
+We will prove it by contradiction. Assume otherwise, that \(d(x,z) > d(x,y) +
+d(y,z)\) for some three nodes \(x,y,z\). This means that the shortest path from
+\(x\) to \(z\) is longer than the sum of shortest paths between \(x\) and \(y\)
+and between \(y\) and \(z\). In that case, we could just combine 
+
+
+
+\(dist\) is a
+[metric](http://en.wikipedia.org/wiki/Metric_%28mathematics%29).
+
 
 
 <h6>The Uniqueness question</h6>
