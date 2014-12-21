@@ -21,8 +21,14 @@ TODO: Add abstract
 
 <h4>Motivation</h4>
 
+(TODO: Fix links here:)
+
 Given a mesh network, we want to be able to send a message between two
-arbitrary nodes. We can look at this question from another perspective: How can
+arbitrary nodes. We have already presented several possible solutions:
+[flooding](http://en.wikipedia.org/wiki/Flooding_%28computer_networking%29),
+\(\sqrt{n} mesh routing\), Virtual DHT routing and the Distributed Post office.
+
+We can look at this question from another perspective: How can
 a message inside the network navigate itself to a given destination?
 
 <h5>The Global Positioning System</h5>
@@ -32,20 +38,8 @@ System](http://en.wikipedia.org/wiki/Global_Positioning_System), also known as
 GPS. It works pretty well, and one might wonder why not apply it to messages
 that travel inside mesh networks.
 
-Given that every node in the network knows it's own GPS coordinates, routing a
-message to a destination GPS coordinate is still not a trivial question. A
-[greedy algorithm](http://en.wikipedia.org/wiki/Greedy_algorithm) 
-(Always transfer the message to node with closest GPS coordinates) will not
-always work correctly. This algorithm might get stuck on some node \(y'\) that
-is closer than all his neighbours to the destination GPS coordinates, but still
-\(y'\) will not be the destination node. This is a case of a greedy algorithm
-getting stuck on a local maximum, instead of finding the global maximum.
-
-(TODO: Add a picture of the failure of the greedy algorithm. Local maximum
-which is not the global maximum).
-
-Even if we do manage to find a navigation algorithm that works well with the
-GPS coordinates, we still have some weak points to overcome:
+Some objections to use GPS to route messages in a mesh network might be as
+follows:
 
 - Having a GPS receiver on a node might require extra hardware setup and cost.
 
@@ -57,30 +51,72 @@ GPS coordinates, we still have some weak points to overcome:
   GPS navigation with some other routing algorithm whenever the message gets
   close enough to the destination.
 
-- The loss of Anonymity: If a node's address is his GPS coordinates, it is easy to find his
-  location geographically. (There might be a way around this though).
+- The loss of Anonymity: If a node's address is his GPS coordinates, it is easy
+  to find his location geographically. (There might be a way around this
+though).
 
-There is one more weak point which is more about the routing
-itself: The GPS system encapsulates a good understanding of physical
-location on the Earth surface, but generally it will not have a "good
-understanding" of the mesh network layout. In other words: Two network nodes
-that are connected by a direct link might be very distant geographically.
-This will be less of a problem in mesh networks where every node is connected to
-geographically close nodes, however such mesh networks will have very high
-latency. 
+But even ignoring all the objections mentioned above, there is still one more
+thing to consider. Navigating using GPS coordinates inside a mesh network has
+an inherent theoretical flaw.
 
+While the GPS system encapsulates a "good understanding" of physical location on
+the Earth surface, generally it will not have a "good understanding" of the
+mesh network layout. Put in other words: **Two network nodes that are connected
+by a direct network link might be very distant geographically**, and thus have
+very different GPS coordinates.
 
-Finally, Work done by Jon Kleinberg, ["The Small-World Phenomenon: An
+Work done by Jon Kleinberg, ["The Small-World Phenomenon: An
 Algorithmic Perspective"](http://www.cs.cornell.edu/home/kleinber/swn.pdf),
-hints that the GPS method will work efficiently only when the network links are
-configured in a specific way.
+puts this idea into a more formal argument. Kleinberg's work hints that
+navigation in a mesh using GPS coordinates can work efficiently only when the
+network links are configured in a specific way. (If a link between every
+two nodes \(x,y\) exists with probability proportional to the inverse square
+geographical distance between \(x\) and \(y\)).
 
+In simpler words, routing algorithms that rely on GPS coordinates will not make
+good use of long links between distant nodes, unless those links show up in some
+specific probability. (Don't let this make you skip the Small-World paper though :) )
 
-(TODO: Add an example for failure of the greedy algorithm to find the shortest
+We don't know if this specific configuration happens in real mesh networks, but
+it seems to be very specific, so we will assume that generally it doesn't
+happen for the rest of this text.
+
+(TODO: Add a picture example for failure of the greedy algorithm to find the shortest
 path (Draw a map). Explain relation to Kleinberg small world model).
 
+Despite the flaws in GPS based routing, there is still something very
+attractive about it. Routing a message in a mesh network is hard because every
+node has only local knowledge of the network, which doesn't give much
+information about the network's structure as a whole. 
+GPS gives us some approximation (although very incomplete) about
+where we are in the network: It gives us some kind of "global information",
+something that could not be trivially achieved in a distributed mesh network.
 
+We might be able to reproduce the effect we get from GPS using some other
+means. We begin by understanding how GPS works. 
 
+<h5>How Positioning Systems work?</h5>
+
+Described very roughly, the GPS system is based on a set of human made statellites
+around earth. The satellites where positioned in a way that makes sure in every
+time and place on earth, one can receive signal from a few of them. In order to
+find out where you are on earth, you should receive signal from a few
+satellites and find out how far you are from those satellites. Using the
+obtained set of distances (And some information about current time and course
+of those satellites), you can calculate where you are.
+
+(TODO: Add a picture of the satellites system?)
+
+The navigators of old used [Celestial
+Navigation](http://en.wikipedia.org/wiki/Celestial_navigation) to find their
+way using the stars. They looked at the stars and concluded information about
+their location or direction. (Instead of measuring distance and time, they used
+angular measurements).
+
+We might be able to make our own system of "satellites" or "stars" inside our
+network, to allow messages find their way in the network.
+
+<h4></h4>
 
 
 </%block>
