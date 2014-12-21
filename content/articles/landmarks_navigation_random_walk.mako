@@ -116,7 +116,144 @@ angular measurements).
 We might be able to make our own system of "satellites" or "stars" inside our
 network, to allow messages find their way in the network.
 
-<h4></h4>
+<h4>The Network Coordinates</h4>
+
+<h5>The Landmarks</h5>
+
+(TODO: Fix link here:)
+
+In the end of [The Distributed Post Office] article we mentioned the idea of
+Landmarks. Given a network of \(n\) nodes, we choose a set of \(k\) nodes to be
+landmarks: \(\{l_1,l_2,\dots,l_k\}\). (Those are just regular nodes that were
+given the "Landmark" title.) Every node \(x\) in the network remembers
+a shortest path to each of the landmarks.
+
+Let's assume that every node in the network has generated a keypair of [public
+key and private key](http://en.wikipedia.org/wiki/Public-key_cryptography). We
+also assume that every node in the network knows a list of all the landmarks'
+public keys. Every node that is a landmark would be able to prove it, by proving
+that he owns his public key.
+
+We currently do not discuss the method used to choose the set of landmarks.
+Instead we will assume that it was chosen randomly somehow ahead of time. This
+will be discussed in the future. (We showed one method to do this in "The
+Distributed Post Office": Choosing the nodes that maximize the value of some
+cryptographic hash functions)
+
+We also do not discuss the value we pick for \(k\). Currently you may assume
+that we pick \(k\) to be of some
+[polylogarithmic](http://en.wikipedia.org/wiki/Polylogarithmic_function) size
+with respect to \(n\).
+
+<h5>Maintaining contact with the Landmarks</h5>
+
+We begin by describing how each node \(x\) in the network obtains a shortest
+path to each of the landmarks: This is done by a few iterations where every
+node in the network exchanges information with his immediate neighbours.
+
+Find Shortest Paths (for node \(x\)):
+
+- Every few seconds:
+    - Send to all immediate neighbours the shortest path known to landmark
+      \(l_j) for each \(1 \leq j \leq k\).
+
+- On receival of a set of paths:
+    - Update shortest paths to \(l_j\) for each \(1 \leq j \leq k\) accordingly.
+
+
+As shown in [The Distributed Post Office], this algorithm will calculate
+shortest paths from every node \(x\) to all the landmarks in at most \(d\)
+iterations, where \(d\) is the
+[diameter](http://en.wikipedia.org/wiki/Distance_%28graph_theory%29) of the
+network. Note that we don't need to know the exact value of \(d\), because the
+"Find Shortest Paths" algorithm keeps running as long as a node is in the
+network.
+
+Next, Every node \(x\) should verify periodically that his paths to the
+landmarks are alive. Here is one way to do it: \(x\) will periodically send a
+message to each of the landmarks that asks them to prove their identity (The
+message will be sent along the shortest path known to \(x\)). In return, the
+landmarks will respond with a proof that they are alive.
+
+(TODO: Add a picture for periodic verification for the landmarks. In the picture
+\(x\) should have paths to each of the landmarks. The picture will \(x\) sending
+a message to one of the landmarks, asking him to prove his identity).
+
+This method works, but it puts a lot of load on the landmarks. From the point of
+view of one landmark \(l_j\), \(l_j\) has to send proofs to all the nodes in the
+network every period of time. Forget about this problem for a while. We will show how
+to resolve it in the future.
+
+(TODO: Add a picture of \(l_j\) having to send proofs to all the node in the
+network).
+
+
+We get that at all times, every node \(x\) has a verified shortest path to each
+of the landmarks in the network. \(x\) can calculate his network distance from
+each of the landmarks (It's the length of the shortest path to those landmarks).
+We denote the list of distances of \(x\) from each of the landmarks by
+
+\[(c_x^1,\dots,c_x^k) := (dist(x,l_1),\dots,dist(x,l_k))\] 
+
+and we call it **\(x\)'s network coordinate**.
+
+(TODO: Add a picture that explains network coordinate).
+
+<h5>Properties of the Network Coordinates</h5>
+
+By our construction we get a network coordinate for every node in the network.
+We note here a few properties of the network coordinates.
+
+<h6>Coordinates of landmarks</h6>
+
+The landmark \(l_j\) will have a coordinate of the form:
+
+\[(dist(l_j,l_1),\dots,dist(l_{j-1},l_j),0,dist(l_{j+1},l_j),\dots,dist(l_j,l_k)\]
+
+That is because \(dist(l_j,l_j) = 0\) (The network distance of \(l_j\) from himself is
+0\). 
+
+In addition, note that if a node \(x\) has some \(0\) coordinate, than \(x\) must be a
+landmark. (If the \(i\)'s coordinate is \(0\), then this is the \(i\)'s
+landmark.)
+
+<h6>Continuity</h6>
+
+For every two immediate neighbours \(x\) and \(y\) in the network, we get that
+\(\left|c_x^j - c_y^j\right| \leq 1\) for every \(1 \leq j \leq k\). (Whenever
+we move to an adjacent node in the network, we change every entry in the network
+coordinate by at most 1)
+
+We can prove this [by
+contradiction](http://en.wikipedia.org/wiki/Proof_by_contradiction). Assume
+(Without loss of generality) that for some \(j\) we get that \(c_x^j - c_y^j
+\geq 2\). This means that \(dist(x,l_j) \geq 2 + dist(y,l_j)\): The shortest
+path between \(x\) and \(l_j\) is two hops longer than the shortest path between
+\(y\) and \(l_j\). But \(x\) and \(y\) are neighbours, so \(x\) could instead
+use the following path to \(l_j\): First move to \(y\), and then continue using
+the shortest path from \(y\) to \(l_j\), which is of length \(dist(y,l_j)\). As
+a result we get a path from \(x\) to \(l_j\) which is of total length
+\(dist(y,l_j) + 1\), \(1\) hop shorter than the path we assumed is the shortest
+from \(x\) to \(l_j\). This is a contradiction.
+
+(TODO: Add a picture of \(x,y\) and the shortest paths to \(l_j\). Try to show
+the contradiction in the picture).
+
+Therefore we conclude that for every two immediate neighbours \(x,y\) in the
+network, \(\left|c_x^j - c_y^j\right| \leq 1\). We call this property the
+continuity of network coordinates.
+
+<h6>The triangle inequalities</h6>
+
+
+<h6>The Uniqueness question</h6>
+
+
+
+
+
+
+
 
 
 </%block>
