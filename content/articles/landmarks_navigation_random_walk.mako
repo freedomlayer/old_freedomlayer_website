@@ -268,19 +268,13 @@ that \(dist\) is a
 [metric](http://en.wikipedia.org/wiki/Metric_%28mathematics%29).
 
 
-We use \(dist\)'s properties to conclude some inequalities about the network
-coordinates.
-
-
-
-TODO: Continue writing here:
-
-
-
+We use \(dist\)'s properties to conclude the following inequality about the network
+coordinates: For every node \(x\) and \(1 \leq i,j \leq k\):
 
 \[\left|c_x^i - c_x^j\right| \leq dist(l_i,l_j) \leq c_x^i + c_x^j\]
 
 
+TODO: Continue writing here:
 
 
 <h6>The Uniqueness question</h6>
