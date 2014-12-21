@@ -193,7 +193,7 @@ of the landmarks in the network. \(x\) can calculate his network distance from
 each of the landmarks (It's the length of the shortest path to those landmarks).
 We denote the list of distances of \(x\) from each of the landmarks by
 
-\[(c_x^1,\dots,c_x^k) := (dist(x,l_1),\dots,dist(x,l_k))\] 
+\[Coord(x) = (c_x^1,\dots,c_x^k) := (dist(x,l_1),\dots,dist(x,l_k))\] 
 
 and we call it **\(x\)'s network coordinate**.
 
@@ -273,12 +273,57 @@ coordinates: For every node \(x\) and \(1 \leq i,j \leq k\):
 
 \[\left|c_x^i - c_x^j\right| \leq dist(l_i,l_j) \leq c_x^i + c_x^j\]
 
+In particular, this means that not every coordinate is valid. Some combinations
+of numbers can never form a network coordinate. (With respect to a given set of
+landmarks and distances between landmarks).
 
-TODO: Continue writing here:
+(TODO: Add a picture of the mentioned distances).
 
+Proof: Recall that \(c_x^i = dist(x,l_i)\), and \(c_x^j = dist(x,l_j)\).
+By the triangle inequality property of \(dist\) we get that \(dist(l_i,l_j) \leq
+dist(x,l_i) + dist(x,l_j) = c_x^i + c_x^j\), which proves the right part of the
+inequality.
+
+For the left part of the inequality, note that by the triangle inequality
+property of \(dist\) we get that \(dist(l_i,l_j) + dist(l_j,x) \geq
+dist(l_i,x)\). Therefore \(dist(l_i,l_j) \geq dist(l_i,x) - dist(l_j,x)\). In
+the symmetric direction we will get that \(dist(l_i,l_j) \geq dist(l_j,x) -
+dist(l_i,x)\). We conclude that \(dist(l_i,l_j) \geq \left|dist(l_i,x) -
+dist(l_j,x)\right|\), which proves the left side of the inequality.
 
 <h6>The Uniqueness question</h6>
 
+Are network coordinates unique? 
+
+Assume that \(x\) and \(y\) are two different nodes in the network. Is it
+possible that \(Coord(x) = Coord(y)\)?
+
+The answer is yes. It is possible to construct a network where \(x,y\) are two
+different nodes, but \(Coord(x) = Coord(y)\).
+
+(TODO: Add a picture that demonstrates this kind of example).
+
+However, this case is not the common case. It turns out that in many networks
+where \({log{n}}^2\) landmarks are chosen randomly, nodes' coordinates are
+unique. We observe this phenomenon later in our experiments. Note that at this
+point we don't know of a formal explanation in favor of this phenomenon.
+
+As an exercise, think about the case of two dimensional grid. How many landmarks
+are needed to make sure that network coordinates are unique?
+
+<h4>Navigating with Random Walk</h4>
+
+By now we managed to set Network Coordinates for every node. We have seen that
+those coordinates, as opposed to GPS Coordinates, have a "real understanding" of
+the network's structure. (See for example the continuity property). In
+particular, our new construction is not limited by [small-world impossibility
+result](http://www.cs.cornell.edu/home/kleinber/swn.pdf) result.
+
+That said, it is still not obvious how to use the Network Coordinates to route
+messages in the network.
+
+We present here a relatively naive message routing method that gives nice
+results. It is based on [random walking](http://en.wikipedia.org/wiki/Random_walk).
 
 
 
