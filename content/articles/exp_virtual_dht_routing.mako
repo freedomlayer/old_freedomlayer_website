@@ -531,7 +531,7 @@ for the smaller size of \(i=11\) this solution seems to be practical.
 Considering a random graph of the Erdos-Renyi model with \(n=2^{11}\) nodes
 and \(p = \frac{2i}{2^i}\), we get that the average path from a node \(x\) to
 some best finger candidate is about \(3.3\). Routing a message in a DHT of size
-\(2^11\) will usually take no more than \(11\) DHT hops. As each of those DHT
+\(2^{11}\) will usually take no more than \(11\) DHT hops. As each of those DHT
 hops will go through an average of \(3.3\) nodes in the mesh network, we get a
 total network path length of \(3.3 \cdot 11 = 36.3\).
 
