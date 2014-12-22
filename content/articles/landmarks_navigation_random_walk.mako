@@ -501,10 +501,10 @@ the network. We describe here the algorithm used to pass the message to one of
 -   For each \(r\) which is a neighbour of \(q\):
     - Calculate the weight \(w_r = {\beta}^{odist(q,y) - odist(r,y)}\)
 
--   Calculate \(w = \sum{w_r}\), the sum of all weights.
+-   Calculate \(w = \sum_{r}{w_r}\), the sum of all weights.
     
 -   Pass the message to a random neighbour of \(q\), where every neighbour \(r\)
-    is chosen with probability \(w_r / w\)
+    is chosen with probability \(\frac{w_r}{w}\).
 
 
 Some notes about neighbour's probabilities:
@@ -546,8 +546,14 @@ random walking with odist.
 We generate random
 [Erdos-Renyi](http://en.wikipedia.org/wiki/Erd%C5%91s%E2%80%93R%C3%A9nyi_model)
 networks of different sizes. We pick \(n = 2^i\) to be the amount of nodes in the
-network, and \(k=i^2\) to be the amount of landmarks. In other words, \(k =
-{\log{n}}^2\). For every generated graph we simulate delivery of a few messages
+network, and \(p = \frac{2i}{2^{i}}\): the probability for an edge to exist. 
+\(k=i^2\) is the amount of landmarks. In other words, \(k =
+{\log{n}}^2\). 
+
+For the random walk we pick \(\beta = 150\). Why \(150\)? It gave the best
+results. I have no idea why.
+
+For every generated graph we simulate delivery of a few messages
 using the random walk method.
 
 These are the results: (I stopped the program at i=14, as it was taking too
@@ -604,13 +610,172 @@ than \(28\).
 hence the network coordinates are not unique.
 
 
+The first thing to observe about the results is the value of "Max Coord Occur".
+It is always \(1\) (At least until \(i=14\)). This means that the network
+coordinates are unique. This is important: We can not expect to route
+messages successfuly if nodes' addresses aren't unique. 
+
+If we pick \(i=k\) the network coordinates will not be unique. If we pick
+\(i=k^{1.5}\) we sometimes get a \(2\) at the "Max Coord Occur".
+
+Next, it is interesting to look at "Avg num hops". It has some pretty small
+values for \(i \leq 10\), but it increases very fast. At \(i=14\) we already
+get a value of \(68.9\). This is still practical, but at this growth rate when
+we get to \(i=40\) we expect to have a huge "Avg num hops".
+
+Regarding "Max Node Visits": It looks like it somehow grows, but I didn't
+manage to get any important conclusion from its values. I left it there because
+you might have an idea.
 
 
 <h6>Measuring network load</h6>
 
+TODO: Add link here:
+
+In the [Distributed Post Office] we managed to route messages very efficiently,
+however all the messages were routed through a few specific nodes. This is
+unacceptable for a distributed mesh network.
+
+We want to make sure that we managed to avoid this problem here. To measure the
+load, we count the amount of messages that have passed through each of the
+nodes in the network. Then we look at the nodes that routed the biggest amount
+of messages.
+
+For this run we generate a random network (Using the Erdos-Renyi model) of
+size \(i=14\) (\(n=2^{i})\). We pick \(p = \frac{2i}{2^{i}}\) to be the
+probability of an edge to exist. The amount of landmarks is \(k = i^{2}\), and
+\(\beta = 150\).
+
+After the graph generation, we simulate the delivery of \(4096\) messages. For
+each node \(x\) we count the amount of times a message has passed through
+\(x\). (Note that a message might pass more than once through \(x\)).
+
+
+    :::
+    ||| graph generation func = gen_gnp_graph
+    ||| i = 14
+    ||| num_messages = 4096
+
+    Generating graph...
+    Generating coordinates...
+    Simulating messages delivery...
+
+    most commonly visited nodes:
+
+     node            | Times visited   
+    -----------------------------------
+     6653            |             207 
+     15690           |             173 
+     13858           |             170 
+     526             |             163 
+     10573           |             156 
+     1377            |             155 
+     1995            |             153 
+     9860            |             146 
+     6278            |             143 
+     5639            |             136 
+     6031            |             133 
+     12220           |             122 
+     1004            |             120 
+     11870           |             120 
+     1471            |             112 
+     5733            |             109 
+     15928           |             108 
+     6253            |             107 
+     9550            |             107 
+     6537            |             106 
+     9622            |             106 
+     12719           |             105 
+     58              |             104 
+     4964            |             104 
+     6366            |             104 
+     10257           |             103 
+     10874           |             103 
+     2923            |             102 
+     5698            |             102 
+     6861            |             102 
+     3041            |             100 
+     7955            |             100 
+
+
+The table shown in the output is the set of most commonly visited nodes. It
+is ordered by the amount of visits.
+
+The node column is the index of the node in the list of nodes inside the python
+code. Times visited counts the amount of messages that have visited the
+specific node.
+
+
+None of the nodes you see in this table are landmark nodes. I know this because
+if any of those nodes was a landmark, it was printed with two asterisks around
+it. (See the source code for evidence). This means that the landmark nodes
+aren't being visited more than usual nodes.
+
+We can also see that some nodes are more visited than others, though it seems
+like there is no specific set of nodes that routes most of the messages.
 
 
 <h6>Naive random walking</h6>
+
+If you are not sure that we gained anything by having the \(odist\) function,
+let me show you what happens when we perform a naive random walk, without
+using the information from \(odist\).
+
+We use the same parameters from the "Random Walking with odist" section, except
+for choosing \(\beta = 1\). Recall that the weight for moving to a neighbour
+\(r\) in the random walk is \(w_r = {\beta}^{odist(q,y) - odist(r,y)}\).
+For \(\beta = 1\) we always get \(w_r = 1\), therefore all the neighbours will
+have the same probability of being chosen.
+
+These are the results: (I stopped at \(i=12\)).
+
+    :::
+    Naive Random Walking
+    ---------------------------
+    ||| graph generation func = gen_gnp_graph
+    ||| i's range = range(6, 16)
+    ||| num_messages = 32
+
+     i   | k      | Avg num hops    | Max Node Visits  | Max Coord Occur  
+    ----------------------------------------------------------------------
+       6 |     36 |       60.906250 |               56 |               1 
+       7 |     49 |      165.937500 |               91 |               1 
+       8 |     64 |      301.812500 |               79 |               1 
+       9 |     81 |      631.937500 |               75 |               1 
+      10 |    100 |     1270.343750 |               81 |               1 
+      11 |    121 |     2323.406250 |               72 |               1 
+      12 |    144 |     4498.906250 |               76 |               1 
+
+
+Note that the average amount of hops is much larger in this case. This means
+that we do gain something by using the information from the \(odist\) function.
+
+<h4>Summary</h4>
+
+We introduced a way to assign Coordinates to nodes in any mesh network. We call
+these coordinates The Network Coordinates, and we use them as the network
+addresses of nodes. The Network coordinates have some "understanding" of the
+structure of the mesh network which we want to exploit to route messages in the
+network.
+
+We defined a function \(odist\), which is used here as approximation of
+the network distance function (\(dist\)). We also explored some other
+interesting features of \(odist\). The value \(odist(x,y)\) could be calculated
+just by knowing the coordinates of \(x\) and \(y\).
+
+To route messages in the network we use random walking that takes into account
+information from the \(odist\) function: In every step, Nodes that are closer
+to the destination are more likely to be chosen.
+
+We ran the random walk algorithm and checked the results. It seems like the
+random walk algorithm is practical for small networks (Probably up to
+\(n=2^{14}\)). We don't know what happens for larger networks, but we
+conjecture that the average amount of hops for message delivery becomes too
+large.
+
+<h4>Further thoughts</h4>
+
+
 
 
 
