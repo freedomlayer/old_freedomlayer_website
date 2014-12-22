@@ -14,6 +14,13 @@
 </%def>
 
 <%block name="article_body" filter="self.filters.math_mdown">
+<!--
+abs function.
+-->
+\(
+\newcommand{\abs}[1]{\left|{#1}\right|}
+\newcommand{\paren}[1]{\left({#1}\right)}
+\)
 
 <h4>Abstract</h4>
 
@@ -26,7 +33,7 @@ TODO: Add abstract
 Given a mesh network, we want to be able to send a message between two
 arbitrary nodes. We have already presented several possible solutions:
 [flooding](http://en.wikipedia.org/wiki/Flooding_%28computer_networking%29),
-\(\sqrt{n} mesh routing\), Virtual DHT routing and the Distributed Post office.
+\(\sqrt{n}\) mesh routing, Virtual DHT routing and the Distributed Post office.
 
 We can look at this question from another perspective: How can
 a message inside the network navigate itself to a given destination?
@@ -155,7 +162,7 @@ Find Shortest Paths (for node \(x\)):
 
 - Every few seconds:
     - Send to all immediate neighbours the shortest path known to landmark
-      \(l_j) for each \(1 \leq j \leq k\).
+      \(l_j\) for each \(1 \leq j \leq k\).
 
 - On receival of a set of paths:
     - Update shortest paths to \(l_j\) for each \(1 \leq j \leq k\) accordingly.
@@ -315,15 +322,120 @@ are needed to make sure that network coordinates are unique?
 
 By now we managed to set Network Coordinates for every node. We have seen that
 those coordinates, as opposed to GPS Coordinates, have a "real understanding" of
-the network's structure. (See for example the continuity property). In
-particular, our new construction is not limited by [small-world impossibility
-result](http://www.cs.cornell.edu/home/kleinber/swn.pdf) result.
+the network's structure. (See for example the continuity property, which the GPS
+coordinates lack). In particular, our new construction is not limited by the
+[small-world impossibility
+results](http://www.cs.cornell.edu/home/kleinber/swn.pdf) result.
 
 That said, it is still not obvious how to use the Network Coordinates to route
 messages in the network.
 
 We present here a relatively naive message routing method that gives nice
-results. It is based on [random walking](http://en.wikipedia.org/wiki/Random_walk).
+results and demonstrates the usefulness of Network Coordinates. It is based on
+[random walking](http://en.wikipedia.org/wiki/Random_walk). 
+
+To rephrase our intentions: Given two arbitrary nodes \(x\) and \(y\), \(x\)
+wants to send a message to \(y\). For this purpose \(x\) is given \(y\)'s
+Network Coordinate \(Coord(y)\). We show an algorithm for routing a message from
+\(x\) to \(y\), given the knowledge of \(Coord(y)\).
+
+
+<h5>The Observable distance</h5>
+
+Assume that a message is to be routed from \(x\) to \(y\). Also assume that the
+current position of the message in the network is some node \(q\). If we could
+know \(dist(q,y)\) for any intermediate \(q\), we could easily route the message to
+its destination \(y\) using the following greedy algorithm: In every step pass
+the message to the neighbour node with the smallest distance to the destination
+\(y\).
+
+However, we probably don't have enough information to calculate \(dist(q,y)\) for
+every \(q\) in the network. Instead, we might be able to calculate some
+approximation to the \(dist\) function.
+
+Given two nodes \(a,b\) in the network and a value \(1 \leq j \leq k\), it is
+true that:
+
+\[ \abs{dist(a,l_j) - dist(b_l,j)} \leq dist(a,b) \leq dist(a,l_j) + dist(b,l_j)\]
+
+This can be concluded from the triangle inequality for the metric \(dist\), as
+we demonstrated earlier.
+
+(TODO: Add a picture that demonstrates the triangle inequality here).
+
+Using the information from distances to all the landmarks we can further
+conclude that:
+
+\[ \max_{1 \leq j \leq k}\abs{dist(a,l_j) - dist(b,l_j)} \leq dist(a,b)
+\leq \min_{1 \leq j \leq k}\paren{dist(a,l_j) + dist(b,l_j)}\]
+
+
+We are more interested in the left part at this point. We call it the
+Observable distance between the nodes \(a\) and \(b\). We denote it by:
+
+\[odist(a,b) := \max_{1 \leq j \leq k}\abs{dist(a,l_j) - dist(b_l,j)}\]
+
+As we have just seen, \(odist(a,b) \leq dist(a,b)\) for every two nodes
+\(a,b\). 
+
+We also emphasize that \(odist(a,b)\) could be calculated just by
+knowing the network coordinates of \(a,b\).
+
+\[odist(a,b) := \max_{1 \leq j \leq k}\abs{dist(a,l_j) -
+    dist(b,l_j)} = \max_{1 \leq j \leq k}\abs{c_a^j - c_b^j}\]
+
+Next, we prove some properties of \(odist\). (Basically we are going to show
+that \(odist\) is some kind of a weaker distance function. You can skip this if
+you don't want have the mood for the math, you will still understand the rest
+of the text).
+
+we prove that \(odist\) satisfies the following for every three nodes
+\(x,y,z\):
+
+- \(odist(x,y) \geq 0\) (Non negativity)
+- \(odist(x,x) = 0\) for every node x.
+- \(odist(x,y) = odist(y,x)\). (Symmetry)
+- \(odist(x,z) \leq odist(x,y) + odist(y,z)\) (The Triangle inequality).
+
+This means that \(odist\) is a [Pseudometric](http://en.wikipedia.org/wiki/Pseudometric_space).
+Note that \(odist\) is not a metric because as we have seen before, it is
+possible that \(odist(x,y) = 0\) but \(x \neq y\). (Compare the conditions we
+presented for \(dist\) with those we presented here for \(odist\)).
+
+Our plan to prove this is to first show that each of the functions
+\(odist_j(a,b) := \abs{dist(a,l_j) - dist(b,l_j)}\) (For \(1 \leq j \leq
+k\) are pseudometrics. 
+
+Then we use the fact that a maximum of pseudometrics is also a pseudometric
+(See a hint [here [Mathematics
+StackExchange]](http://math.stackexchange.com/questions/1020808/maximum-of-two-metrics-is-a-metric)),
+which will prove that \(odist\) is a pseudo metric.
+
+For some \(1 \leq j \leq k\), we get that \(odist_j(x,y) = \abs{dist(x,l_j) -
+dist(y,l_j)} \geq 0\), and also that \(odist_j(x,x) = \abs{dist(x,l_j) -
+dist(x,l_j)} = 0\). For symmetry, we have that \(odist_j(x,y) =
+\abs{dist(x,l_j) - dist(y,l_j)} = \abs{dist(y,l_j) - dist(x,l_j)} = odist_j(y,x)\).
+
+We are left to show the triangle inequality for \(odist_j\).
+\[odist_j(x,z) = \abs{c_x^j - c_z^j}\]
+\[odist_j(x,y) + odist_j(y,z) = \abs{c_x^j - c_y^j} + \abs{c_y^j -
+c_z^j}\]
+
+Assigning \(x' = c_x^j, y' = c_y^j, z' = c^z_j\) we are left to prove:
+
+\[odist_j(x,z) = \abs{x' - z'} \leq \abs{x' - y'} + \abs{y' - z'} =
+odist_j(x,y) + odist_j(y,z)\]
+
+But \(\abs{x' - z'} = \abs{(x' - y') + (y' - z')} \leq \abs{x' - y'} +
+\abs{y' - z'}\). So we proved the triangle inequality for \(odist_j\).
+
+As \(odist(x,y) = \max_{1 \leq j \leq k}{odist_j(x,y)}\), we conclude that
+\(odist\) is a pseudometric.
+
+
+
+
+
 
 
 
