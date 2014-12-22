@@ -385,9 +385,11 @@ knowing the network coordinates of \(a,b\).
     dist(b,l_j)} = \max_{1 \leq j \leq k}\abs{c_a^j - c_b^j}\]
 
 Next, we prove some properties of \(odist\). (Basically we are going to show
-that \(odist\) is some kind of a weaker distance function. You can skip this if
-you don't want have the mood for the math, you will still understand the rest
-of the text).
+that \(odist\) is some weaker notion of distance function. You can skip this if
+you don't have the mood for the math. The rest of the text doesn't rely on
+those results).
+
+<h6>odist is a Pseudometric</h6>
 
 we prove that \(odist\) satisfies the following for every three nodes
 \(x,y,z\):
@@ -413,8 +415,9 @@ which will prove that \(odist\) is a pseudo metric.
 
 For some \(1 \leq j \leq k\), we get that \(odist_j(x,y) = \abs{dist(x,l_j) -
 dist(y,l_j)} \geq 0\), and also that \(odist_j(x,x) = \abs{dist(x,l_j) -
-dist(x,l_j)} = 0\). For symmetry, we have that \(odist_j(x,y) =
-\abs{dist(x,l_j) - dist(y,l_j)} = \abs{dist(y,l_j) - dist(x,l_j)} = odist_j(y,x)\).
+dist(x,l_j)} = 0\). To show the Symmetry property, we have that \(odist_j(x,y)
+= \abs{dist(x,l_j) - dist(y,l_j)} = \abs{dist(y,l_j) - dist(x,l_j)} =
+odist_j(y,x)\).
 
 We are left to show the triangle inequality for \(odist_j\).
 \[odist_j(x,z) = \abs{c_x^j - c_z^j}\]
@@ -431,6 +434,57 @@ But \(\abs{x' - z'} = \abs{(x' - y') + (y' - z')} \leq \abs{x' - y'} +
 
 As \(odist(x,y) = \max_{1 \leq j \leq k}{odist_j(x,y)}\), we conclude that
 \(odist\) is a pseudometric.
+
+<h6>odist with A*</h6>
+
+I deviate from our current track for a moment to show you another interesting
+feature of the \(odist\) function.
+
+[\(A*\)](http://en.wikipedia.org/wiki/A*_search_algorithm) (Pronounced A Star) is
+a graph searching algorithm. Shortly described, it is an extension of Dijkstra
+algorithm that uses heuristics to get better performance. A great explanation
+of \(A*\) and graphs pathfinding could be found
+[here](http://www.redblobgames.com/pathfinding/a-star/introduction.html).
+
+Please make sure you understand \(A*\) to some extent before you keep reading
+this section.
+
+While I don't know of a way to use the \(A*\) algorithm in a distributed manner
+(which is also secure), it is still interesting to find out what is possible
+with \(A*\), given the \(odist\) function.
+
+To use \(A*\), we need some [admissible heuristic
+function](http://en.wikipedia.org/wiki/Admissible_heuristic) \(h\). That means,
+if we try to find a path from node \(x\) to node \(y\), we want some function
+\(h\) such that \(h(q) \leq dist(q,y)\) for every node \(q\).
+
+It is also known that if we manage to find such function \(h\) that is also
+[consistent](http://en.wikipedia.org/wiki/Consistent_heuristic), we will be
+able to invoke \(A*\) more efficiently. A consistent heuristic is a
+function \(h\) such that \(h(a) \leq d(a,b) + h(b)\) for every two nodes
+\(a,b\).
+
+
+
+
+
+TODO: Continue here
+
+
+
+
+
+
+Given a network and two nodes \(x\) and \(y\), the \(A*\) algorithm will try to find a
+path from \(x\) to \(y\). \(A*\) uses some admissible heuristic function \(h\)
+that approximates the length of path from the current node \(q\) to \(y\), but never
+overestimates the length of the path.
+
+We are going to use \(h(q) := odist(q,y)\) as the admissible heuristic
+function. 
+
+
+
 
 
 
