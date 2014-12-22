@@ -318,7 +318,7 @@ point we don't know of a formal explanation in favor of this phenomenon.
 As an exercise, think about the case of two dimensional grid. How many landmarks
 are needed to make sure that network coordinates are unique?
 
-<h4>Navigating with Random Walk</h4>
+<h4>Navigation by Random Walking</h4>
 
 By now we managed to set Network Coordinates for every node. We have seen that
 those coordinates, as opposed to GPS Coordinates, have a "real understanding" of
@@ -356,7 +356,7 @@ approximation to the \(dist\) function.
 Given two nodes \(a,b\) in the network and a value \(1 \leq j \leq k\), it is
 true that:
 
-\[ \abs{dist(a,l_j) - dist(b_l,j)} \leq dist(a,b) \leq dist(a,l_j) + dist(b,l_j)\]
+\[ \abs{dist(a,l_j) - dist(b,l_j)} \leq dist(a,b) \leq dist(a,l_j) + dist(b,l_j)\]
 
 This can be concluded from the triangle inequality for the metric \(dist\), as
 we demonstrated earlier.
@@ -446,7 +446,7 @@ algorithm that uses heuristics to get better performance. A great explanation
 of \(A*\) and graphs pathfinding could be found
 [here](http://www.redblobgames.com/pathfinding/a-star/introduction.html).
 
-Please make sure you understand \(A*\) to some extent before you keep reading
+Please make sure you understand \(A*\) to some extent before you continue reading
 this section.
 
 While I don't know of a way to use the \(A*\) algorithm in a distributed manner
@@ -460,41 +460,157 @@ if we try to find a path from node \(x\) to node \(y\), we want some function
 
 It is also known that if we manage to find such function \(h\) that is also
 [consistent](http://en.wikipedia.org/wiki/Consistent_heuristic), we will be
-able to invoke \(A*\) more efficiently. A consistent heuristic is a
-function \(h\) such that \(h(a) \leq d(a,b) + h(b)\) for every two nodes
+able to invoke \(A*\) more efficiently. A consistent heuristic is a function
+\(h\) that satisfies \(h(a) \leq dist(a,b) + h(b)\) for every two nodes
 \(a,b\).
 
+Given a destination node \(y\), we can define \(h(q) := odist(q,y)\) to be our
+heuristic function. We show that \(h\) is an admissible consistent
+heuristic function.
+
+\(h\) is admissible because \(h(q) = odist(q,y) \leq dist(q,y)\).
+To be prove that \(h\) is consistent, we first note that by \(odist\)'s
+triangle inequality property, we get:
+
+\[h(a) - h(b) = odist(a,y) - odist(b,y) \leq odist(a,b) \leq dist(a,b)\]
+
+Therefore \(h(a) \leq dist(a,b) + h(b)\), which means that \(h\) is consistent.
+
+We showed that \(h(q) := odist(q,y)\) is an admissible consistent heuristic.
+
+<h5>Random walking</h5>
+
+We want to send a message from some node \(x\) to another node \(y\) in the
+network. We plan to let the message wander somewhat randomly around the
+network, hoping that it will eventually find \(y\).
+Given that at the current step the message is located at some node \(q\), in
+the next step the message will be passed randomly to one of \(q\)'s neighbours.
+
+Without further information about the location of \(y\) and the current
+location of the message inside the network, we couldn't expect this method to
+yield any promising results. (The message might wander around and go through
+almost all nodes before finding \(y\)). However, using the \(odist\) function
+we could get some approximation for how close we are to the destination node
+\(y\).
+
+Assume that a message that is being sent from a source node \(x\) to a destination node
+\(y\). Also assume that currently the message is located at some node \(q\) in
+the network. We describe here the algorithm used to pass the message to one of
+\(q\)'s neighbours:
+
+-   For each \(r\) which is a neighbour of \(q\):
+    - Calculate the weight \(w_r = {\beta}^{odist(q,y) - odist(r,y)}\)
+
+-   Calculate \(w = \sum{w_r}\), the sum of all weights.
+    
+-   Pass the message to a random neighbour of \(q\), where every neighbour \(r\)
+    is chosen with probability \(w_r / w\)
+
+
+Some notes about neighbour's probabilities:
+
+-   We pick \(\beta\) to be some positive number. You can imagine that \(\beta
+    = 2\).
+
+-   The more a neighbour of \(q\) is close to \(y\), the more likely it is that
+    we choose to pass the message to that neighbour.
+
+-   We divide by \(w\) to normalize the weights \(w_r\) into a [probability
+    vector](http://en.wikipedia.org/wiki/Probability_vector).
+
+<h5>Experiments results</h5>
+
+I wrote some code to test the efficiency of message routing using random walk,
+as described above. It is written in Python3, and relies on the networkx
+library.
+
+The code could be obtained [here
+[github]](https://github.com/realcr/freedomlayer_code/tree/master/landmarks_navigation_rw)
+
+If you want to run it, make sure that you have networkx installed. It could be
+installed by running:
+
+    :::
+    pip install networkx
+
+There are a few files in the landmarks_navigation_rw folder. The file
+graph_coord.py is the main graph coordinates library. It contains GraphCoord
+class, which is most of the logic. The other python files rely on
+graph_coord.py, and they check different things.
+
+<h6>Random Walking with odist</h6>
+
+We begin with random_walk_odist.py. This program checks the performance of
+random walking with odist.
+
+We generate random
+[Erdos-Renyi](http://en.wikipedia.org/wiki/Erd%C5%91s%E2%80%93R%C3%A9nyi_model)
+networks of different sizes. We pick \(n = 2^i\) to be the amount of nodes in the
+network, and \(k=i^2\) to be the amount of landmarks. In other words, \(k =
+{\log{n}}^2\). For every generated graph we simulate delivery of a few messages
+using the random walk method.
+
+These are the results: (I stopped the program at i=14, as it was taking too
+long)
+
+    :::
+    Random walking using odist
+    ---------------------------
+    ||| graph generation func = gen_gnp_graph
+    ||| i's range = range(6, 16)
+    ||| num_messages = 32
+
+     i   | k      | Avg num hops    | Max Node Visits  | Max Coord Occur  
+    ----------------------------------------------------------------------
+       6 |     36 |        1.781250 |                5 |               1 
+       7 |     49 |        2.500000 |                6 |               1 
+       8 |     64 |        4.093750 |               10 |               1 
+       9 |     81 |        5.312500 |               28 |               1 
+      10 |    100 |        6.218750 |                6 |               1 
+      11 |    121 |       19.781250 |               11 |               1 
+      12 |    144 |       20.718750 |               25 |               1 
+      13 |    169 |       49.625000 |               63 |               1 
+      14 |    196 |       68.937500 |              103 |               1 
+
+
+How to read this output?
+
+The first lines show the parameters chosen for this run. graph_generation_func
+is the function used to generate the graph. We chose gen_gnp_graph, which is an
+Erdos-Renyi random graph. (Other possibility is gen_grid_graph. You can try
+it). \(i\) is a parameter related to the amount of nodes in the network. As
+noted above, \(n = 2^{i}\). num_messages is the amount of messages we send to
+approximate the average number of hops it takes for one message to get to its
+destination. We chose 32.
+
+Next, we have a table. Every row in this table represents the results for one
+generated graph. We now explain every column in this table. \(i\) is the
+logarithm of the amount of nodes in the network. \(k\) is the amount of
+landmarks (Note that in this experiment, we chose \(k = i^2\)).
+
+"Avg num hops" is the average number of hops it takes for a message to get to
+its destination. This number is approximate. It is deduced by sending just a
+few messages, and calculating an average for the amount of hops.
+
+"Max Node Visits" counts the maximum amount of times a node was visited by
+wandering messages. For example, if this column shows \(28\), it means that
+some node \(q\) in the network has routed \(28\) messages (Maybe even the same
+message more than once), and no node in the network has routed more messages
+than \(28\).
+
+"Max Coord Occur" counts the occurences of the most common coordinate. If it is
+\(1\), it means that coordinates in the network are unique. If is is more than
+\(1\), it means that some coordinate in the network occurs more than once,
+hence the network coordinates are not unique.
 
 
 
 
-TODO: Continue here
+<h6>Measuring network load</h6>
 
 
 
-
-
-
-Given a network and two nodes \(x\) and \(y\), the \(A*\) algorithm will try to find a
-path from \(x\) to \(y\). \(A*\) uses some admissible heuristic function \(h\)
-that approximates the length of path from the current node \(q\) to \(y\), but never
-overestimates the length of the path.
-
-We are going to use \(h(q) := odist(q,y)\) as the admissible heuristic
-function. 
-
-
-
-
-
-
-
-
-
-
-
-
-
+<h6>Naive random walking</h6>
 
 
 
