@@ -424,7 +424,7 @@ We are left to show the triangle inequality for \(odist_j\).
 \[odist_j(x,y) + odist_j(y,z) = \abs{c_x^j - c_y^j} + \abs{c_y^j -
 c_z^j}\]
 
-Assigning \(x' = c_x^j, y' = c_y^j, z' = c^z_j\) we are left to prove:
+Assigning \(x' = c_x^j, y' = c_y^j, z' = c_z^j\) we are left to prove:
 
 \[odist_j(x,z) = \abs{x' - z'} \leq \abs{x' - y'} + \abs{y' - z'} =
 odist_j(x,y) + odist_j(y,z)\]
