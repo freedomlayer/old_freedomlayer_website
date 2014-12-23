@@ -44,12 +44,15 @@ Network Coordinates to route messages in the network.
 
 <h4>Motivation</h4>
 
-(TODO: Fix links here:)
-
 Given a mesh network, we want to be able to send a message between two
 arbitrary nodes. We have already presented several possible solutions:
 [flooding](http://en.wikipedia.org/wiki/Flooding_%28computer_networking%29),
-\(\sqrt{n}\) mesh routing, Virtual DHT routing and the Distributed Post office.
+[\(\sqrt{n}\) mesh
+routing](${self.utils.rel_file_link("articles/sqrt_n_routing.html")}), [Virtual
+DHT
+routing](${self.utils.rel_file_link("articles/exp_virtual_dht_routing.html")})
+and the [Distributed Post
+office](${self.utils.rel_file_link("articles/dist_post_office.html")}).
 
 We can look at this question from another perspective: How can
 a message inside the network navigate itself to a given destination?
@@ -143,9 +146,9 @@ network, to allow messages find their way in the network.
 
 <h5>The Landmarks</h5>
 
-(TODO: Fix link here:)
-
-In the end of [The Distributed Post Office] article we mentioned the idea of
+In the end of [The Distributed Post
+Office](${self.utils.rel_file_link("articles/dist_post_office.html")}) article
+we mentioned the idea of
 Landmarks. Given a network of \(n\) nodes, we choose a set of \(k\) nodes to be
 landmarks: \(\{l_1,l_2,\dots,l_k\}\). (Those are just regular nodes that were
 given the "Landmark" title.) Every node \(x\) in the network remembers
@@ -184,7 +187,7 @@ Find Shortest Paths (for node \(x\)):
     - Update shortest paths to \(l_j\) for each \(1 \leq j \leq k\) accordingly.
 
 
-As shown in [The Distributed Post Office], this algorithm will calculate
+As shown in "The Distributed Post Office", this algorithm will calculate
 shortest paths from every node \(x\) to all the landmarks in at most \(d\)
 iterations, where \(d\) is the
 [diameter](http://en.wikipedia.org/wiki/Distance_%28graph_theory%29) of the
@@ -653,11 +656,11 @@ you might have an idea.
 
 <h6>Measuring network load</h6>
 
-TODO: Add link here:
-
-In the [Distributed Post Office] we managed to route messages very efficiently,
-however all the messages were routed through a few specific nodes. This is
-unacceptable for a distributed mesh network.
+In the [Distributed Post
+Office](${self.utils.rel_file_link("articles/dist_post_office.html")}) we
+managed to route messages very efficiently, however all the messages were
+routed through a few specific nodes. This is unacceptable for a distributed
+mesh network.
 
 We want to make sure that we managed to avoid this problem here. To measure the
 load, we count the amount of messages that have passed through each of the
@@ -820,8 +823,8 @@ to each of the landmarks, and expect a response. This method puts great
 load over the landmarks. There is a way to overcome this issue by combining all
 the challenges and responses in the network. We will discuss it in the future.
 
-About **choosing the Landmarks**: We have already presented in [The Distributed
-Post Office] a method to pick landmarks (We pick the nodes that maximize some
+About **choosing the Landmarks**: We have already presented in "The Distributed
+Post Office" a method to pick landmarks (We pick the nodes that maximize some
 cryptographic hash functions with their public key). However, an adversary
 could craft special public keys that happen to maximize the hash values, and
 thus he could take control over all the landmarks. One approach would be to
