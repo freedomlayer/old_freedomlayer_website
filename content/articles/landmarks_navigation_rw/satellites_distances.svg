@@ -14,7 +14,7 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="New document 1">
+   sodipodi:docname="satellites_distances.svg">
   <defs
      id="defs4">
     <inkscape:path-effect
@@ -170,9 +170,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1"
-     inkscape:cx="-33.64711"
-     inkscape:cy="249.45878"
+     inkscape:zoom="2.8284271"
+     inkscape:cx="216.26777"
+     inkscape:cy="207.11164"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -1218,16 +1218,6 @@
       </g>
     </g>
     <path
-       sodipodi:type="arc"
-       style="opacity:0.60082302;fill:#f20000;fill-opacity:1;stroke:#f20000;stroke-width:2;stroke-linecap:butt;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
-       id="path3792"
-       sodipodi:cx="110.30865"
-       sodipodi:cy="729.92151"
-       sodipodi:rx="4.9497476"
-       sodipodi:ry="4.9497476"
-       d="m 115.25839,729.92151 c 0,2.73367 -2.21607,4.94975 -4.94974,4.94975 -2.73367,0 -4.94975,-2.21608 -4.94975,-4.94975 0,-2.73367 2.21608,-4.94975 4.94975,-4.94975 2.73367,0 4.94974,2.21608 4.94974,4.94975 z"
-       transform="translate(327,-203)" />
-    <path
        style="fill:none;stroke:#000000;stroke-width:2.20000005;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:2.2, 6.6;stroke-dashoffset:0"
        d="m 447,523.36218 92,-90"
        id="path4574"
@@ -1255,5 +1245,15 @@
        inkscape:path-effect="#path-effect4588"
        inkscape:original-d="m 429,533.36218 -235,27"
        inkscape:connector-curvature="0" />
+    <path
+       sodipodi:type="arc"
+       style="fill:#2600c8;fill-opacity:1;stroke:none"
+       id="path3755-7-5-3-8-6-4-56-1-13"
+       sodipodi:cx="102.5"
+       sodipodi:cy="199.86218"
+       sodipodi:rx="10.5"
+       sodipodi:ry="10.5"
+       d="m 113,199.86218 a 10.5,10.5 0 1 1 -21,0 10.5,10.5 0 1 1 21,0 z"
+       transform="matrix(0.762737,0,0,0.762737,359.78229,375.78769)" />
   </g>
 </svg>

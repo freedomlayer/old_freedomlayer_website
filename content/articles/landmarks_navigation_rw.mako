@@ -2,13 +2,14 @@
 <%def name="post_metadata()">
 <%
     return {\
-    "title": "Landmarks Navigation by random walking",\
-    "date": "2014-12-18 15:51",\
+    "title": "Landmarks Navigation by Random Walking",\
+    "date": "2014-12-23 19:19",\
     "author": "real",\
     "number":9,\
     "tags": [],\
-    "draft":"True",\
-    "description":""}
+    "draft":"False",\
+    "description":("A random walking algorithm that uses information from network" 
+    " coordinates to route messages inside a decentralized mesh network.")}
 
 %>
 </%def>
@@ -36,11 +37,11 @@ to a destination node in the network.
 Next, we run some [code experiments
 [github]](https://github.com/realcr/freedomlayer_code/tree/master/landmarks_navigation_rw)
 to check the performance of the random walk algorithm. Our results show that
-this method of routing will work to networks up to size of \(2^{15}\) nodes. It
+this method of routing works for networks up to size of \(2^{15}\) nodes. It
 will probably not scale well for much larger networks.
 
-We conjecture that there exists a better decentralized algorithm that relies on
-Network Coordinates to route messages in a mesh network.
+We conjecture that there exists a more efficient decentralized algorithm that
+relies on Network Coordinates to route messages in a mesh network.
 
 <h4>Motivation</h4>
 
@@ -222,17 +223,21 @@ message to each of the landmarks that asks them to prove their identity (The
 message will be sent along the shortest path known to \(x\)). In return, the
 landmarks will respond with a proof that they are alive.
 
-(TODO: Add a picture for periodic verification for the landmarks. In the picture
-\(x\) should have paths to each of the landmarks. The picture will \(x\) sending
-a message to one of the landmarks, asking him to prove his identity).
+<img class="wimage"
+src="${self.utils.rel_file_link("articles/landmarks_navigation_rw/landmarks_challenge_response.svg")}"/>
+<div class="pict_desc"> \(x\) sends a challenge message to one of the landmarks
+(\(l_3\)) through a shortest path. \(x\) then waits for a proof of identity
+from \(l_3\). If no answer arrives, \(x\) discards his shortest path to \(l_3\)
+and finds another path.
+
+\(x\) does the same for all of the other landmarks.
+</div>
+<br /><br />
 
 This method works, but it puts a lot of load on the landmarks. From the point of
 view of one landmark \(l_j\), \(l_j\) has to send proofs to all the nodes in the
 network every period of time. Forget about this problem for a while. We will show how
 to resolve it in the future.
-
-(TODO: Add a picture of \(l_j\) having to send proofs to all the node in the
-network).
 
 
 We get that at all times, every node \(x\) has a verified shortest path to each
@@ -244,7 +249,15 @@ We denote the list of distances of \(x\) from each of the landmarks by
 
 and we call it **\(x\)'s network coordinate**.
 
-(TODO: Add a picture that explains network coordinate).
+<img class="wimage"
+src="${self.utils.rel_file_link("articles/landmarks_navigation_rw/network_coordinate.svg")}"/>
+<div class="pict_desc">The picture illustrates network coordinates. 
+\(x\) maintains a shorest path to each of the landmarks
+\(l_1,l_2,l_3,l_4,l_5\). The coordinate \(c_x^j = dist(x,l_j)\) is the length
+of the shortest path from \(x\) to \(l_j\) for some \(1 \leq j \leq 5\).
+</div>
+<br /><br />
+
 
 <h5>Properties of the Network Coordinates</h5>
 
@@ -276,15 +289,20 @@ contradiction](http://en.wikipedia.org/wiki/Proof_by_contradiction). Assume
 (Without loss of generality) that for some \(j\) we get that \(c_x^j - c_y^j
 \geq 2\). This means that \(dist(x,l_j) \geq 2 + dist(y,l_j)\): The shortest
 path between \(x\) and \(l_j\) is two hops longer than the shortest path between
-\(y\) and \(l_j\). But \(x\) and \(y\) are neighbours, so \(x\) could instead
+\(y\) and \(l_j\). 
+
+<img class="wimage"
+src="${self.utils.rel_file_link("articles/landmarks_navigation_rw/coord_continuity.svg")}"/>
+<div class="pict_desc">Illustration of \(c_x^j\) and \(c_y^j\).</div>
+<br /><br />
+
+But \(x\) and \(y\) are neighbours, so \(x\) could instead
 use the following path to \(l_j\): First move to \(y\), and then continue using
 the shortest path from \(y\) to \(l_j\), which is of length \(dist(y,l_j)\). As
 a result we get a path from \(x\) to \(l_j\) which is of total length
 \(dist(y,l_j) + 1\), \(1\) hop shorter than the path we assumed is the shortest
 from \(x\) to \(l_j\). This is a contradiction.
 
-(TODO: Add a picture of \(x,y\) and the shortest paths to \(l_j\). Try to show
-the contradiction in the picture).
 
 Therefore we conclude that for every two immediate neighbours \(x,y\) in the
 network, \(\left|c_x^j - c_y^j\right| \leq 1\). We call this property **the
@@ -324,7 +342,11 @@ In particular, this means that not every coordinate is valid. Some combinations
 of numbers can never form a network coordinate. (With respect to a given set of
 landmarks and distances between landmarks).
 
-(TODO: Add a picture of the mentioned distances).
+<img class="wimage"
+src="${self.utils.rel_file_link("articles/landmarks_navigation_rw/coord_triangle_ineq.svg")}"/>
+<div class="pict_desc">Illustration of the triangle inequality for network
+coordinates.</div>
+<br /><br />
 
 Proof: Recall that \(c_x^i = dist(x,l_i)\), and \(c_x^j = dist(x,l_j)\).
 By the triangle inequality property of \(dist\) we get that \(dist(l_i,l_j) \leq
@@ -348,7 +370,12 @@ possible that \(Coord(x) = Coord(y)\)?
 The answer is yes. It is possible to construct a network where \(x,y\) are two
 different nodes, but \(Coord(x) = Coord(y)\).
 
-(TODO: Add a picture that demonstrates this kind of example).
+<img class="wimage"
+src="${self.utils.rel_file_link("articles/landmarks_navigation_rw/nonunique_coords.svg")}"/>
+<div class="pict_desc">Example of different nodes having the same network
+coordinate. Blue dots are regular nodes. Green nodes are landmarks. Note that
+the network coordinate (2,4,1) shows up twice. </div>
+<br /><br />
 
 However, this case is not the common case. It turns out that in many networks
 where \({log{n}}^2\) landmarks are chosen randomly, nodes' coordinates are
@@ -400,8 +427,6 @@ true that:
 
 This can be concluded from the triangle inequality for the metric \(dist\), as
 we demonstrated earlier.
-
-(TODO: Add a picture that demonstrates the triangle inequality here).
 
 Using the information from distances to all the landmarks we can further
 conclude that:
@@ -595,8 +620,8 @@ network, and \(p = \frac{2i}{2^{i}}\): the probability for an edge to exist.
 \paren{\log{n}}^2\). 
 
 For the random walk we pick \(\beta = 22\). Why \(22\)? It gave me good
-results. I have no idea why. (Note that \(\beta\) is referred to as "base"
-inside the code.
+results. You might find a better \(\beta\) yourself. (Note that \(\beta\) is
+referred to as "base" inside the code.)
 
 For every generated graph we simulate delivery of a few messages
 using the random walk method.
@@ -697,6 +722,7 @@ After the graph generation, we simulate the delivery of \(4096\) messages. For
 each node \(x\) we count the amount of times a message has passed through
 \(x\). (Note that a message might pass more than once through \(x\)).
 
+The relevant code is inside measure_load_odist.py. Here are the results:
 
     :::
     ||| graph generation func = gen_gnp_graph
@@ -775,7 +801,7 @@ for choosing \(\beta = 1\). Recall that the weight for moving to a neighbour
 For \(\beta = 1\) we always get \(w_r = 1\), therefore all the neighbours will
 have the same probability of being chosen.
 
-These are the results: (I stopped at \(i=12\)).
+The code is at random_walk_naive.py. These are the results:
 
     :::
     Naive random walking
@@ -856,8 +882,6 @@ has the disadvantage of being computationally expensive.
 
 A different approach to choosing landmarks would be to elect them. Every some
 period of the time the landmarks will free some node from his landmark duty,
-and elect a new landmark. (Only nodes that proved contribution to the network
-will be considered for election).
-
+and elect a new landmark. 
 
 </%block>
