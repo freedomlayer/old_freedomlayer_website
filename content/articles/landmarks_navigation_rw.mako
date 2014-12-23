@@ -107,8 +107,19 @@ We don't know if this specific configuration happens in real mesh networks, but
 it seems to be very specific, so we will assume that generally it doesn't
 happen for the rest of this text.
 
-(TODO: Add a picture example for failure of the greedy algorithm to find the shortest
-path (Draw a map). Explain relation to Kleinberg small world model).
+
+<img class="wimage"
+src="${self.utils.rel_file_link("articles/landmarks_navigation_rw/gps_fails_long_links.svg")}"/>
+<div class="pict_desc">
+In the picture: \(x\) routes a message to \(y\) using GPS coordinates. As \(y\)
+is at the north, it seems reasonable to route the message to northern nodes.
+However, it turns out that a faster path is possible if \(x\) would send the
+message to \(z\) at the south, which has a direct link to the destination node
+\(y\).
+
+Using only knowledge from GPS coordinates, \(x\) won't be able to guess that.
+</div>
+<br /><br />
 
 Despite the flaws in GPS based routing, there is still something very
 attractive about it. Routing a message in a mesh network is hard because every
@@ -132,6 +143,13 @@ obtained set of distances (And some information about current time and course
 of those satellites), you can calculate where you are.
 
 (TODO: Add a picture of the satellites system?)
+<img class="wimage"
+src="${self.utils.rel_file_link("articles/landmarks_navigation_rw/satellites_distances.svg")}"/>
+<div class="pict_desc">
+A very schematic illustration of finding location by data from a few
+satellites.
+</div>
+<br /><br />
 
 The navigators of old used [Celestial
 Navigation](http://en.wikipedia.org/wiki/Celestial_navigation) to find their
