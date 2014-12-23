@@ -373,12 +373,12 @@ different nodes, but \(Coord(x) = Coord(y)\).
 <img class="wimage"
 src="${self.utils.rel_file_link("articles/landmarks_navigation_rw/nonunique_coords.svg")}"/>
 <div class="pict_desc">Example of different nodes having the same network
-coordinate. Blue dots are regular nodes. Green nodes are landmarks. Note that
+coordinate. Blue dots are regular nodes. Green dots are landmarks. Note that
 the network coordinate (2,4,1) shows up twice. </div>
 <br /><br />
 
 However, this case is not the common case. It turns out that in many networks
-where \({log{n}}^2\) landmarks are chosen randomly, nodes' coordinates are
+where \(\paren{log{n}}^2\) landmarks are chosen randomly, nodes' coordinates are
 unique. We observe this phenomenon later in our experiments. Note that at this
 point we don't know of a formal explanation in favor of this phenomenon.
 
