@@ -24,7 +24,23 @@ abs function.
 
 <h4>Abstract</h4>
 
-TODO: Add abstract
+We introduce the Network Coordinates: A dynamic method for assigning addresses
+for nodes in a distributed mesh network. We show some properties of the Network
+Coordinates. In particular, the Network Coordinates of adjacent nodes are
+similar.
+
+We create a random walking algorithm that is based on the information from the
+Network Coordinates. We use this algorithm to route messages from a source node
+to a destination node in the network. 
+
+Next, we run some [code experiments
+[github]](https://github.com/realcr/freedomlayer_code/tree/master/landmarks_navigation_rw)
+to check the performance of the random walk algorithm. Our results show that
+this method of routing will work to networks up to size of \(2^{15}\) nodes. It
+will probably not scale well for much larger networks.
+
+We conjecture that there exists a better decentralized algorithm that relies on
+Network Coordinates to route messages in the network.
 
 <h4>Motivation</h4>
 
@@ -509,14 +525,18 @@ the network. We describe here the algorithm used to pass the message to one of
 
 Some notes about neighbour's probabilities:
 
--   We pick \(\beta\) to be some positive number. You can imagine that \(\beta
-    = 2\).
+-   We pick \(\beta\) to be some number bigger than 1. You can imagine that \(\beta
+    = 2\). In our experiments later we pick \(\beta = 22\).
 
 -   The more a neighbour of \(q\) is close to \(y\), the more likely it is that
     we choose to pass the message to that neighbour.
 
 -   We divide by \(w\) to normalize the weights \(w_r\) into a [probability
     vector](http://en.wikipedia.org/wiki/Probability_vector).
+
+-   Because of the continuity property of the coordinates, we can conclude that
+    \(odist(q,y) - odist(r,y) \in \{-1,0,1\}\). Therefore \(w_r \in
+    \{{\beta}^{-1},1,\beta\}\)
 
 <h5>Experiments results</h5>
 
@@ -548,16 +568,16 @@ We generate random
 networks of different sizes. We pick \(n = 2^i\) to be the amount of nodes in the
 network, and \(p = \frac{2i}{2^{i}}\): the probability for an edge to exist. 
 \(k=i^2\) is the amount of landmarks. In other words, \(k =
-{\log{n}}^2\). 
+\paren{\log{n}}^2\). 
 
-For the random walk we pick \(\beta = 150\). Why \(150\)? It gave the best
-results. I have no idea why.
+For the random walk we pick \(\beta = 22\). Why \(22\)? It gave me good
+results. I have no idea why. (Note that \(\beta\) is referred to as "base"
+inside the code.
 
 For every generated graph we simulate delivery of a few messages
 using the random walk method.
 
-These are the results: (I stopped the program at i=14, as it was taking too
-long)
+These are the results: 
 
     :::
     Random walking using odist
@@ -565,18 +585,20 @@ long)
     ||| graph generation func = gen_gnp_graph
     ||| i's range = range(6, 16)
     ||| num_messages = 32
+    ||| base =  22
 
      i   | k      | Avg num hops    | Max Node Visits  | Max Coord Occur  
     ----------------------------------------------------------------------
-       6 |     36 |        1.781250 |                5 |               1 
-       7 |     49 |        2.500000 |                6 |               1 
-       8 |     64 |        4.093750 |               10 |               1 
-       9 |     81 |        5.312500 |               28 |               1 
-      10 |    100 |        6.218750 |                6 |               1 
-      11 |    121 |       19.781250 |               11 |               1 
-      12 |    144 |       20.718750 |               25 |               1 
-      13 |    169 |       49.625000 |               63 |               1 
-      14 |    196 |       68.937500 |              103 |               1 
+       6 |     36 |        2.687500 |                5 |               1 
+       7 |     49 |        3.031250 |                5 |               1 
+       8 |     64 |        3.562500 |                4 |               1 
+       9 |     81 |        5.781250 |                4 |               1 
+      10 |    100 |       10.281250 |                6 |               1 
+      11 |    121 |       15.437500 |                6 |               1 
+      12 |    144 |       29.593750 |               12 |               1 
+      13 |    169 |       34.531250 |                8 |               1 
+      14 |    196 |       41.000000 |                7 |               1 
+      15 |    225 |       53.593750 |                8 |               1 
 
 
 How to read this output?
@@ -599,10 +621,10 @@ its destination. This number is approximate. It is deduced by sending just a
 few messages, and calculating an average for the amount of hops.
 
 "Max Node Visits" counts the maximum amount of times a node was visited by
-wandering messages. For example, if this column shows \(28\), it means that
-some node \(q\) in the network has routed \(28\) messages (Maybe even the same
+wandering messages. For example, if this column shows \(5\), it means that
+some node \(q\) in the network has routed \(5\) messages (Maybe even the same
 message more than once), and no node in the network has routed more messages
-than \(28\).
+than \(5\).
 
 "Max Coord Occur" counts the occurences of the most common coordinate. If it is
 \(1\), it means that coordinates in the network are unique. If is is more than
@@ -611,7 +633,7 @@ hence the network coordinates are not unique.
 
 
 The first thing to observe about the results is the value of "Max Coord Occur".
-It is always \(1\) (At least until \(i=14\)). This means that the network
+It is always \(1\) (At least until \(i=15\)). This means that the network
 coordinates are unique. This is important: We can not expect to route
 messages successfuly if nodes' addresses aren't unique. 
 
@@ -621,7 +643,8 @@ If we pick \(i=k\) the network coordinates will not be unique. If we pick
 Next, it is interesting to look at "Avg num hops". It has some pretty small
 values for \(i \leq 10\), but it increases very fast. At \(i=14\) we already
 get a value of \(68.9\). This is still practical, but at this growth rate when
-we get to \(i=40\) we expect to have a huge "Avg num hops".
+we get to \(i=40\) we expect to have a huge "Avg num hops". My guess is that
+this method won't scale to very big networks.
 
 Regarding "Max Node Visits": It looks like it somehow grows, but I didn't
 manage to get any important conclusion from its values. I left it there because
@@ -644,7 +667,7 @@ of messages.
 For this run we generate a random network (Using the Erdos-Renyi model) of
 size \(i=14\) (\(n=2^{i})\). We pick \(p = \frac{2i}{2^{i}}\) to be the
 probability of an edge to exist. The amount of landmarks is \(k = i^{2}\), and
-\(\beta = 150\).
+\(\beta = 22\).
 
 After the graph generation, we simulate the delivery of \(4096\) messages. For
 each node \(x\) we count the amount of times a message has passed through
@@ -655,6 +678,7 @@ each node \(x\) we count the amount of times a message has passed through
     ||| graph generation func = gen_gnp_graph
     ||| i = 14
     ||| num_messages = 4096
+    ||| base =  22
 
     Generating graph...
     Generating coordinates...
@@ -664,38 +688,38 @@ each node \(x\) we count the amount of times a message has passed through
 
      node            | Times visited   
     -----------------------------------
-     6653            |             207 
-     15690           |             173 
-     13858           |             170 
-     526             |             163 
-     10573           |             156 
-     1377            |             155 
-     1995            |             153 
-     9860            |             146 
-     6278            |             143 
-     5639            |             136 
-     6031            |             133 
-     12220           |             122 
-     1004            |             120 
-     11870           |             120 
-     1471            |             112 
-     5733            |             109 
-     15928           |             108 
-     6253            |             107 
-     9550            |             107 
-     6537            |             106 
-     9622            |             106 
-     12719           |             105 
-     58              |             104 
-     4964            |             104 
-     6366            |             104 
-     10257           |             103 
-     10874           |             103 
-     2923            |             102 
-     5698            |             102 
-     6861            |             102 
-     3041            |             100 
-     7955            |             100 
+     1689            |              51 
+     15541           |              47 
+     13284           |              45 
+     11387           |              44 
+     8423            |              43 
+     4256            |              41 
+     6428            |              41 
+     5203            |              40 
+     13389           |              40 
+     15753           |              40 
+     6618            |              39 
+     999             |              37 
+     7084            |              37 
+     9790            |              37 
+     12962           |              37 
+     1308            |              36 
+     1548            |              36 
+     5301            |              36 
+     5592            |              36 
+     9701            |              36 
+     16201           |              36 
+     573             |              35 
+     1339            |              35 
+     2628            |              35 
+     4451            |              35 
+     4615            |              35 
+     7415            |              35 
+     7492            |              35 
+     7720            |              35 
+     10367           |              35 
+     12390           |              35 
+     12492           |              35 
 
 
 The table shown in the output is the set of most commonly visited nodes. It
@@ -730,21 +754,25 @@ have the same probability of being chosen.
 These are the results: (I stopped at \(i=12\)).
 
     :::
-    Naive Random Walking
+    Naive random walking
     ---------------------------
     ||| graph generation func = gen_gnp_graph
     ||| i's range = range(6, 16)
     ||| num_messages = 32
+    ||| base =  1
 
      i   | k      | Avg num hops    | Max Node Visits  | Max Coord Occur  
     ----------------------------------------------------------------------
-       6 |     36 |       60.906250 |               56 |               1 
-       7 |     49 |      165.937500 |               91 |               1 
-       8 |     64 |      301.812500 |               79 |               1 
-       9 |     81 |      631.937500 |               75 |               1 
-      10 |    100 |     1270.343750 |               81 |               1 
-      11 |    121 |     2323.406250 |               72 |               1 
-      12 |    144 |     4498.906250 |               76 |               1 
+       6 |     36 |       71.593750 |               59 |               1 
+       7 |     49 |      172.187500 |              103 |               1 
+       8 |     64 |      326.343750 |               82 |               1 
+       9 |     81 |      449.625000 |               68 |               1 
+      10 |    100 |      884.781250 |               61 |               1 
+      11 |    121 |     2719.187500 |               85 |               1 
+      12 |    144 |     3449.906250 |               58 |               1 
+      13 |    169 |    10169.531250 |               88 |               1 
+      14 |    196 |    18943.343750 |               82 |               1 
+      15 |    225 |    36732.375000 |               78 |               1 
 
 
 Note that the average amount of hops is much larger in this case. This means
@@ -775,8 +803,37 @@ large.
 
 <h4>Further thoughts</h4>
 
+**The random walk method we used is pretty naive**. It was just a quick example of
+what could be done with the Network Coordinates. Probably we can use the
+Network Coordinates in a smarter way to route messages.
 
+I suspect that routing messages using Network Coordinates on a two dimensional
+grid graph should be easier than routing them on random Erdos-Renyi graph. This
+is why all of the run results here deal with Erdos-Renyi graphs, which is the
+harder case.
 
+**Maintaining contact with the landmarks**: The network changes (Nodes join and
+leave). Therefore every node \(x\) in the network should verify that his
+shortest path to each of the landmarks is still alive, and also that the
+landmarks themselves are still alive. \(x\) could periodically send a message
+to each of the landmarks, and expect a response. This method puts great
+load over the landmarks. There is a way to overcome this issue by combining all
+the challenges and responses in the network. We will discuss it in the future.
+
+About **choosing the Landmarks**: We have already presented in [The Distributed
+Post Office] a method to pick landmarks (We pick the nodes that maximize some
+cryptographic hash functions with their public key). However, an adversary
+could craft special public keys that happen to maximize the hash values, and
+thus he could take control over all the landmarks. One approach would be to
+"mine" landmarks. All the nodes in the network will make effort to get higher
+hash values. Assuming that the adversary is computationaly limited, we assume
+that he won't be able to gain control over most of the landmarks. This method
+has the disadvantage of being computationaly expensive.
+
+A different approach to choosing landmarks would be to elect them. Every some
+period of the time the landmarks will free some node from his landmark duty,
+and elect a new landmark. (Only nodes that proved contribution to the network
+will be considered for election).
 
 
 </%block>
