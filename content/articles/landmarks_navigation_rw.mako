@@ -123,7 +123,7 @@ means. We begin by understanding how GPS works.
 
 <h5>How Positioning Systems work?</h5>
 
-Described very roughly, the GPS system is based on a set of human made statellites
+Described very roughly, the GPS system is based on a set of human made satellites
 around earth. The satellites where positioned in a way that makes sure in every
 time and place on earth, one can receive signal from a few of them. In order to
 find out where you are on earth, you should receive signal from a few
@@ -154,7 +154,7 @@ landmarks: \(\{l_1,l_2,\dots,l_k\}\). (Those are just regular nodes that were
 given the "Landmark" title.) Every node \(x\) in the network remembers
 a shortest path to each of the landmarks.
 
-Let's assume that every node in the network has generated a keypair of [public
+Let's assume that every node in the network has generated a key-pair of [public
 key and private key](http://en.wikipedia.org/wiki/Public-key_cryptography). We
 also assume that every node in the network knows a list of all the landmarks'
 public keys. Every node that is a landmark would be able to prove it, by proving
@@ -168,7 +168,7 @@ cryptographic hash functions)
 
 We also do not discuss the value we pick for \(k\). Currently you may assume
 that we pick \(k\) to be of some
-[polylogarithmic](http://en.wikipedia.org/wiki/Polylogarithmic_function) size
+[poly-logarithmic](http://en.wikipedia.org/wiki/Polylogarithmic_function) size
 with respect to \(n\).
 
 <h5>Maintaining contact with the Landmarks</h5>
@@ -462,7 +462,7 @@ feature of the \(odist\) function.
 [\(A*\)](http://en.wikipedia.org/wiki/A*_search_algorithm) (Pronounced A Star) is
 a graph searching algorithm. Shortly described, it is an extension of Dijkstra
 algorithm that uses heuristics to get better performance. A great explanation
-of \(A*\) and graphs pathfinding could be found
+of \(A*\) and graphs path-finding could be found
 [here](http://www.redblobgames.com/pathfinding/a-star/introduction.html).
 
 Please make sure you understand \(A*\) to some extent before you continue reading
@@ -629,7 +629,7 @@ some node \(q\) in the network has routed \(5\) messages (Maybe even the same
 message more than once), and no node in the network has routed more messages
 than \(5\).
 
-"Max Coord Occur" counts the occurences of the most common coordinate. If it is
+"Max Coord Occur" counts the occurrences of the most common coordinate. If it is
 \(1\), it means that coordinates in the network are unique. If is is more than
 \(1\), it means that some coordinate in the network occurs more than once,
 hence the network coordinates are not unique.
@@ -638,7 +638,7 @@ hence the network coordinates are not unique.
 The first thing to observe about the results is the value of "Max Coord Occur".
 It is always \(1\) (At least until \(i=15\)). This means that the network
 coordinates are unique. This is important: We can not expect to route
-messages successfuly if nodes' addresses aren't unique. 
+messages successfully if nodes' addresses aren't unique. 
 
 If we pick \(i=k\) the network coordinates will not be unique. If we pick
 \(i=k^{1.5}\) we sometimes get a \(2\) at the "Max Coord Occur".
@@ -829,9 +829,9 @@ cryptographic hash functions with their public key). However, an adversary
 could craft special public keys that happen to maximize the hash values, and
 thus he could take control over all the landmarks. One approach would be to
 "mine" landmarks. All the nodes in the network will make effort to get higher
-hash values. Assuming that the adversary is computationaly limited, we assume
+hash values. Assuming that the adversary is computationally limited, we assume
 that he won't be able to gain control over most of the landmarks. This method
-has the disadvantage of being computationaly expensive.
+has the disadvantage of being computationally expensive.
 
 A different approach to choosing landmarks would be to elect them. Every some
 period of the time the landmarks will free some node from his landmark duty,
