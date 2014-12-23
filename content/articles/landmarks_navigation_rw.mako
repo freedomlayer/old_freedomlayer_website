@@ -705,8 +705,8 @@ you might have an idea.
 In the [Distributed Post
 Office](${self.utils.rel_file_link("articles/dist_post_office.html")}) we
 managed to route messages very efficiently, however all the messages were
-routed through a few specific nodes. This is unacceptable for a distributed
-mesh network.
+routed through a few specific nodes. This is unacceptable for large distributed
+mesh networks.
 
 We want to make sure that we managed to avoid this problem here. To measure the
 load, we count the amount of messages that have passed through each of the
