@@ -156,6 +156,10 @@ way using the stars. They looked at the stars and concluded information about
 their location or direction. (Instead of measuring distance and time, they used
 angular measurements).
 
+An interesting thing to note is that in order to allow the navigation,  both
+the satellites and the stars don't have to do much or be very smart. The
+satellites transmit data continuously, and the stars always shine.
+
 We might be able to make our own system of "satellites" or "stars" inside our
 network, to allow messages find their way in the network.
 
