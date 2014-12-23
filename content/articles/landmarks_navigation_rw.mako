@@ -142,7 +142,6 @@ satellites and find out how far you are from those satellites. Using the
 obtained set of distances (And some information about current time and course
 of those satellites), you can calculate where you are.
 
-(TODO: Add a picture of the satellites system?)
 <img class="wimage"
 src="${self.utils.rel_file_link("articles/landmarks_navigation_rw/satellites_distances.svg")}"/>
 <div class="pict_desc">
