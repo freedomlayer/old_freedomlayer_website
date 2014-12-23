@@ -53,7 +53,7 @@ routing](${self.utils.rel_file_link("articles/sqrt_n_routing.html")}), [Virtual
 DHT
 routing](${self.utils.rel_file_link("articles/exp_virtual_dht_routing.html")})
 and the [Distributed Post
-office](${self.utils.rel_file_link("articles/dist_post_office.html")}).
+Office](${self.utils.rel_file_link("articles/dist_post_office.html")}).
 
 We can look at this question from another perspective: How can
 a message inside the network navigate itself to a given destination?
