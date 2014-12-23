@@ -40,7 +40,7 @@ this method of routing will work to networks up to size of \(2^{15}\) nodes. It
 will probably not scale well for much larger networks.
 
 We conjecture that there exists a better decentralized algorithm that relies on
-Network Coordinates to route messages in the network.
+Network Coordinates to route messages in a mesh network.
 
 <h4>Motivation</h4>
 
@@ -454,32 +454,32 @@ But \(\abs{x' - z'} = \abs{(x' - y') + (y' - z')} \leq \abs{x' - y'} +
 As \(odist(x,y) = \max_{1 \leq j \leq k}{odist_j(x,y)}\), we conclude that
 \(odist\) is a pseudometric.
 
-<h6>odist with A*</h6>
+<h6>odist with \(A^*\)</h6>
 
 I deviate from our current track for a moment to show you another interesting
 feature of the \(odist\) function.
 
-[\(A*\)](http://en.wikipedia.org/wiki/A*_search_algorithm) (Pronounced A Star) is
+[\(A^*\)](http://en.wikipedia.org/wiki/A*_search_algorithm) (Pronounced A Star) is
 a graph searching algorithm. Shortly described, it is an extension of Dijkstra
 algorithm that uses heuristics to get better performance. A great explanation
-of \(A*\) and graphs path-finding could be found
+of \(A^*\) and graphs path-finding could be found
 [here](http://www.redblobgames.com/pathfinding/a-star/introduction.html).
 
-Please make sure you understand \(A*\) to some extent before you continue reading
+Please make sure you understand \(A^*\) to some extent before you continue reading
 this section.
 
-While I don't know of a way to use the \(A*\) algorithm in a distributed manner
+While I don't know of a way to use the \(A^*\) algorithm in a distributed manner
 (which is also secure), it is still interesting to find out what is possible
-with \(A*\), given the \(odist\) function.
+with \(A^*\), given the \(odist\) function.
 
-To use \(A*\), we need some [admissible heuristic
+To use \(A^*\), we need some [admissible heuristic
 function](http://en.wikipedia.org/wiki/Admissible_heuristic) \(h\). That means,
 if we try to find a path from node \(x\) to node \(y\), we want some function
 \(h\) such that \(h(q) \leq dist(q,y)\) for every node \(q\).
 
 It is also known that if we manage to find such function \(h\) that is also
 [consistent](http://en.wikipedia.org/wiki/Consistent_heuristic), we will be
-able to invoke \(A*\) more efficiently. A consistent heuristic is a function
+able to invoke \(A^*\) more efficiently. A consistent heuristic is a function
 \(h\) that satisfies \(h(a) \leq dist(a,b) + h(b)\) for every two nodes
 \(a,b\).
 
