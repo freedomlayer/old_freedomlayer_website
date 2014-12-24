@@ -707,7 +707,7 @@ I introduce here some modifications I tried. It might be of interest.
 - If \(fk=1\). (\(fk\) is the size of the set of candidates for
   some finger), the algorithm doesn't find a solution for large enough networks.
 
-- If \(fk=\frac{i}{2}\) the simulations runs a bit faster, but we get longer
+- If \(fk=\frac{i}{2}\) the simulations run a bit faster, but we get longer
   average path lengths. (We might not get a solution for large enough networks,
   but I haven't seen any evidence for that).
 
