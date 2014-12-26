@@ -28,7 +28,7 @@ TODO: Add abstract
 
 <h4>Motivation</h4>
 
-<h5>The single challenge-response</h5>
+<h5>The Challenge-Response</h5>
 
 Let \(x,y\) be two nodes in distributed mesh network. Assume that there is a
 path of nodes between \(x\) and \(y\), known to \(x\) and \(y\).  By a path we
@@ -95,7 +95,66 @@ This kind of attack, performed by \(e\), is also known as [Replay
 attack](http://en.wikipedia.org/wiki/Replay_attack). One way to avoid it is to
 make sure that \(x\) sends to \(y\) a different challenge every time.
 
-<h5>The multi challenge response</h5>
+<h5>One to Many challenge-response</h5>
+
+Assume that some node \(t\) is a pretty important node in the network. It's so
+important that every node \(x\) in the network keeps a path to \(t\). (An
+example to this case could be found in [Landmarks Navigation by Random
+Walking](${self.utils.rel_file_link("articles/landmarks_navigation_rw.html")}),
+where \(t\) might be one of the landmarks).
+
+Note that this case is a bit different from the one described above. It
+assymetric. Every node remembers a path to \(t\), but \(t\) doesn't remember a
+path to each node in the network. \(t\) doesn't have the ability to do that, as
+there are too many nodes in the network. Therefore we assume that every node
+\(x\) remembers a path to \(t\), however \(t\) doesn't know that path.
+
+Every node \(x\) that keeps a path to \(t\) will want to know that \(t\) is
+still alive, and that his path to \(t\) is still alive. 
+
+<h6>Using simple challenge response</h6>
+
+One idea to do that would be to use the challenge-response method that was
+introduced earlier. \(x\) will periodically send a unique message with a
+**unique** challenge along the path to \(t\), then \(t\) will produce a proof
+and send a response message containing that proof somehow back to \(x\).
+
+The main issue with this idea is that \(t\) will have to generate proofs for
+challenges sent from every node in the network. As noted above, \(t\) does not
+have the ability to do that, because there are too many nodes in the network.
+
+<h6>Flooding a signed message</h6>
+
+Maybe instead of using the challenge response mechanism, \(t\) could just flood
+the network with a message signed by \(t\)'s key that says \(t\) is alive?
+
+This method is vulnerable to the Replay Attack: A node \(e\) could wait until
+\(t\) sends such a message, and then send this message again at a later time,
+convincing all the nodes in the network the \(t\) is alive.
+
+<h6>Flooding a signed message with a counter</h6>
+
+To avoid the attack described above, \(t\) could send a unique signed message
+every time. \(t\) can include some kind of counter inside his messages, and
+increase that counter by \(1\) for every message sent. Then the message sent by
+\(t\) will look something like: ("I am alive, counter = 345",Signature), where
+the counter is increased for every message.
+
+This time \(e\) will not be able to immediately replay \(t\)'s messages. That
+is because the messages have a counter, and every node in the network remembers the
+last counter value sent by \(t\).
+
+
+
+
+TODO: Continue explaining failure of this method:
+
+
+
+
+However, \(e\) could wait for a while, until \(t\) disconnects from the
+network, and all the nodes in the network forget about \(t\)'s old messages and
+counter numbers. This must happen at some point, because the network 
 
 
 
