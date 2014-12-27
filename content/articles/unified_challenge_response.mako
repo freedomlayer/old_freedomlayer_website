@@ -278,14 +278,14 @@ and a short explanation of why they won't fit for our case:
   network, this will probably not work correctly.
 
 
-<h5>The Unified-Challenge response</h5>
+<h4>The Unified Challenge-Response</h4>
 
-Short recap of our ideas so far: Let \(t\) be a specific node inside a mesh
-network. We are looking for a way to let \(t\) broadcast a signed message to all
-the nodes in the network, so that every node will know that the message sent was
-signed recently, and thus \(t\) was recently alive. 
+Let \(t\) be a specific node inside a mesh network. We are looking for a way to
+let \(t\) broadcast a signed message to all the nodes in the network, so that
+every node will know that the message sent was signed recently, and thus \(t\)
+was recently alive. 
 
-We mentioned two main ideas:
+We mentioned earlier two main ideas:
 
 - Challenge-Response: Every node \(x\) sends a unique challenge to \(t\), and
   \(t\) responds with a proof. This proves to \(x\) that \(t\) is alive. We
@@ -308,7 +308,7 @@ previous ideas. \(t\) will sign the Unified challenge. Whenever a node
 inside this challenge, thus \(x\) will know that the message from \(t\) is
 recent, and hence \(t\) was recently alive.
 
-
+<h5></h5>
 
 
 </%block>
