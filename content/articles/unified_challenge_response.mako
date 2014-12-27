@@ -25,8 +25,10 @@ abs function.
 
 TODO: Add abstract
 
+<h4>Motivation</h4>
 
-<h4>Introduction</h4>
+TODO: Extend motivation. Make sure that reading the first parts, one knows
+exactly what is the problem that we try to solve here.
 
 <h5>The Challenge-Response</h5>
 
