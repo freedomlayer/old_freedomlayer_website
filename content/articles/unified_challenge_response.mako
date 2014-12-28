@@ -61,6 +61,12 @@ and \(y\) will want to be informed, so that they could find an alternative
 path. (Or even just give up on the connection, in case one of them has failed).
 
 (TODO: A picture of the path between \(x\) and \(y\))
+<img class="wimage"
+src="${self.utils.rel_file_link("articles/unified_challenge_response/path_x_y.svg")}"/>
+<div class="pict_desc">
+A path between of nodes between \(x\) and \(y\). If any of the nodes along the
+path fails, the communication between \(x\) and \(y\) will fail.</div>
+<br /><br />
 
 One idea would be that \(x\) and \(y\) will send periodic messages to
 each other along the known path. Then if for example \(x\) has not received a
@@ -86,7 +92,7 @@ challenge message \(cm\) along the path to \(y\). \(e\) sees the messages
 \(cm\) and passes it to the next node on the path, until the message \(cm\)
 arrives at \(y\).
 
-\(y\) creates a proof to his identity the related to the sent challenge. We
+\(y\) creates a proof for his identity with respect to the sent challenge. We
 call this proof \(pr\). \(y\) then sends \(pr\) along the path from \(y\) to
 \(x\). \(e\) will see \(pr\), and pass it along to the next node on the path to
 \(x\).
