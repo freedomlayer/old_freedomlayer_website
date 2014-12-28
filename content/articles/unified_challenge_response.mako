@@ -2,7 +2,7 @@
 <%def name="post_metadata()">
 <%
     return {\
-    "title": "The Unified Challenge-Response: Secure time inside the mesh",\
+    "title": "The Unified Challenge-Response: Secure Time inside the Mesh",\
     "date": "2014-12-26 19:19",\
     "author": "real",\
     "number":10,\
@@ -23,12 +23,27 @@ abs function.
 
 <h4>Abstract</h4>
 
-TODO: Add abstract
+Let \(t\) be a specific node in a mesh network. Assume that every node \(x\)
+knows the identity of \(t\), and wants to verify that \(t\) was recently alive. 
+Also assume that \(t\) has limited networking and computing power.
+
+We review a few algorithms to solve this problem: Simple Challenge-Response,
+Digital signature over a counter and Digital signature over a global time
+value: A time stamp. We then discuss the flaws of each of those algorithms.
+
+Finally we present the Unified Challenge-Response: A distributed algorithm that
+simulates time stamp using Cryptographic Hash functions and periodic randomly
+generated numbers. By Signing the simulated time stamp and broadcasting it, the
+node \(t\) can prove that we was recently alive.
+
+The size of the broadcasted message by \(t\) in the naive solution is
+\(O(d\cdot s)\), where \(d\) is the network diameter and \(s\) is the amount of
+immediate neighbours every node has. We mention two more improvments which
+allow to reduce the size of the broadcasted message to \(O(d\log{s}\) or to
+\(O(d)\).
+
 
 <h4>Motivation</h4>
-
-TODO: Extend motivation. Make sure that reading the first parts, one knows
-exactly what is the problem that we try to solve here.
 
 <h5>The Challenge-Response</h5>
 
@@ -129,7 +144,7 @@ have the ability to do that, because there are too many nodes in the network.
 
 Instead of using the challenge response mechanism, \(t\) could just flood the
 network with a message signed by \(t\)'s key that says \(t\) is alive.
-The message will be something of the form: ("\(t\) is alive",Signature by \(t\)).
+The message will be something of the form: ("\(t\) is alive", Signature by \(t\)).
 (Note that the signature signs the content "\(t\) is alive").
 
 Recall what flooding means: Every node \(x\) that recieves such a message and
@@ -203,7 +218,7 @@ At the point where the information about \(t\) was long forgotten, \(e\) will
 be able to replay all of \(t\)'s messages. \(e\) could send all the messages
 from the list above, one after the other, living the history of \(t\) again.
 
-<h5>Using the Time</h5>
+<h5>Using a Time Stamp</h5>
 
 We saw that adding a counter to the signed "alive" messages helps to deal with
 replay attacks of the present, but it fails protecting against replay attacks
@@ -261,7 +276,7 @@ and a short explanation of why they won't fit for our case:
   Then whenever \(t\) wants to send an "alive" message, it will take the last
   message sent by \(TS\), concat to that message the string "\(t\) is alive"
   and add a signature over everything. The end result will be:
-  ("\(t\) is alive",(current_time,Signature by \(TS\)),Signature by \(t\)).
+  ("\(t\) is alive",(current_time,Signature by \(TS\)), Signature by \(t\)).
   (Note that using this method \(t\) can not make "alive" messages ahead of
   time).
 
@@ -313,7 +328,7 @@ recent, and hence \(t\) was recently alive.
 Recall how a simple
 [challenge-response](http://en.wikipedia.org/wiki/Challenge%E2%80%93response_authentication)
 mechanism works. \(x\) sends \(t\) some random number \(r\) (Sometimes called
-the [nonce](http://en.wikipedia.org/wiki/Cryptographic_nonce)). \(t\) concats
+a [nonce](http://en.wikipedia.org/wiki/Cryptographic_nonce)). \(t\) concats
 some value of its own \(g\) to \(r\), and then \(t\) signs the full message to
 obtain: (r,g,Signature by \(t\)). (The signature is over (r,g)).
 
@@ -337,14 +352,19 @@ function](http://en.wikipedia.org/wiki/Cryptographic_hash_function).
 
 Initialize:
     
-    - For each neighbour \(q_j\):
-        - Set \(r_j\) to be a random number.
+- Initialize current Iteration Number \(cit\) to be \(0\) 
+  (We use the concept of "Iteration Number" instead of a clock)
+
+- For each neighbour \(q_j\):
+    - Set \(r_j\) to be a random number.
 
 Every few seconds: (Update Iteration)
 
+-   Increase the current iteration number \(cit\) by \(1\). 
+
 -   Generate a random number \(r\).
 
--   Set \(e := (r,r_1,\dots,r_{s})\). 
+-   Set \(w := (r,r_1,\dots,r_{s})\). 
 
     In other words, we construct a string that contains all the random
     numbers, and includes the new random number \(r\) that we have just
@@ -352,15 +372,15 @@ Every few seconds: (Update Iteration)
 
 -   for every \(j\) between \(1\) and \(s\):
 
-    - Remember \(e\). (It can be forgotten after long enough time).
-      In addition, remember the time that \(e\) was generated.
+    - Remember \(w\). (It can be forgotten after long enough time).
+    In addition, remember the iteration number \(it\) in which \(w\) was
+    generated.
 
-    - Send \(H(e)\) to \(q_j\).
+    - Send \(H(w)\) to \(q_j\).
 
 On receipt of message \(m\) from neighbour \(q_j\):
 
 -   Set \(r_j := m\).
-
 
 
 (TODO: Add a picture of the basic iteration).
@@ -372,11 +392,11 @@ Some Observations:
   to all his neighbours data of constant size.
 
 - Memory usage: The node \(x\) should remember the value
-  \(e\) for every Update Iteration. We may assume that \(x\) keeps track of the
-  last \(1024\) values of \(e\) generated. Whenever new values of \(e\) are
+  \(w\) for every Update Iteration. We may assume that \(x\) keeps track of the
+  last \(1024\) values of \(w\) generated. Whenever new values of \(w\) are
   generated, the old ones can be forgotten.
 
-- Assuming that the network is connected, after a while, every value \(e\)
+- Assuming that the network is connected, after a while, every value \(w\)
   generated by a node \(x\) depends on all the random numbers from all the nodes
   in the network. To be more precise, for this to happen, we need at most \(d\)
   update iterations, where \(d\) is the
@@ -385,13 +405,13 @@ Some Observations:
   network).
 
 
-Further explanation for the next observation: Consider a new calculated \(e\)
-value of some node \(x\) at the network. \(e\) is depends on the newly generated
-random value \(r\) of \(x\), and on all the \(e\) values from all of \(x\)'s
-neighbours. Consider some value \(e\) that was accepted from a neighbour \(q\)
-of \(x\). \(e\) depends on the random value \(r\) generated by \(q\), and also
-on all the \(e\) values accepted from all the neighbours of \(q\). We can keep
-going until we get that the original value \(e\) we discussed depends on random
+Further explanation for the next observation: Consider a new calculated \(w\)
+value of some node \(x\) at the network. \(w\) is depends on the newly generated
+random value \(r\) of \(x\), and on all the \(w\) values from all of \(x\)'s
+neighbours. Consider some value \(w\) that was accepted from a neighbour \(q\)
+of \(w\). \(w\) depends on the random value \(r\) generated by \(q\), and also
+on all the \(w\) values accepted from all the neighbours of \(q\). We can keep
+going until we get that the original value \(w\) we discussed depends on random
 values \(r\) generated by all the nodes in the network.
 
 
@@ -402,54 +422,186 @@ encapslutes all the random numbers from the network).
 <h5>Building the Response</h5>
 
 Let \(t\) be a node in the network. \(t\) wants to broadcast a proof of being
-alive ot all the nodes in the network.
+alive to all the nodes in the network.
 
-This will be done as follows: \(t\) will take its current value \(e_0 = e\) and sign
-it. The full message \(t\) generates is: ("\(t\) is alive",\(e_0\), Signature by
+This will be done as follows: \(t\) will take its current value \(w_0 = w\) and sign
+it. The full message \(t\) generates is: ("\(t\) is alive",\(w_0\), Signature by
 \(t\)).  (The signature by \(t\) is over the content and over the
-value \(e\)). This message will be sent to all of \(t\)'s immediate neighbours.  
+value \(w\)). This message will be sent to all of \(t\)'s immediate neighbours.  
+
+In some sense, the value \(w_0\) replaces the time stamp that we used in
+previous solution proposals.
 
 
-We describe here the algorithm for any node \(x\) in the network that receives
-such a message.
+We describe here the verification algorithm for any node \(x\) in the network
+that receives such a message. 
 
-On receipt of a message of the form: ("\(t\) is alive",\(e_0\),Signature by \(t\),
-\(e_1,\dots,e_p\)):
+On receipt of a message of the form: ("\(t\) is alive",\(w_0\),Signature by \(t\),
+\(w_1,\dots,w_p\)):
 
 (Note: This message has probably gone through a path of \(p\) nodes before \(x\)
 has received it.)
 
 - Verify \(t\)'s signature. If it is invalid, discard the message.
 
-- Look for some record of \(e\) in the past, such that \(H(e)\) is inside
-  \(e_p\). We call this record \(rc\). If there is no such record, discard this
+- Look for some record of \(w\) in the past such that \(H(w)\) is inside
+  \(w_p\). We call this record \(rc\). If there is no such record, discard this
   message.
   
-  Let \(dt\) be the time that \(e\) was generated.
+  Let \(it\) be the iteration number in which \(w\) was generated.
 
-- Verify that \(H(e_i)\) is inside \(H(e_{i-1})\) for every \(1 \leq i \leq p\).
+- Verify that \(H(w_i)\) is inside \(H(w_{i-1})\) for every \(1 \leq i \leq p\).
   If not, discard the message.
 
 - Accept the message. \(x\) will conclude that \(t\) was alive at time \(dt\).
 
 - Check if the record \(rc\) contains \(t\) (That means we already know that
-  \(t\) was alive at time \(dt\)). If \(rc\) doesn't contain \(t\):
+  \(t\) was alive at iteration number \(it\)). If \(rc\) doesn't contain \(t\):
 
   (Note that we do this check to avoid loops in the flooding algorithm)
 
   - Add \(t\) to the record \(rc\).
-    This has the meaning of remembering \(t\) was alive "at time \(dt\)".
+    This has the meaning of remembering \(t\) was alive "after iteration
+    \(it\)".
 
-  - Set \(e_{p+1} := e\). Send the following message to all the neighbours:
-    ("\(t\) is alive", \(e_0\), Signature by \(t\), \(e_1,\dots,e_p,e_{p+1}\))
+  - Set \(w_{p+1} := w\). Send the following message to all the neighbours:
+    ("\(t\) is alive", \(w_0\), Signature by \(t\), \(w_1,\dots,w_p,e_{w+1}\))
 
+
+We call the complete procedure decribed here (creating a combined challenge from all the
+network nodes followed by verifying \(t\)'s "alive" message) the **Unified
+Challenge-Response mechanism**.
 
 (TODO: Think about a picture to illustrate the proving part).
 
+<h5>The security of the Unified Challenge-Response</h5>
+
+We want to show that it is hard to forge a "proof of being alive" for node
+\(t\) without knowing \(t\)'s private key.
+
+Our assumptions over the adversary: The adversary is computationally bounded
+(Can not forge a signature or invert a hash function), and has control over
+some nodes inside the network. We call the nodes under the control of the
+adversary the "corrupt" nodes. We call the rest of the nodes the "correct"
+nodes.
+
+We assume that if we discard the set of corrupt nodes, the network
+will still be connected. In a different formulation: We assume that there is a
+path between every two correct nodes that doesn't go through a corrupt node.
+
+We first note that given the algorithm we described, \(t\)'s messages will
+arrive at all the correct nodes in the network. That is because for every
+correct node \(x\) there is a path between \(t\) and \(x\) that doesn't go
+through a corrupt node. (Note that we also assume here that \(t\) is correct).
+
+(TODO: Add a picture that illustrates the fact that \(t\)'s messages will
+arrive at \(x\)).
+
+Next, we want to show that if a node \(x\) receives and accepts a message of
+the form ("\(t\) is alive",\(w_0\), Signature by \(t\), \(w_1,\dots,w_p\)), it
+means that with high probability \(t\) was alive after a specific iteration
+\(it\) of \(x\).
+
+As we assumed the adversary is computationally bounded, he can not forge the
+first part of the message: ["\(t\) is alive",\(w_0\),Signature by \(t\)].
+We conclude that the first part of the message was created by \(t\), and that
+\(w_0\) was the value of \(t\)'s \(w\) at the time of the message creation. In
+other words: \(t\) was alive after the value \(w_0\) was computed.
+
+Next, as the message is accepted by \(x\), it must be true that \(H(w_1)\) is
+inside \(w_0\). We assumed that with high probability the adversary can not
+invert cryptographic hash functions, therefore the value \(H(w_1)\) was
+generated using the contents of \(w_1\).
+
+Generally for every \(1 \leq i \leq p\) we find that the value \(H(w_i)\) was
+generated relying on the contents of \(w_i\). As \(w_{i-1}\) contains
+\(H(w_i)\), we conclude that \(w_{i-1}\) was computed only after \(w_i\) was
+computed.
+
+Therefore we find that \(t\) was alive after the value \(w_p\) was computed.
+\(x\) knows of a record \(rc\) that contains \(w\) such that \(H(w)\) is inside
+\(w_p\). That means that \(t\) was alive after the record \(rc\) was generated.
+\(rc\) was generated at iteration \(it\) of \(x\). Therefore \(x\)
+knows that with high probability \(t\) was alive after iteration \(it\).
+
+<h5>Shorter Messages</h5>
+
+If every node in the network has many immediate neighbours, the broadcasted
+messages from \(t\) of the form ("\(t\) is alive",\(w_0\), Signature by \(t\),
+\(w_1,\dots,w_p\)) could become large.
+
+Assuming that the size of a signature or a hash value is \(b\) and that every
+node in the network has \(s\) immediate neighbours, we get that \(w_i\) is of
+size \(b\cdot s\) for every \(0 \leq i \leq p\). It means that a message from
+\(t\) could grow to a total size of \(d\cdot b \cdot s\), where \(d\) is the
+diameter of the network.
+
+In our current algorithm every node \(x\) combines all the values \(r_i\) from his
+neighbours together with his randomly generated value \(r\) into one new value
+\(H(w)\), where \(w = (r,r_1,\dots,r_s)\). \(w\) is kept for later use, **as
+a proof** that the value \(H(w)\) was calculated after the values
+\(r,r_1,\dots,r_s\).
+
+We might be able to combine the values \(r,r_1,\dots,r_s\) into a new value
+\(g\) using a different method. Without getting into too much details, I
+present here two methods in which we could obtain much shorter proofs.
+
+One method would be to use a [Merkle Tree](http://en.wikipedia.org/wiki/Merkle_tree).
+Using this method \(g\) will still have a constant size, however a proof that
+\(g\) depends on some \(r_i\) will be of size \(c\cdot\log{s}\) instead of
+\(c\cdot s\). This could be done by using .
+
+We could become even more efficient, and get a proof of size \(O(1)\) using
+constant size polynomial commitments. Read ["Constant-Size Commitments to
+Polynomials and Their
+Applications"](http://www.cypherpunks.ca/~iang/pubs/PolyCommit-AsiaCrypt.pdf)
+By A. Kate, G. Zaverucha, I. Goldberg for more information about this idea.
 
 
+<h4>Some thoughts about network time</h4>
 
+We managed to replace the time stamp we used in the beginning (See "Using a
+Time Stamp" above) with a strange cryptographic object: A hash value \(H(w)\) that
+depends on random numbers generated by all the nodes in the network. 
 
+**That hash value, together with other data kept inside other nodes in the
+network, are a proof that certain events happened in a certain order.** This is a
+proof that the value \(w\) was calculated only after all the random numbers
+were generated. 
+
+Note that We use real clocks in our solution only to invoke periodic
+iterations. We need that every node in the network will have some machine that
+ticks every once in a while. We call the time between two ticks "the iteration
+period". It different nodes might have different periods.
+
+The period times of all nodes can be used to calculate how fast a generated
+random number propagates through the network. Consider some random
+number \(r\) that was generated by a node \(x\). Assume that some node \(y\) is
+of distance \(D = dist(x,y)\) from \(y\). Then the value \(w\) of \(w\) will
+depend on the \(r\) value generated by \(x\) only after at least \(D\)
+iterations. (Maybe more, because the periodic ticks of all nodes in the network
+are not synchronized).
+
+Finally, note that a hash value \(H(w)\) at some node \(x\) is different from
+the one at node \(y\). If we treat the value \(H(w)\) as the "mesh network time",
+then in some sense every node in the network has a different view of time.
+
+<h4>Summary</h4>
+
+A node \(t\) wants to broadcast a proof that he is alive to all the nodes in a
+mesh network. We tried different methods to solve this problem: Flooding a
+signed message, adding in a counter and using a time stamp of a global clock,
+but we found some flaws in all of those methods.
+
+We introduced a different method to simulate a time stamp using
+cryptographic hash functions and periodically generated random numbers. A
+signature of \(t\) over that simulated time stamp serves as evidence for each
+node \(x\) in the network that \(t\) was alive after a certain moment.
+
+Finally, we showed some ideas to make our algorithm more efficient, by sending
+shorter messages. We found that messages broadcasted by \(t\) could be reduced
+to be of size \(O(d\log{s})\) using Merkle trees, and \(O(d)\) using polynomial
+commitments.
 
 
 </%block>
