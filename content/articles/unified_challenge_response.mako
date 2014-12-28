@@ -60,7 +60,6 @@ forever. (One of the nodes one the path might fail). Moreover, one of the nodes
 and \(y\) will want to be informed, so that they could find an alternative
 path. (Or even just give up on the connection, in case one of them has failed).
 
-(TODO: A picture of the path between \(x\) and \(y\))
 <img class="wimage"
 src="${self.utils.rel_file_link("articles/unified_challenge_response/path_x_y.svg")}"/>
 <div class="pict_desc">
