@@ -17,7 +17,6 @@
 abs function.
 -->
 \(
-\newcommand{\abs}[1]{\left|{#1}\right|}
 \newcommand{\paren}[1]{\left({#1}\right)}
 \)
 
@@ -28,8 +27,8 @@ knows the identity of \(t\), and wants to verify that \(t\) was recently alive.
 Also assume that \(t\) has limited networking and computing power.
 
 We review a few algorithms to solve this problem: Simple Challenge-Response,
-Digital signature over a counter and Digital signature over a global time
-value: A time stamp. We then discuss the flaws of each of those algorithms.
+Digital Signature over a counter and Digital Signature over a time stamp. We
+then discuss the flaws of each of those algorithms.
 
 Finally we present the Unified Challenge-Response: A distributed algorithm that
 simulates time stamp using Cryptographic Hash functions and periodic randomly
@@ -42,13 +41,12 @@ immediate neighbours every node has. We mention two more improvments which
 allow to reduce the size of the broadcasted message to \(O(d\log{s}\) or to
 \(O(d)\).
 
-
 <h4>Initial Ideas</h4>
 
 <h5>The Challenge-Response</h5>
 
 Let \(x,y\) be two nodes in distributed mesh network. Assume that there is a
-path of nodes between \(x\) and \(y\), known to \(x\) and \(y\).  By a path we
+path of nodes between \(x\) and \(y\), known to \(x\) and \(y\). By a path we
 mean that \(x\) is an immediate neighbour of some other node \(x_1\), which in
 turn an immediate neighbour of some other node \(x_2\) and so on, until we get
 to some \(x_k\), which is an immediate neighbour of \(y\).
