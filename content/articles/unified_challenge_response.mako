@@ -8,7 +8,7 @@
     "number":10,\
     "tags": [],\
     "draft":"True",\
-    "description": "")}
+    "description": ""}
 %>
 </%def>
 
@@ -38,7 +38,7 @@ node \(t\) can prove that we was recently alive.
 The size of the broadcasted message by \(t\) in the naive solution is
 \(O(d\cdot s)\), where \(d\) is the network diameter and \(s\) is the amount of
 immediate neighbours every node has. We mention two more improvements which
-allow to reduce the size of the broadcasted message to \(O(d\log{s}\) or to
+allow to reduce the size of the broadcasted message to \(O(d\log{s})\) or to
 \(O(d)\).
 
 <h4>Initial Ideas</h4>
@@ -57,8 +57,8 @@ them they can communicate.
 As the network changes, the path between \(x\) and \(y\) might not last
 forever. (One of the nodes one the path might fail). Moreover, one of the nodes
 \(x\) or \(y\) might fail at some point. In a case of failure, the nodes \(x\)
-and \(y\) will want to be informed, to find an alternative path. (Or even just
-give up on the connection, in case one of them has failed).
+and \(y\) will want to be informed, so that they could find an alternative
+path. (Or even just give up on the connection, in case one of them has failed).
 
 (TODO: A picture of the path between \(x\) and \(y\))
 
@@ -265,31 +265,31 @@ Timestamps](http://en.wikipedia.org/wiki/Lamport_timestamps).
 I include here some naive approaches to get a mesh network definition of time,
 and a short explanation of why they won't fit for our case:
 
-- We can set a special trusted node \(TS\) (Time Server) that is responsible
-  for advertising time. \(TS\) will flood the network with a message about his
-  current time every 1 second. \(TS\)
+-   We can set a special trusted node \(TS\) (Time Server) that is responsible
+    for advertising time. \(TS\) will flood the network with a message about his
+    current time every 1 second.
 
-  The message sent by \(TS\) will be of the form (current_time, Signature by
-  \(TS\)).
+    The message sent by \(TS\) will be of the form (current_time, Signature by
+    \(TS\)).
 
-  Then whenever \(t\) wants to send an "alive" message, it will take the last
-  message sent by \(TS\), concatenate to that message the string "\(t\) is alive"
-  and add a signature over everything. The end result will be:
-  ("\(t\) is alive",(current_time,Signature by \(TS\)), Signature by \(t\)).
-  (Note that using this method \(t\) can not make "alive" messages ahead of
-  time).
+    Then whenever \(t\) wants to send an "alive" message, it will take the last
+    message sent by \(TS\), concatenate to that message the string "\(t\) is alive"
+    and add a signature over everything. The end result will be:
+    ("\(t\) is alive",(current_time,Signature by \(TS\)), Signature by \(t\)).
+    (Note that using this method \(t\) can not make "alive" messages ahead of
+    time).
 
-  To make this work we need some trusted node with some globally trusted key.
-  This node has to live forever, or else the time in the network will "stop
-  moving. This is probably unacceptable for most distributed network settings.
+    To make this work we need some trusted node with some globally trusted key.
+    This node has to live forever, or else the time in the network will "stop
+    moving. This is probably unacceptable for most distributed network settings.
 
-- Every node will have its own clock, and nodes will fix drift by asking each
-  other about the time. The time it takes a message to arrive can also be taken
-  into account.
+-   Every node will have its own clock, and nodes will fix drift by asking each
+    other about the time. The time it takes a message to arrive can also be taken
+    into account.
 
-  This could probably work in a setting where we trust all the nodes to tell
-  the truth about time. However, in the case of adversarial nodes inside the
-  network, this will probably not work correctly.
+    This could probably work in a setting where we trust all the nodes to tell
+    the truth about time. However, in the case of adversarial nodes inside the
+    network, this will probably not work correctly.
 
 
 <h4>The Unified Challenge-Response</h4>
@@ -301,15 +301,15 @@ was recently alive.
 
 We mentioned earlier two main ideas:
 
-- Challenge-Response: Every node \(x\) sends a unique challenge to \(t\), and
-  \(t\) responds with a proof. This proves to \(x\) that \(t\) is alive. We
-  couldn't use this method because we can't afford letting \(t\) generate
-  proofs for challenges from all the nodes in the network.
+-   Challenge-Response: Every node \(x\) sends a unique challenge to \(t\), and
+    \(t\) responds with a proof. This proves to \(x\) that \(t\) is alive. We
+    couldn't use this method because we can't afford letting \(t\) generate
+    proofs for challenges from all the nodes in the network.
 
-- Signing over some recent data: \(t\) will sign some recent data, like the 
-  current time, and broadcast it to all the nodes in the network. We couldn't
-  use this method because we don't have a reliable and secure way to generate
-  "recent data", like time.
+-   Signing over some recent data: \(t\) will sign some recent data, like the 
+    current time, and broadcast it to all the nodes in the network. We couldn't
+    use this method because we don't have a reliable and secure way to generate
+    "recent data", like time.
 
 The approach presented in this text is to somehow combine those two ideas
 together. We will create something that we call the "Unified Challenge": A
@@ -405,7 +405,7 @@ Some Observations:
   network).
 
 
-Further explanation for the next observation: Consider a new calculated \(w\)
+Further explanation for the last observation: Consider a new calculated \(w\)
 value of some node \(x\) at the network. \(w\) is depends on the newly generated
 random value \(r\) of \(x\), and on all the \(w\) values from all of \(x\)'s
 neighbours. Consider some value \(w\) that was accepted from a neighbour \(q\)
@@ -442,30 +442,30 @@ On receipt of a message of the form: ("\(t\) is alive",\(w_0\),Signature by \(t\
 (Note: This message has probably gone through a path of \(p\) nodes before \(x\)
 has received it.)
 
-- Verify \(t\)'s signature. If it is invalid, discard the message.
+-   Verify \(t\)'s signature. If it is invalid, discard the message.
 
-- Look for some record of \(w\) in the past such that \(H(w)\) is inside
-  \(w_p\). We call this record \(rc\). If there is no such record, discard this
-  message.
+-   Look for some record of \(w\) in the past such that \(H(w)\) is inside
+    \(w_p\). We call this record \(rc\). If there is no such record, discard this
+    message.
   
-  Let \(it\) be the iteration number in which \(w\) was generated.
+    Let \(it\) be the iteration number in which \(w\) was generated.
 
-- Verify that \(H(w_i)\) is inside \(H(w_{i-1})\) for every \(1 \leq i \leq p\).
-  If not, discard the message.
+-   Verify that \(H(w_i)\) is inside \(H(w_{i-1})\) for every \(1 \leq i \leq p\).
+    If not, discard the message.
 
-- Accept the message. \(x\) will conclude that \(t\) was alive at time \(dt\).
+-   Accept the message. \(x\) will conclude that \(t\) was alive at time \(dt\).
 
-- Check if the record \(rc\) contains \(t\) (That means we already know that
-  \(t\) was alive at iteration number \(it\)). If \(rc\) doesn't contain \(t\):
+-   Check if the record \(rc\) contains \(t\) (That means we already know that
+    \(t\) was alive at iteration number \(it\)). If \(rc\) doesn't contain \(t\):
 
-  (Note that we do this check to avoid loops in the flooding algorithm)
+    (Note that we do this check to avoid loops in the flooding algorithm)
 
-  - Add \(t\) to the record \(rc\).
-    This has the meaning of remembering \(t\) was alive "after iteration
-    \(it\)".
+    -   Add \(t\) to the record \(rc\).
+        This has the meaning of remembering \(t\) was alive "after iteration
+        \(it\)".
 
-  - Set \(w_{p+1} := w\). Send the following message to all the neighbours:
-    ("\(t\) is alive", \(w_0\), Signature by \(t\), \(w_1,\dots,w_p,e_{w+1}\))
+    -   Set \(w_{p+1} := w\). Send the following message to all the neighbours:
+        ("\(t\) is alive", \(w_0\), Signature by \(t\), \(w_1,\dots,w_p,e_{w+1}\))
 
 
 We call the complete procedure described here (creating a combined challenge
