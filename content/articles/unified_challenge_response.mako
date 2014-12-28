@@ -43,7 +43,7 @@ allow to reduce the size of the broadcasted message to \(O(d\log{s}\) or to
 \(O(d)\).
 
 
-<h4>Motivation</h4>
+<h4>Initial Ideas</h4>
 
 <h5>The Challenge-Response</h5>
 
@@ -131,10 +131,11 @@ still alive, and that his path to \(t\) is still alive.
 
 <h5>Using simple challenge response</h5>
 
-One idea to do that would be to use the challenge-response method that was
-introduced earlier. Every node \(x\) will periodically send a unique message
-with a **unique** challenge along the path to \(t\), then \(t\) will produce a
-proof and send a response message containing that proof somehow back to \(x\).
+One idea to do that would be to use many instances of the challenge-response
+method that was introduced earlier. Every node \(x\) will periodically send a
+message with a **unique** challenge along the path to \(t\), then \(t\) will
+produce a proof and send a response message containing that proof somehow back
+to \(x\).
 
 The main issue with this idea is that \(t\) will have to generate proofs for
 challenges sent from every node in the network. As noted above, \(t\) does not
