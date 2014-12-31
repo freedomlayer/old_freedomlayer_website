@@ -3,12 +3,13 @@
 <%
     return {\
     "title": "The Unified Challenge-Response: Secure Time inside the Mesh",\
-    "date": "2014-12-26 19:19",\
+    "date": "2014-12-31 18:49",\
     "author": "real",\
     "number":10,\
     "tags": [],\
-    "draft":"True",\
-    "description": ""}
+    "draft":"False",\
+    "description": ("A Distributed Algorithm for simulating time stamp inside"
+                    " a mesh network using cryptographic hash functions.")}
 %>
 </%def>
 
@@ -468,7 +469,7 @@ value \(r_x\) on the last level. \(x\) might have generated a new random value
 \(r\) by that time.
 
 </div>
-<br /><br />
+<br />
 
 
 <h5>Building the Response</h5>
