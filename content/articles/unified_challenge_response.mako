@@ -34,7 +34,7 @@ then discuss the flaws of each of those algorithms.
 Finally we present the Unified Challenge-Response: A distributed algorithm that
 simulates time stamp using Cryptographic Hash functions and periodic randomly
 generated numbers. By Signing the simulated time stamp and broadcasting it, the
-node \(t\) can prove that we was recently alive.
+node \(t\) can prove that he was recently alive.
 
 The size of the broadcasted message by \(t\) in the naive solution is
 \(O(d\cdot s)\), where \(d\) is the network diameter and \(s\) is the amount of
