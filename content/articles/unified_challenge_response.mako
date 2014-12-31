@@ -107,9 +107,18 @@ incorrectly assume that \(y\) has sent it. At this point \(y\) might be already
 dead, but \(e\) could keep sending convincing messages to \(x\) about \(y\)'s
 existence.
 
-(TODO: Show the path between \(x\) and \(y\), and two stages of the replay
-attack. First \(e\) just listens to the messages, and then \(e\) cuts the next
-message and sends \(x\) back the response).
+<img class="wimage"
+src="${self.utils.rel_file_link("articles/unified_challenge_response/replay_attack_x_y_e.svg")}"/>
+<div class="pict_desc">
+In the picture: First (1), \(x\) wants to verify that \(y\) is alive. \(x\) sends a
+challenge message \(cm\) to \(y\) along the path between \(x\) and \(y\), and
+\(y\) sends back a response, proving that he is alive. Next (2), \(x\) sends
+again the same challenge to \(y\), asking him to prove that he is alive. \(e\),
+which is a node in the middle of the path, doesn't forward \(x\)'s challenge to
+\(y\). Instead, it replays the last response sent by \(y\), fooling \(x\) to
+believe that \(y\) is alive.
+</div>
+<br /><br />
 
 This kind of attack, performed by \(e\), is also known as [Replay
 attack](http://en.wikipedia.org/wiki/Replay_attack). One way to avoid it is to
@@ -342,7 +351,16 @@ could in fact ask \(t\) to sign anything, which is not a good thing. Therefore
 \(t\) will add its own value \(g\) before signing the message. You can think of
 \(g\) as some special constant.
 
-(TODO: Add a timeline picture of the challenge-response process)
+<img class="wimage"
+src="${self.utils.rel_file_link("articles/unified_challenge_response/classic_challenge_response.svg")}"/>
+<div class="pict_desc">
+A [Message sequence chart](http://en.wikipedia.org/wiki/Message_sequence_chart)
+for a simple challenge response algorithm. \(x\) sends \(t\) a random number
+\(r\). \(t\) generates a random number \(g\), and then \(t\) sends
+(r,g,Signature by \(t\)), where the signature is over (r,g). Finally \(x\)
+verifies the signature.
+</div>
+<br /><br />
 
 Observing this challenge-response process, we see that \(x\)'s challenge could
 be determined by some random number \(r\). In order to build a challenge that
