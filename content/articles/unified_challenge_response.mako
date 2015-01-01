@@ -518,7 +518,7 @@ has received it.)
         \(it\)".
 
     -   Set \(w_{p+1} := w\). Send the following message to all the neighbours:
-        ("\(t\) is alive", \(w_0\), Signature by \(t\), \(w_1,\dots,w_p,e_{w+1}\))
+        ("\(t\) is alive", \(w_0\), Signature by \(t\), \(w_1,\dots,w_p,w_{p+1}\))
 
 
 We call the complete procedure described here (creating a combined challenge
