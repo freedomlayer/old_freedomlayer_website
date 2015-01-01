@@ -8,7 +8,8 @@
     "number":11,\
     "tags": [],\
     "draft":"False",\
-    "description": "Current roadmap for the creation of a secure distributed mesh network"}
+    "description": ("Current roadmap for the creation of"
+                    "a secure distributed mesh network")}
 %>
 </%def>
 
@@ -36,7 +37,8 @@ decentralized networks are:
 -   [Virtual DHT
     Routing](${self.utils.rel_file_link("articles/virtual_dht_routing.html")})
 
--   [Landmarks Navigation](${self.utils.rel_file_link("articles/landmarks_navigation_rw.html")
+-   [Landmarks
+    Navigation](${self.utils.rel_file_link("articles/landmarks_navigation_rw.html")})
 
 For Landmarks Navigation we only showed a very naive routing method (Random
 walking), and currently we don't know of a better algorithm to use the Network
