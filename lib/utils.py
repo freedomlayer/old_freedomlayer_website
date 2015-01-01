@@ -136,19 +136,27 @@ def rel_file_link(context,file_path):
     href_addr = os.path.relpath(file_path,cur_path)
     return os.path.normpath(href_addr)
 
-def inspect_temp(context,file_path,key):
+def inspect_temp(context,file_path,keys):
     """
     Inspect a template to get some metadata.
     Basically it runs self.${key}() at the template side and returns
     the result.
     """
+    # Result dictionary:
+    res_dc = {}
+
     # Render the template with inspect=True to get the blog entry's
     # metadata.
     fl_tmp = Template(filename=file_path,lookup=context.lookup)
-    res_inspect = fl_tmp.render(inspect=key)
-    metadata = json.loads(res_inspect)
 
-    return metadata
+    for key in keys:
+        res_inspect = fl_tmp.render(inspect=key)
+        metadata = json.loads(res_inspect)
+        # Add metadata to result dictionary:
+        res_dc[key] = metadata
+
+    return res_dc
+
 
 def inspect_directory(context,dir_name,props):
     """
@@ -180,9 +188,7 @@ def inspect_directory(context,dir_name,props):
             entry = {}
             fl_rel_html = change_extension(fl_rel,HTML_EXT)
             entry["link_addr"] = os.path.join(dir_name,fl_rel_html)
-            entry["props"] = {}
-            for prop in props:
-                entry["props"][prop] = inspect_temp(context,fl_path,prop)
+            entry["props"] = inspect_temp(context,fl_path,props)
             res_entries.append(entry)
 
     return res_entries
