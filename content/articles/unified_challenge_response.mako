@@ -202,7 +202,7 @@ messages sent from \(t\) would be:
 
 ...
 
-("\(t\) am alive", counter = 171, Signature)
+("\(t\) is alive", counter = 171, Signature)
 
 Recall that those messages have the purpose of proving to all the nodes in the
 network that \(t\) is still alive. 
