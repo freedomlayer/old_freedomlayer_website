@@ -31,17 +31,17 @@ Advanced ideas
 Mesh with Landmarks
 -------------------
 
-- Using the graph geometry
+- Using the graph geometry -- V
 	- Hierarchy using landmarks.
 	- How to choose landmarks. (Mining lowest hash?)
 	- Most of the burden falls on the landmarks.
 
-- The collective challenge response
+- The collective challenge response -- V
 	- How to know that a landmark really exists?
 
 - Choosing the landmarks.
 
-- Navigating around the landmarks.
+- Navigating around the landmarks. -- V
 	- Graph coordinates.
 	- Triangle inequalities and metrics.
 	- The random walk solution.
