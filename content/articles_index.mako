@@ -5,7 +5,7 @@
 
 
 <%block name="web_page_header">
-<title>FreedomLayer | About</title>
+<title>FreedomLayer | Articles</title>
 </%block>
 
 <%def name="article_entry(article_file)">
